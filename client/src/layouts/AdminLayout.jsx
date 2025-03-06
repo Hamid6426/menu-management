@@ -1,16 +1,7 @@
-import AdminNavbar from "../components/Navbars/AdminNavbar";
+import React from 'react'
 
-const AdminLayout = ({ children }) => {
+export default function AdminLayout() {
   return (
-    <div className="flex min-w-screen min-h-screen">
-      <div className='h-full fixed'>
-        <AdminNavbar />
-      </div>
-      <main className="ml-20 w-full flex justify-center bg-gray-100">
-        {children}
-      </main>
-    </div>
-  );
-};
-
-export default AdminLayout;
+    <div>AdminLayout</div>
+  )
+}
