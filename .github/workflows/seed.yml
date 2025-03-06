@@ -1,0 +1,30 @@
+name: Seed Database
+
+on:
+  push:
+    branches:
+      - main # Trigger on push to main branch
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18 # Use your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Seed database
+        env:
+          MONGODB_URI: ${{ secrets.MONGO_URI }} # Store MongoDB URI in GitHub Secrets
+        run: node server/scripts/seed.js
+
+       # store MONGO_URI at Settings > Secrets > Actions
