@@ -1,0 +1,43 @@
+// middlewares/middlewares.js
+const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+// Protect routes - ensure user is logged in
+exports.protectRoute = async (req, res, next) => {
+  try {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.userId).select("-password"); // Attach user info
+
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Invalid Token" });
+  }
+};
+
+// Authorize roles - restrict access to specific roles
+exports.authorizeRoles = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    next();
+  };
+};
+
+exports.uploadMiddleware = (req, res, next) => {};
+
+exports.convertToObjectId = (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
+      return res.status(400).json({ message: "Invalid ObjectId" });
+    }
+    req.params._id = new mongoose.Types.ObjectId(req.params._id); // Ensure it's an ObjectId
+    next();
+  } catch (error) {
+    return res.status(400).json({ message: "Invalid ObjectId format" });
+  }
+};
