@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,21 +26,30 @@ const Login = () => {
 
     try {
       const response = await axiosInstance.post("/auth/login", formData);
-      const { token, user } = response.data;
+      const { token } = response.data;
+
+      // Store token & user data immediately
+      localStorage.setItem("token", token);
+
+      if (!token) {
+        setError("No token received. Please try again.");
+        return;
+      }
+
+      const decoded = jwtDecode(token);
+      const userId = decoded?.userId;
+      const username = decoded?.username;
+      const role = decoded?.role;
+      const allergies = decoded?.allergies;
 
       setSuccess("Login successful!");
       setFormData({ email: "", password: "" });
 
-      // Store token & user data immediately
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-
       setTimeout(() => {
-        const userId = user.userId;
-        if (["admin", "manager", "super-admin"].includes(user.role)) {
-          navigate("/dashboard");
-        } else if (user.role) {
-          if (!Array.isArray(user.allergies) || user.allergies.length === 0) {
+        if (["admin", "manager", "super-admin"].includes(role)) {
+          navigate(`/${username}`);
+        } else if (role) {
+          if (!Array.isArray(allergies) || allergies.length === 0) {
             navigate(`/${userId}/add-allergies`);
           } else {
             navigate("/top-restaurants");

@@ -6,9 +6,9 @@ const crypto = require("crypto"); // For generating reset tokens
 
 exports.userRegister = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -24,6 +24,7 @@ exports.userRegister = async (req, res) => {
     // Create new user
     const newUser = new User({
       name,
+      username,
       email,
       password: hashedPassword,
       role: "user",
@@ -39,9 +40,9 @@ exports.userRegister = async (req, res) => {
 
 exports.adminRegister = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, username, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -55,6 +56,7 @@ exports.adminRegister = async (req, res) => {
     // Create new admin who will create a restaurant later
     const newAdmin = new User({
       name,
+      username,
       email,
       password: hashedPassword,
       role: "admin",
@@ -92,6 +94,7 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user._id,
+        username: user.username,
         email: user.email,
         name: user.name,
         role: user.role, // Role from DB
@@ -103,13 +106,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       token,
-      user: {
-        userId: user._id,
-        email: user.email,
-        name: user.name,
-        role: user.role, // Role from DB
-        allergies: user.allergies,
-      },
+      user
     });
   } catch (error) {
     console.error("Login Error:", error);

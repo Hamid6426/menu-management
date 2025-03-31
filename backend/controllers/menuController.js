@@ -1,4 +1,5 @@
 const Menu = require("../models/Menu");
+const Dish = require("../models/Dish");
 const Restaurant = require("../models/Restaurant");
 
 exports.createMenu = async (req, res) => {
@@ -8,9 +9,7 @@ exports.createMenu = async (req, res) => {
 
     // Ensure name, restaurantId, and category are provided
     if (!name || !restaurantId || !category) {
-      return res
-        .status(400)
-        .json({ message: "Name, category and restaurant ID are required." });
+      return res.status(400).json({ message: "Name, category and restaurant ID are required." });
     }
 
     // Check if restaurant exists
@@ -48,14 +47,12 @@ exports.createMenu = async (req, res) => {
   }
 };
 
-exports.getAllMenus = async (req, res) => {
+exports.getCurrentRestaurantMenus = async (req, res) => {
   try {
     const { restaurantId } = req.params;
 
     if (!restaurantId) {
-      return res
-        .status(400)
-        .json({ message: "Restaurant ID is required." });
+      return res.status(400).json({ message: "Restaurant ID is required." });
     }
 
     // Verify that the restaurant exists
@@ -66,9 +63,7 @@ exports.getAllMenus = async (req, res) => {
 
     // Find menus associated with the restaurant
     const menus = await Menu.find({ restaurant: restaurantId });
-    res
-      .status(200)
-      .json({ message: "Menus fetched successfully", menus });
+    res.status(200).json({ message: "Menus fetched successfully", menus });
   } catch (error) {
     console.error("Get All Menus Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -77,16 +72,14 @@ exports.getAllMenus = async (req, res) => {
 
 exports.getMenuById = async (req, res) => {
   try {
-    const menuId = req.params.id;
+    const { menuId } = req.params;
     const menu = await Menu.findById(menuId).populate("dishes");
 
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
     }
 
-    res
-      .status(200)
-      .json({ message: "Menu fetched successfully", menu });
+    res.status(200).json({ message: "Menu fetched successfully", menu });
   } catch (error) {
     console.error("Get Menu By ID Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -95,7 +88,7 @@ exports.getMenuById = async (req, res) => {
 
 exports.updateMenu = async (req, res) => {
   try {
-    const menuId = req.params.id;
+    const { menuId } = req.params;
     const updates = req.body; // This may include name, description, category, etc.
 
     // Find the menu and update it; returns the new document after update
@@ -108,9 +101,7 @@ exports.updateMenu = async (req, res) => {
       return res.status(404).json({ message: "Menu not found." });
     }
 
-    res
-      .status(200)
-      .json({ message: "Menu updated successfully", menu });
+    res.status(200).json({ message: "Menu updated successfully", menu });
   } catch (error) {
     console.error("Update Menu Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -119,23 +110,20 @@ exports.updateMenu = async (req, res) => {
 
 exports.deleteMenu = async (req, res) => {
   try {
-    const menuId = req.params.id;
-
+    const { menuId } = req.params;
     // Find the menu first
     const menu = await Menu.findById(menuId);
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
     }
-
+    // Delete associated dishes
+    await Dish.deleteMany({ _id: { $in: menu.dishes } });
     // Remove the menu document
-    await menu.remove();
+    await menu.deleteOne();
 
-    // Remove the menu reference from the associated restaurant's menus array, if applicable
-    await Restaurant.findByIdAndUpdate(menu.restaurant, {
-      $pull: { menus: menuId },
-    });
-
-    res.status(200).json({ message: "Menu deleted successfully" });
+    // Remove the menu reference from the associated restaurant's menus array
+    await Restaurant.findByIdAndUpdate(menu.restaurant, { $pull: { menus: menuId } });
+    res.status(200).json({ message: "Menu and its dishes deleted successfully" });
   } catch (error) {
     console.error("Delete Menu Error:", error);
     res.status(500).json({ message: "Internal Server Error" });

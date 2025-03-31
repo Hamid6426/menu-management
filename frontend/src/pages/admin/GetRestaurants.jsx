@@ -62,9 +62,9 @@ const GetRestaurants = () => {
       ) : (
         <>
           {restaurants.length === 0 ? (
-            <p>No restaurants found.</p>
+            <px>No restaurants found.</px>
           ) : (
-            <table className="table table-striped">
+            <table className="table table-striped mt-4">
               <thead>
                 <tr>
                   <th>#</th>
@@ -102,7 +102,7 @@ const GetRestaurants = () => {
                     </td>
                     <td>
                       <Link
-                        to={`/dashboard/${restaurant._id}/menus`}
+                        to={`/dashboard/${userId}/${restaurant._id}/menus`}
                         className="btn btn-sm btn-outline-secondary"
                         title="Menus"
                       >

@@ -3,7 +3,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 const AdminRegister = () => {
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+  const [formData, setFormData] = useState({ name: "", username: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,6 +49,19 @@ const AdminRegister = () => {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter full name"
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label">Username</label>
+            <input
+              type="text"
+              name="username"
+              className="form-control"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Enter a username"
               required
             />
           </div>

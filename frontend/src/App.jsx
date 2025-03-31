@@ -42,8 +42,14 @@ import ForbiddenPage from "./pages/ForbiddenPage";
 import InternalServerErrorPage from "./pages/InternalServerErrorPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import DashboardLayout from "./layouts/DashboardLayout";
+import Profile from "./pages/Profile";
+import { jwtDecode } from "jwt-decode";
 
 function App() {
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded.username;
+  
   return (
     <Routes>
       {/* Routes using the Layout component */}
@@ -52,12 +58,13 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/top-restaurants" element={<TopRestaurants />} />
-        <Route path="/:restaurantId" element={<PreviewRestaurant />} />
-        <Route path="/menu/:menuId/preview" element={<PreviewMenu />} />
-        <Route path="/dish/:dishId/preview" element={<PreviewDish />} />
+        <Route path="/restaurant/:restaurantId" element={<PreviewRestaurant />} />
+        <Route path="/menu/:restaurantId/:menuId" element={<PreviewMenu />} />
+        <Route path="/dish/:restaurantId/:menuId/:dishId" element={<PreviewDish />} />
 
         {/* Protected route */}
         <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin", "manager", "user"]} />}>
+          <Route path="/:userId" element={<Profile />} />
           <Route path="/:userId/add-allergies" element={<AddAllergies />} />
         </Route>
       </Route>
@@ -74,19 +81,19 @@ function App() {
 
       <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin", "manager"]} />}>
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/:username" element={<Dashboard />} />
 
           <Route path="/dashboard/:userId/restaurants" element={<GetRestaurants />} />
           <Route path="/dashboard/:userId/create-restaurant" element={<CreateRestaurant />} />
-          <Route path="/dashboard/restaurants/:restaurantId/update" element={<UpdateRestaurant />} />
+          <Route path="/dashboard/:userId/:restaurantId/update-restaurant" element={<UpdateRestaurant />} />
 
-          <Route path="/dashboard/:restaurantId/menus" element={<GetMenus />} />
-          <Route path="/dashboard/:restaurantId/create-menu" element={<CreateMenu />} />
-          <Route path="/dashboard/menus/:menuId/update" element={<UpdateMenu />} />
+          <Route path="/dashboard/:userId/:restaurantId/menus" element={<GetMenus />} />
+          <Route path="/dashboard/:userId/:restaurantId/create-menu" element={<CreateMenu />} />
+          <Route path="/dashboard/:userId/:restaurantId/:menuId/update-menu" element={<UpdateMenu />} />
 
-          <Route path="/dashboard/:menuId/dishes" element={<GetDishes />} />
-          <Route path="/dashboard/:menuId/create-dish" element={<CreateDish />} />
-          <Route path="/dashboard/dishes/:dishId/update" element={<UpdateDish />} />
+          <Route path="/dashboard/:userId/:restaurantId/:menuId/dishes" element={<GetDishes />} />
+          <Route path="/dashboard/:userId/:restaurantId/:menuId/create-dish" element={<CreateDish />} />
+          <Route path="/dashboard/:userId/:restaurantId/:menuId/:dishId/update-dish" element={<UpdateDish />} />
 
           <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin"]} />}>
             <Route path="/dashboard/settings" element={<Settings />} />
