@@ -1,23 +1,22 @@
 const Restaurant = require("../models/Restaurant");
-const User = require("../models/User");
 const slugify = require("slugify");
 const Menu = require("../models/Menu"); // For use in deleteRestaurant
 
 // Create a new restaurant
 exports.createRestaurant = async (req, res) => {
   try {
-    const { name, slug, location, brandColors, languages } = req.body;
-    const { userId } = req.params;
+    const { name, restaurantSlug, location, brandColors, languages } = req.body;
+    const { username } = req.params;
 
     if (!name || !languages || languages.length === 0) {
       return res.status(400).json({ message: "Name and at least one language are required." });
     }
 
-    // If no slug provided, generate one from the name
+    // If no restaurantSlug provided, generate one from the name
     const generatedSlug = slugify(name, { lower: true, strict: true });
-    const finalSlug = slug ? slug : generatedSlug;
+    const finalSlug = restaurantSlug ? restaurantSlug : generatedSlug;
 
-    // Check if slug already exists
+    // Check if restaurantSlug already exists
     const existingRestaurant = await Restaurant.findOne({ name });
     if (existingRestaurant) {
       return res.status(409).json({ message: "Name already taken. Choose a different one." });
@@ -25,11 +24,11 @@ exports.createRestaurant = async (req, res) => {
 
     const restaurant = new Restaurant({
       name,
-      slug: finalSlug,
+      restaurantSlug: finalSlug,
       brandColors,
       location,
       languages,
-      createdBy: userId, // get it from params
+      createdBy: username, // get it from params
     });
 
     await restaurant.save();
@@ -65,28 +64,28 @@ exports.getAllRestaurants = async (req, res) => {
   }
 };
 
-// Get a single restaurant by ID
-exports.getRestaurantById = async (req, res) => {
-  try {
-    const { restaurantId } = req.params;
+// // Get a single restaurant by ID
+// exports.getRestaurantById = async (req, res) => {
+//   try {
+//     const { restaurantId } = req.params;
 
-    const restaurant = await Restaurant.findById(restaurantId);
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found" });
-    }
+//     const restaurant = await Restaurant.findById(restaurantId);
+//     if (!restaurant) {
+//       return res.status(404).json({ message: "Restaurant not found" });
+//     }
 
-    res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
-  } catch (error) {
-    console.error("Get Restaurant By ID Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+//     res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
+//   } catch (error) {
+//     console.error("Get Restaurant By ID Error:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
 
 exports.getRestaurantBySlug = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const { restaurantSlug } = req.params;
 
-    const restaurant = await Restaurant.findById(slug);
+    const restaurant = await Restaurant.findById(restaurantSlug);
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
@@ -166,9 +165,9 @@ exports.deleteRestaurant = async (req, res) => {
 // Get restaurants created by the current user
 exports.getCurrentUserRestaurants = async (req, res) => {
   try {
-    const { userId } = req.params; // userId passed in the URL
+    const { username } = req.params; // userId passed in the URL
 
-    const restaurants = await Restaurant.find({ createdBy: userId }).sort({
+    const restaurants = await Restaurant.find({ createdBy: username }).sort({
       createdAt: -1,
     });
     res.status(200).json({

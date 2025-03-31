@@ -5,30 +5,30 @@ const upload = require("../middlewares/uploadMiddleware");
 
 const router = express.Router();
 
-router.post("/:userId", protectRoute, authorizeRoles("super-admin", "admin"), restaurantController.createRestaurant);
+router.post("/:username", protectRoute, authorizeRoles("super-admin", "admin"), restaurantController.createRestaurant);
 router.get("/", restaurantController.getAllRestaurants);
 router.get(
-  "/:userId",
+  "/:username",
   protectRoute,
   authorizeRoles("admin", "super-admin"),
   restaurantController.getCurrentUserRestaurants
 );
-router.get("/id/:restaurantId", restaurantController.getRestaurantById);
-router.get("/:slug", restaurantController.getRestaurantBySlug);
+// router.get("/:restaurantId", restaurantController.getRestaurantById);
+router.get("/:restaurantSlug", restaurantController.getRestaurantBySlug);
 router.put(
-  "/:restaurantId",
+  "/:restaurantSlug",
   protectRoute,
   authorizeRoles("admin", "manager", "super-admin"),
   restaurantController.updateRestaurant
 );
 router.delete(
-  "/:restaurantId",
+  "/:restaurantSlug",
   protectRoute,
   authorizeRoles("admin", "super-admin"),
   restaurantController.deleteRestaurant
 );
 router.post(
-  "/logo",
+  "/:restaurantSlug/add-logo",
   protectRoute,
   upload.single("logo"),
   authorizeRoles("admin", "manager", "super-admin"),
