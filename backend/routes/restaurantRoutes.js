@@ -6,22 +6,42 @@ const upload = require("../middlewares/uploadMiddleware");
 const router = express.Router();
 
 // Create a new restaurant (no username in URL)
-router.post("/:username", protectRoute, authorizeRoles("super-admin", "admin"), restaurantController.createRestaurant);
+router.post(
+  "/:username/create-restaurant",
+  protectRoute,
+  authorizeRoles("super-admin", "admin"),
+  restaurantController.createRestaurant
+);
 
 // Get all restaurants
 router.get("/", restaurantController.getAllRestaurants);
 
 // Get restaurants created by a specific user (avoid conflict with restaurant slug)
-router.get("/user/:username", protectRoute, authorizeRoles("admin", "super-admin"), restaurantController.getCurrentUserRestaurants);
+router.get(
+  "/:username",
+  protectRoute,
+  authorizeRoles("admin", "super-admin"),
+  restaurantController.getCurrentUserRestaurants
+);
 
 // Get a single restaurant by its slug
 router.get("/:restaurantSlug", restaurantController.getRestaurantBySlug);
 
 // Update a restaurant by its slug
-router.put("/:restaurantSlug", protectRoute, authorizeRoles("admin", "manager", "super-admin"), restaurantController.updateRestaurant);
+router.put(
+  "/:restaurantSlug",
+  protectRoute,
+  authorizeRoles("admin", "manager", "super-admin"),
+  restaurantController.updateRestaurant
+);
 
 // Delete a restaurant by its slug
-router.delete("/:restaurantSlug", protectRoute, authorizeRoles("admin", "super-admin"), restaurantController.deleteRestaurant);
+router.delete(
+  "/:restaurantSlug",
+  protectRoute,
+  authorizeRoles("admin", "super-admin"),
+  restaurantController.deleteRestaurant
+);
 
 // Upload restaurant logo
 router.post(

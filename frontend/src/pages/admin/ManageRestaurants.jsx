@@ -5,7 +5,7 @@ import { MdVisibility, MdEdit, MdMenu } from "react-icons/md";
 import DeleteRestaurantButton from "../../components/DeleteRestaurantButton";
 import { jwtDecode } from "jwt-decode";
 
-const GetRestaurants = () => {
+const ManageRestaurants = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -22,13 +22,18 @@ const GetRestaurants = () => {
     setError(null);
 
     try {
-
+      const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);
+      const username = decoded?.username;
       // const response = await axiosInstance.get(`/restaurants/${username}?page=${page}&limit=${limit}`);
-      const response = await axiosInstance.get(`/restaurants/${username}`);
+      const response = await axiosInstance.get(`/restaurants/${username}?page=${page}&limit=${limit}`);
       setRestaurants(response.data.restaurants);
       setTotal(response.data.total);
     } catch (err) {
-      setError(err.response?.data?.message || "Error fetching restaurants. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Error fetching restaurants. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -46,7 +51,10 @@ const GetRestaurants = () => {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Restaurants List</h2>
-        <Link to={`/${username}/manage-restaurants/create-restaurant`} className="btn btn-primary">
+        <Link
+          to={`/${username}/manage-restaurants/create-restaurant`}
+          className="btn btn-primary"
+        >
           Create New
         </Link>
       </div>
@@ -95,10 +103,12 @@ const GetRestaurants = () => {
                     </td>
                     <td>{restaurant.name}</td>
                     <td>{restaurant.location}</td>
-                    <td>{new Date(restaurant.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      {new Date(restaurant.createdAt).toLocaleDateString()}
+                    </td>
                     <td>
                       <Link
-                        to={`/${username}/${restaurant.restaurantSlug}/menus`}
+                        to={`/${username}/manage-restaurants/${restaurant.restaurantSlug}/menus`}
                         className="btn btn-sm btn-outline-secondary"
                         title="Menus"
                       >
@@ -106,7 +116,11 @@ const GetRestaurants = () => {
                       </Link>
                     </td>
                     <td>
-                      <Link to={`/${restaurant._id}`} className="btn btn-sm btn-outline-info me-1" title="Preview">
+                      <Link
+                        to={`/${restaurant._id}`}
+                        className="btn btn-sm btn-outline-info me-1"
+                        title="Preview"
+                      >
                         <MdVisibility />
                       </Link>
                       <Link
@@ -116,7 +130,10 @@ const GetRestaurants = () => {
                       >
                         <MdEdit />
                       </Link>
-                      <DeleteRestaurantButton restaurantId={restaurant._id} onDeleteSuccess={fetchRestaurants} />
+                      <DeleteRestaurantButton
+                        restaurantId={restaurant._id}
+                        onDeleteSuccess={fetchRestaurants}
+                      />
                     </td>
                   </tr>
                 ))}
@@ -127,13 +144,24 @@ const GetRestaurants = () => {
           {total > limit && (
             <nav>
               <ul className="pagination">
-                {Array.from({ length: Math.ceil(total / limit) }, (_, index) => (
-                  <li key={index} className={`page-item ${page === index + 1 ? "active" : ""}`}>
-                    <button className="page-link" onClick={() => handlePageChange(index + 1)}>
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
+                {Array.from(
+                  { length: Math.ceil(total / limit) },
+                  (_, index) => (
+                    <li
+                      key={index}
+                      className={`page-item ${
+                        page === index + 1 ? "active" : ""
+                      }`}
+                    >
+                      <button
+                        className="page-link"
+                        onClick={() => handlePageChange(index + 1)}
+                      >
+                        {index + 1}
+                      </button>
+                    </li>
+                  )
+                )}
               </ul>
             </nav>
           )}
@@ -143,4 +171,4 @@ const GetRestaurants = () => {
   );
 };
 
-export default GetRestaurants;
+export default ManageRestaurants;

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const CreateMenu = () => {
-  const { restaurantId } = useParams();
+  const { restaurantSlug } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -13,6 +14,10 @@ const CreateMenu = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded.username;
 
   const handleChange = (e) => {
     setFormData({
@@ -35,10 +40,14 @@ const CreateMenu = () => {
     setLoading(true);
     try {
       // Assuming the POST endpoint is configured as "/:restaurantId"
-      const response = await axiosInstance.post(`/menus/${restaurantId}`, formData);
+      const response = await axiosInstance.post(
+        `/menus/${restaurantSlug}`,
+        formData
+      );
       setSuccess(response.data.message);
       // Optionally redirect or clear form after success
       setFormData({ name: "", description: "", category: "" });
+      navigate(`/${username}/manage-restaurants/${restaurantSlug}/menus`);
     } catch (err) {
       setError(err.response?.data?.message || "Error creating menu");
     } finally {

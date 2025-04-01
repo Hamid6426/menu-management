@@ -7,17 +7,22 @@ const slugify = require("slugify");
 exports.createRestaurant = async (req, res) => {
   try {
     const { name, restaurantSlug, location, brandColors, languages } = req.body;
-    // Extract username and userId from authenticated request for security against params changing
-    const { userId, username } = req.user;
+    // Extract username from authenticated request for security against params changing
+    const { username } = req.user;
 
     if (!name || !languages || languages.length === 0) {
-      return res.status(400).json({ message: "Name and at least one language are required." });
+      return res
+        .status(400)
+        .json({ message: "Name and at least one language are required." });
     }
 
-    // Ensure user exists (lookup by userId or username as needed)
-    const userExists = await User.findById(userId);
+    // Ensure user exists (lookup by username as needed)
+    const userExists = await User.findOne({ username });
+
     if (!userExists) {
-      return res.status(403).json({ message: "Unauthorized: User does not exist." });
+      return res
+        .status(403)
+        .json({ message: "Unauthorized: User does not exist." });
     }
 
     // Generate slug if not provided
@@ -27,7 +32,9 @@ exports.createRestaurant = async (req, res) => {
     // Check for duplicate restaurant name or slug
     const existingRestaurant = await Restaurant.findOne({ name });
     if (existingRestaurant) {
-      return res.status(409).json({ message: "Name already taken. Choose a different one." });
+      return res
+        .status(409)
+        .json({ message: "Name already taken. Choose a different one." });
     }
 
     const restaurant = new Restaurant({
@@ -40,7 +47,9 @@ exports.createRestaurant = async (req, res) => {
     });
 
     await restaurant.save();
-    res.status(201).json({ message: "Restaurant created successfully", restaurant });
+    res
+      .status(201)
+      .json({ message: "Restaurant created successfully", restaurant });
   } catch (error) {
     console.error("Create Restaurant Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -83,7 +92,9 @@ exports.getRestaurantBySlug = async (req, res) => {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
+    res
+      .status(200)
+      .json({ message: "Restaurant fetched successfully", restaurant });
   } catch (error) {
     console.error("Get Restaurant By Slug Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -103,9 +114,13 @@ exports.updateRestaurant = async (req, res) => {
     }
 
     // Only Super Admin or the creator can update (compare usernames)
-    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
+    if (
+      req.user.role !== "super-admin" &&
+      req.user.username !== restaurant.createdBy
+    ) {
       return res.status(403).json({
-        message: "Forbidden: You do not have permission to update this restaurant.",
+        message:
+          "Forbidden: You do not have permission to update this restaurant.",
       });
     }
 
@@ -123,7 +138,9 @@ exports.updateRestaurant = async (req, res) => {
     }
 
     await restaurant.save();
-    res.status(200).json({ message: "Restaurant updated successfully", restaurant });
+    res
+      .status(200)
+      .json({ message: "Restaurant updated successfully", restaurant });
   } catch (error) {
     console.error("Update Restaurant Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -142,9 +159,13 @@ exports.deleteRestaurant = async (req, res) => {
     }
 
     // Only Super Admin or the creator can delete
-    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
+    if (
+      req.user.role !== "super-admin" &&
+      req.user.username !== restaurant.createdBy
+    ) {
       return res.status(403).json({
-        message: "Forbidden: You do not have permission to delete this restaurant.",
+        message:
+          "Forbidden: You do not have permission to delete this restaurant.",
       });
     }
 

@@ -45,8 +45,14 @@ const CreateRestaurant = () => {
         languages: languagesArray,
       };
 
-      // POST to /restaurants/:userId
-      const response = await axiosInstance.post(`/restaurants/${username}`, payload, );
+      const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);
+      const username = decoded?.username;
+      // POST to /restaurants/:username/create-restaurant
+      const response = await axiosInstance.post(
+        `/restaurants/${username}/create-restaurant`,
+        payload
+      );
       setSuccess(response.data.message || "Restaurant created successfully");
       setFormData({
         name: "",
@@ -57,7 +63,10 @@ const CreateRestaurant = () => {
       // Optionally, redirect to a different page after creation
       navigate(`/${username}/manage-restaurants`);
     } catch (err) {
-      setError(err.response?.data?.message || "Error creating restaurant. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Error creating restaurant. Please try again."
+      );
     } finally {
       setLoading(false);
     }

@@ -28,9 +28,9 @@ import Dashboard from "./pages/admin/Dashboard";
 import CreateRestaurant from "./pages/admin/CreateRestaurant";
 import CreateMenu from "./pages/admin/CreateMenu";
 import CreateDish from "./pages/admin/CreateDish";
-import GetRestaurants from "./pages/admin/GetRestaurants";
-import GetMenus from "./pages/admin/GetMenus";
-import GetDishes from "./pages/admin/GetDishes";
+import ManageRestaurants from "./pages/admin/ManageRestaurants";
+import ManageMenus from "./pages/admin/ManageMenus";
+import ManageDishes from "./pages/admin/ManageDishes";
 import UpdateRestaurant from "./pages/admin/UpdateRestaurant";
 import UpdateMenu from "./pages/admin/UpdateMenu";
 import UpdateDish from "./pages/admin/UpdateDish";
@@ -80,17 +80,23 @@ function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/:username" element={<Dashboard />} />
 
-          <Route path="/:username/manage-restaurants" element={<GetRestaurants />} />
+          <Route path="/:username/manage-restaurants" element={<ManageRestaurants />} />
           <Route path="/:username/manage-restaurants/create-restaurant" element={<CreateRestaurant />} />
-          <Route path="/:username/manage-restaurants/:restaurantSlug/update-restaurant" element={<UpdateRestaurant />} />
+          <Route
+            path="/:username/manage-restaurants/:restaurantSlug/update-restaurant"
+            element={<UpdateRestaurant />}
+          />
 
-          <Route path="/:username/:restaurantSlug/menus" element={<GetMenus />} />
-          <Route path="/:username/:restaurantSlug/create-menu" element={<CreateMenu />} />
-          <Route path="/:username/:restaurantSlug/:menuSlug/update-menu" element={<UpdateMenu />} />
+          <Route path="/:username/manage-restaurants/:restaurantSlug/menus" element={<ManageMenus />} />
+          <Route path="/:username/manage-restaurants/:restaurantSlug/create-menu" element={<CreateMenu />} />
+          <Route path="/:username/manage-restaurants/:restaurantSlug/:menuSlug/update-menu" element={<UpdateMenu />} />
 
-          <Route path="/:username/:restaurantSlug/:menuSlug/dishes" element={<GetDishes />} />
-          <Route path="/:username/:restaurantSlug/:menuSlug/create-dish" element={<CreateDish />} />
-          <Route path="/:username/:restaurantSlug/:menuSlug/:dishSlug/update-dish" element={<UpdateDish />} />
+          <Route path="/:username/manage-restaurants/:restaurantSlug/:menuSlug/dishes" element={<ManageDishes />} />
+          <Route path="/:username/manage-restaurants/:restaurantSlug/:menuSlug/create-dish" element={<CreateDish />} />
+          <Route
+            path="/:username/manage-restaurants/:restaurantSlug/:menuSlug/:dishSlug/update-dish"
+            element={<UpdateDish />}
+          />
 
           <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin"]} />}>
             <Route path="/:username/settings" element={<Settings />} />

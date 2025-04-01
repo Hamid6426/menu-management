@@ -10,7 +10,16 @@ exports.protectRoute = async (req, res, next) => {
     if (!token) return res.status(401).json({ message: "Unauthorized" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.userId).select("-password"); // Attach user info
+
+    const user = await User.findOne({
+      $or: [{ _id: decoded.userId }, { username: decoded.username }],
+    }).select("-password");
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    req.user = user; // Attach user to request and this was which cause req.user = { username } to be not found
 
     next();
   } catch (error) {

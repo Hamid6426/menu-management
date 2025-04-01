@@ -6,7 +6,8 @@ const slugify = require("slugify");
 exports.createDish = async (req, res) => {
   try {
     // Expecting menuSlug in the request body instead of menuId
-    const { name, description, price, allergens, availability, menuSlug } = req.body;
+    const { name, description, price, allergens, availability } = req.body;
+    const { menuSlug } = req.params;
 
     if (!name || !price || !menuSlug) {
       return res.status(400).json({ message: "Name, price, and menu slug are required." });
@@ -21,7 +22,7 @@ exports.createDish = async (req, res) => {
     // Only Admins or Super Admins can create dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
-        message: "Forbidden: Only Admins or Super Admins can add dishes."
+        message: "Forbidden: Only Admins or Super Admins can add dishes.",
       });
     }
 
@@ -102,7 +103,7 @@ exports.updateDish = async (req, res) => {
     // Only Admins or Super Admins can update dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
-        message: "Forbidden: Only Admins or Super Admins can update dishes."
+        message: "Forbidden: Only Admins or Super Admins can update dishes.",
       });
     }
 
@@ -141,7 +142,7 @@ exports.deleteDish = async (req, res) => {
     // Only Admins or Super Admins can delete dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
-        message: "Forbidden: Only Admins or Super Admins can delete dishes."
+        message: "Forbidden: Only Admins or Super Admins can delete dishes.",
       });
     }
 
@@ -155,10 +156,7 @@ exports.deleteDish = async (req, res) => {
     await dish.remove();
 
     // Remove dish reference from the associated menu's dishes array (using menuSlug)
-    await Menu.findOneAndUpdate(
-      { menuSlug: dish.menuSlug },
-      { $pull: { dishes: dishSlug } }
-    );
+    await Menu.findOneAndUpdate({ menuSlug: dish.menuSlug }, { $pull: { dishes: dishSlug } });
 
     return res.status(200).json({ message: "Dish deleted successfully" });
   } catch (error) {

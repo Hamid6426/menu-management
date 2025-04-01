@@ -2,34 +2,49 @@ import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { MdEdit, MdAdd, MdVisibility, MdDelete } from "react-icons/md";
+import { jwtDecode } from "jwt-decode";
 
-const GetMenus = () => {
-  const { username, restaurantSlug } = useParams();
+const ManageMenus = () => {
+  const { restaurantSlug } = useParams();
   const [menus, setMenus] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded.username;
 
   const fetchMenus = async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axiosInstance.get(`/menus/${restaurantSlug}/menus`);
+      const response = await axiosInstance.get(
+        `/menus/${restaurantSlug}/menus`
+      );
       setMenus(response.data.menus);
     } catch (err) {
-      setError(err.response?.data?.message || "Error fetching menus. Please try again.");
+      setError(
+        err.response?.data?.message || "Error fetching menus. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async (menuSlug) => {
-    if (window.confirm("Are you sure you want to delete this menu and its dishes?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this menu and its dishes?"
+      )
+    ) {
       try {
         setLoading(true);
         await axiosInstance.delete(`/menus/${menuSlug}`);
         fetchMenus(); // refresh the list after deletion
       } catch (err) {
-        alert(err.response?.data?.message || "Error deleting menu. Please try again.");
+        alert(
+          err.response?.data?.message ||
+            "Error deleting menu. Please try again."
+        );
       } finally {
         setLoading(false);
       }
@@ -46,7 +61,10 @@ const GetMenus = () => {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Menus</h2>
-        <Link to={`/${username}/${restaurantSlug}/manage-restaurants/create-menu`} className="btn btn-primary mb-3">
+        <Link
+          to={`/${username}/manage-restaurants/${restaurantSlug}/create-menu`}
+          className="btn btn-primary mb-3"
+        >
           Create New Menu
         </Link>
       </div>
@@ -89,14 +107,14 @@ const GetMenus = () => {
                   <MdDelete /> Delete Menu
                 </button>
                 <Link
-                  to={`/${username}/${restaurantSlug}/${menu._id}/create-dish`}
+                  to={`/${username}/${restaurantSlug}/${menu._id}/create-dish`} 
                   className="btn btn-sm btn-outline-primary me-2"
                   title="Add Dish"
                 >
                   <MdAdd /> Add Dish
                 </Link>
                 <Link
-                  to={`/${username}/${restaurantSlug}/${menu._id}/dishes`}
+                  to={`/${username}/manage-restaurants/${restaurantSlug}/${menu.menuSlug}/dishes`}
                   className="btn btn-sm btn-outline-info"
                   title="Show Dishes"
                 >
@@ -111,4 +129,4 @@ const GetMenus = () => {
   );
 };
 
-export default GetMenus;
+export default ManageMenus;
