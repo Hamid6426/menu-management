@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function LoginAs() {
   return (
@@ -13,9 +14,9 @@ export default function LoginAs() {
               <p className="card-text">
                 Sign up as an admin to own a restaurant, create menus, dishes, and manage your establishment.
               </p>
-              <a href="/admin-login" className="btn btn-primary mt-auto">
+              <Link to={"/admin-register"} className="btn btn-primary mt-auto">
                 Sign Up as Admin
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -27,9 +28,9 @@ export default function LoginAs() {
               <p className="card-text">
                 Sign up as a customer to explore restaurants, order dishes, and enjoy the dining experience.
               </p>
-              <a href="/login" className="btn btn-success mt-auto">
+              <Link to={"/login"} className="btn btn-success mt-auto">
                 Sign Up as User
-              </a>
+              </Link>
             </div>
           </div>
         </div>

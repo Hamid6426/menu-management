@@ -1,10 +1,9 @@
 import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
   const [error, setError] = useState(null);
-  const { username } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +18,6 @@ export default function Dashboard() {
     try {
       const decoded = jwtDecode(token);
       console.log("Decoded Token:", decoded);
-
       if (!decoded.userId) {
         throw new Error("Invalid token structure");
       }
@@ -30,6 +28,10 @@ export default function Dashboard() {
       setTimeout(() => navigate("/login"), 2000);
     }
   }, [navigate]);
+
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded.username;
 
   if (error) {
     return <div>{error}</div>; // Show error before redirecting

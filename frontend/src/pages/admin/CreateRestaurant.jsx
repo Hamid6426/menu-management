@@ -1,10 +1,14 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const CreateRestaurant = () => {
-  const { userId } = useParams();
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded?.username;
 
   // Initial state for form fields.
   const [formData, setFormData] = useState({
@@ -42,7 +46,7 @@ const CreateRestaurant = () => {
       };
 
       // POST to /restaurants/:userId
-      const response = await axiosInstance.post(`/restaurants/${userId}`, payload);
+      const response = await axiosInstance.post(`/restaurants/${username}`, payload, );
       setSuccess(response.data.message || "Restaurant created successfully");
       setFormData({
         name: "",
@@ -51,11 +55,9 @@ const CreateRestaurant = () => {
         languages: "",
       });
       // Optionally, redirect to a different page after creation
-      // navigate(`/dashboard/${userId}/restaurants`);
+      navigate(`/${username}/manage-restaurants`);
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Error creating restaurant. Please try again."
-      );
+      setError(err.response?.data?.message || "Error creating restaurant. Please try again.");
     } finally {
       setLoading(false);
     }

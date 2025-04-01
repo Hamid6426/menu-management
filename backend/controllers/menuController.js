@@ -1,19 +1,21 @@
 const Menu = require("../models/Menu");
 const Dish = require("../models/Dish");
 const Restaurant = require("../models/Restaurant");
+const slugify = require("slugify");
 
+// Create a new menu
 exports.createMenu = async (req, res) => {
   try {
     const { name, description, category } = req.body;
-    const { restaurantId } = req.params;
+    const { restaurantSlug } = req.params;
 
-    // Ensure name, restaurantId, and category are provided
-    if (!name || !restaurantId || !category) {
-      return res.status(400).json({ message: "Name, category and restaurant ID are required." });
+    // Ensure name, restaurantSlug, and category are provided
+    if (!name || !restaurantSlug || !category) {
+      return res.status(400).json({ message: "Name, category and restaurant slug are required." });
     }
 
-    // Check if restaurant exists
-    const restaurant = await Restaurant.findById(restaurantId);
+    // Check if restaurant exists using slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found." });
     }
@@ -25,19 +27,23 @@ exports.createMenu = async (req, res) => {
       });
     }
 
-    // Create the menu with the category and createdBy field
+    // Generate menuSlug from name if needed
+    const generatedMenuSlug = slugify(name, { lower: true, strict: true });
+
+    // Create the menu with restaurantSlug and createdBy as username
     const menu = new Menu({
       name,
       description,
-      category, // New field added
-      restaurant: restaurantId,
-      createdBy: req.user._id,
+      category,
+      menuSlug: generatedMenuSlug,
+      restaurantSlug: restaurant.restaurantSlug, // Reference by restaurant slug
+      createdBy: req.user.username, // Use username instead of userId
     });
 
     await menu.save();
 
-    // Update restaurant's menu list
-    restaurant.menus.push(menu._id);
+    // Update restaurant's menus list (store menuSlug)
+    restaurant.menus.push(menu.menuSlug);
     await restaurant.save();
 
     res.status(201).json({ message: "Menu created successfully", menu });
@@ -47,22 +53,23 @@ exports.createMenu = async (req, res) => {
   }
 };
 
+// Get all menus for a current restaurant by restaurantSlug
 exports.getCurrentRestaurantMenus = async (req, res) => {
   try {
-    const { restaurantId } = req.params;
+    const { restaurantSlug } = req.params;
 
-    if (!restaurantId) {
-      return res.status(400).json({ message: "Restaurant ID is required." });
+    if (!restaurantSlug) {
+      return res.status(400).json({ message: "Restaurant slug is required." });
     }
 
-    // Verify that the restaurant exists
-    const restaurant = await Restaurant.findById(restaurantId);
+    // Verify that the restaurant exists by slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found." });
     }
 
-    // Find menus associated with the restaurant
-    const menus = await Menu.find({ restaurant: restaurantId });
+    // Find menus associated with the restaurant using restaurantSlug
+    const menus = await Menu.find({ restaurantSlug });
     res.status(200).json({ message: "Menus fetched successfully", menus });
   } catch (error) {
     console.error("Get All Menus Error:", error);
@@ -70,10 +77,11 @@ exports.getCurrentRestaurantMenus = async (req, res) => {
   }
 };
 
+// Get a single menu by its slug
 exports.getMenuById = async (req, res) => {
   try {
-    const { menuId } = req.params;
-    const menu = await Menu.findById(menuId).populate("dishes");
+    const { menuSlug } = req.params;
+    const menu = await Menu.findOne({ menuSlug }).populate("dishes");
 
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
@@ -86,13 +94,19 @@ exports.getMenuById = async (req, res) => {
   }
 };
 
+// Update a menu by its slug
 exports.updateMenu = async (req, res) => {
   try {
-    const { menuId } = req.params;
+    const { menuSlug } = req.params;
     const updates = req.body; // This may include name, description, category, etc.
 
-    // Find the menu and update it; returns the new document after update
-    const menu = await Menu.findByIdAndUpdate(menuId, updates, {
+    // If name is being updated, generate a new slug and update it accordingly.
+    if (updates.name) {
+      updates.menuSlug = slugify(updates.name, { lower: true, strict: true });
+    }
+
+    // Find the menu by slug and update it; returns the new document after update
+    const menu = await Menu.findOneAndUpdate({ menuSlug }, updates, {
       new: true,
       runValidators: true,
     });
@@ -108,21 +122,25 @@ exports.updateMenu = async (req, res) => {
   }
 };
 
+// Delete a menu by its slug
 exports.deleteMenu = async (req, res) => {
   try {
-    const { menuId } = req.params;
-    // Find the menu first
-    const menu = await Menu.findById(menuId);
+    const { menuSlug } = req.params;
+    // Find the menu first using its slug
+    const menu = await Menu.findOne({ menuSlug });
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
     }
-    // Delete associated dishes
-    await Dish.deleteMany({ _id: { $in: menu.dishes } });
+    // Delete associated dishes (assumes dishes array contains dish slugs)
+    await Dish.deleteMany({ dishSlug: { $in: menu.dishes } });
     // Remove the menu document
     await menu.deleteOne();
 
     // Remove the menu reference from the associated restaurant's menus array
-    await Restaurant.findByIdAndUpdate(menu.restaurant, { $pull: { menus: menuId } });
+    await Restaurant.findOneAndUpdate(
+      { restaurantSlug: menu.restaurantSlug },
+      { $pull: { menus: menuSlug } }
+    );
     res.status(200).json({ message: "Menu and its dishes deleted successfully" });
   } catch (error) {
     console.error("Delete Menu Error:", error);

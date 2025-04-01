@@ -34,7 +34,7 @@ const AdminRegister = () => {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: "400px" }}>
-        <h2 className="text-center text-dark">Admin/Manager Registration</h2>
+        <h2 className="text-center text-dark">Admin Registration</h2>
 
         {error && <div className="alert alert-danger mt-3">{error}</div>}
         {success && <div className="alert alert-success mt-3">{success}</div>}

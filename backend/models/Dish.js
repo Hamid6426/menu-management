@@ -1,23 +1,27 @@
-// models/Dish.js
 const mongoose = require("mongoose");
 
 const dishSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  dishSlug: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    unique: true,
+  },
   description: String,
   price: { type: Number, required: true },
   allergens: [String], // e.g., ["gluten", "nuts"]
-  isEnabled: { type: Boolean, default: true }, // Admin can disable a dish i.e. not show it in the menu
+  isEnabled: { type: Boolean, default: true }, // Admin can disable a dish
   image: { 
-    type: Buffer,  // Buffer to store image data
-    // Optionally, you could add a contentType field if needed:
-    // contentType: String
+    type: Buffer, // Buffer to store image data
   },
   availability: {
     startTime: Number, // Minutes since midnight (0-1440)
     endTime: Number,
   },
-  menuId: {
-    type: mongoose.Schema.Types.ObjectId,
+  menuSlug: {
+    type: String, // Store menuSlug instead of ObjectId
     ref: "Menu",
     required: true,
   },

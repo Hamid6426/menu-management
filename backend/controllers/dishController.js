@@ -1,38 +1,42 @@
 const Dish = require("../models/Dish");
 const Menu = require("../models/Menu");
+const slugify = require("slugify");
 
+// Create a new dish
 exports.createDish = async (req, res) => {
   try {
-    // Note: Removed category from destructuring since it's not needed now
-    const { name, description, price, allergens, availability, menuId } = req.body;
+    // Expecting menuSlug in the request body instead of menuId
+    const { name, description, price, allergens, availability, menuSlug } = req.body;
 
-    if (!name || !price || !menuId) {
-      return res
-        .status(400)
-        .json({ message: "Name, price, and menu ID are required." });
+    if (!name || !price || !menuSlug) {
+      return res.status(400).json({ message: "Name, price, and menu slug are required." });
     }
 
-    // Check if the menu exists
-    const menu = await Menu.findById(menuId);
+    // Check if the menu exists by slug
+    const menu = await Menu.findOne({ menuSlug });
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
     }
 
     // Only Admins or Super Admins can create dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({ message: "Forbidden: Only Admins or Super Admins can add dishes." });
+      return res.status(403).json({
+        message: "Forbidden: Only Admins or Super Admins can add dishes."
+      });
     }
+
+    // Generate dishSlug from name using slugify
+    const generatedDishSlug = slugify(name, { lower: true, strict: true });
 
     // Build dish data; add image if provided by multer
     const dishData = {
       name,
+      dishSlug: generatedDishSlug,
       description,
       price,
       allergens,
       availability,
-      menuId,
+      menuSlug, // Use menuSlug instead of menuId
     };
 
     if (req.file) {
@@ -41,11 +45,10 @@ exports.createDish = async (req, res) => {
 
     // Create the dish
     const dish = new Dish(dishData);
-
     await dish.save();
 
-    // Add dish to the menu
-    menu.dishes.push(dish._id);
+    // Add dish reference to the menu (using dishSlug)
+    menu.dishes.push(dish.dishSlug);
     await menu.save();
 
     res.status(201).json({ message: "Dish created successfully", dish });
@@ -55,57 +58,57 @@ exports.createDish = async (req, res) => {
   }
 };
 
+// List all dishes for a given menu (using menuSlug)
 exports.listMenuDishes = async (req, res) => {
   try {
-    const { menuId } = req.params;
+    const { menuSlug } = req.params;
 
-    // Verify that the menu exists
-    const menu = await Menu.findById(menuId);
+    // Verify that the menu exists by slug
+    const menu = await Menu.findOne({ menuSlug });
     if (!menu) {
       return res.status(404).json({ message: "Menu not found." });
     }
 
-    // Find dishes associated with the menuId
-    const dishes = await Dish.find({ menuId });
-    return res
-      .status(200)
-      .json({ message: "Dishes fetched successfully", dishes });
+    // Find dishes associated with the menuSlug
+    const dishes = await Dish.find({ menuSlug });
+    return res.status(200).json({ message: "Dishes fetched successfully", dishes });
   } catch (error) {
     console.error("List Menu Dishes Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Get a single dish by its ID
-exports.getDishById = async (req, res) => {
+// Get a single dish by its slug (instead of its ID)
+exports.getDishBySlug = async (req, res) => {
   try {
-    const dishId = req.params.id;
-    const dish = await Dish.findById(dishId);
+    const { dishSlug } = req.params;
+    const dish = await Dish.findOne({ dishSlug });
     if (!dish) {
       return res.status(404).json({ message: "Dish not found." });
     }
-    return res
-      .status(200)
-      .json({ message: "Dish fetched successfully", dish });
+    return res.status(200).json({ message: "Dish fetched successfully", dish });
   } catch (error) {
-    console.error("Get Dish By ID Error:", error);
+    console.error("Get Dish By Slug Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Update a dish by its ID
+// Update a dish by its slug
 exports.updateDish = async (req, res) => {
   try {
-    const dishId = req.params.id;
+    const { dishSlug } = req.params;
     const updates = req.body;
 
     // Only Admins or Super Admins can update dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({
-          message: "Forbidden: Only Admins or Super Admins can update dishes.",
-        });
+      return res.status(403).json({
+        message: "Forbidden: Only Admins or Super Admins can update dishes."
+      });
+    }
+
+    // If a new name is provided, update the dishSlug accordingly
+    if (updates.name) {
+      updates.dishSlug = slugify(updates.name, { lower: true, strict: true });
     }
 
     // If an image file is provided in the update, add its buffer to updates
@@ -113,8 +116,8 @@ exports.updateDish = async (req, res) => {
       updates.image = req.file.buffer;
     }
 
-    // Find and update the dish document
-    const updatedDish = await Dish.findByIdAndUpdate(dishId, updates, {
+    // Find and update the dish document by dishSlug
+    const updatedDish = await Dish.findOneAndUpdate({ dishSlug }, updates, {
       new: true,
       runValidators: true,
     });
@@ -123,31 +126,27 @@ exports.updateDish = async (req, res) => {
       return res.status(404).json({ message: "Dish not found." });
     }
 
-    return res
-      .status(200)
-      .json({ message: "Dish updated successfully", dish: updatedDish });
+    return res.status(200).json({ message: "Dish updated successfully", dish: updatedDish });
   } catch (error) {
     console.error("Update Dish Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Delete a dish by its ID
+// Delete a dish by its slug
 exports.deleteDish = async (req, res) => {
   try {
-    const dishId = req.params.id;
+    const { dishSlug } = req.params;
 
     // Only Admins or Super Admins can delete dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
-      return res
-        .status(403)
-        .json({
-          message: "Forbidden: Only Admins or Super Admins can delete dishes.",
-        });
+      return res.status(403).json({
+        message: "Forbidden: Only Admins or Super Admins can delete dishes."
+      });
     }
 
-    // Find the dish to delete
-    const dish = await Dish.findById(dishId);
+    // Find the dish to delete by its slug
+    const dish = await Dish.findOne({ dishSlug });
     if (!dish) {
       return res.status(404).json({ message: "Dish not found." });
     }
@@ -155,10 +154,11 @@ exports.deleteDish = async (req, res) => {
     // Remove the dish document from the database
     await dish.remove();
 
-    // Remove dish reference from the associated menu's dishes array
-    await Menu.findByIdAndUpdate(dish.menuId, {
-      $pull: { dishes: dishId },
-    });
+    // Remove dish reference from the associated menu's dishes array (using menuSlug)
+    await Menu.findOneAndUpdate(
+      { menuSlug: dish.menuSlug },
+      { $pull: { dishes: dishSlug } }
+    );
 
     return res.status(200).json({ message: "Dish deleted successfully" });
   } catch (error) {

@@ -9,24 +9,33 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
+// Create a new dish for a menu identified by menuSlug
 router.post(
-  "/:menuId/create-dish",
+  "/:menuSlug/create-dish",
   protectRoute,
   upload.single("image"),
   dishController.createDish
 );
+
+// List all dishes for a given menu by its slug
 router.post(
-  "/:menuId/list-menu-dishes",
+  "/:menuSlug/list-menu-dishes",
   protectRoute,
   dishController.listMenuDishes
 );
-router.get("/:id", protectRoute, dishController.getDishById);
+
+// Get a single dish by its slug
+router.get("/:dishSlug", protectRoute, dishController.getDishBySlug);
+
+// Update a dish by its slug
 router.put(
-  "/:id",
+  "/:dishSlug",
   protectRoute,
   upload.single("image"),
   dishController.updateDish
 );
-router.delete("/:id", protectRoute, dishController.deleteDish);
+
+// Delete a dish by its slug
+router.delete("/:dishSlug", protectRoute, dishController.deleteDish);
 
 module.exports = router;

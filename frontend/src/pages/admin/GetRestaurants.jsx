@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { MdVisibility, MdEdit, MdMenu } from "react-icons/md";
 import DeleteRestaurantButton from "../../components/DeleteRestaurantButton";
+import { jwtDecode } from "jwt-decode";
 
 const GetRestaurants = () => {
-  const { userId } = useParams();
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -13,29 +13,30 @@ const GetRestaurants = () => {
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
 
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded?.username;
+
   const fetchRestaurants = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axiosInstance.get(
-        `/restaurants/${userId}?page=${page}&limit=${limit}`
-      );
+
+      // const response = await axiosInstance.get(`/restaurants/${username}?page=${page}&limit=${limit}`);
+      const response = await axiosInstance.get(`/restaurants/${username}`);
       setRestaurants(response.data.restaurants);
       setTotal(response.data.total);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Error fetching restaurants. Please try again."
-      );
+      setError(err.response?.data?.message || "Error fetching restaurants. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (userId) fetchRestaurants();
-  }, [userId, page, limit]);
+    if (username) fetchRestaurants();
+  }, [username, page, limit]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -45,10 +46,7 @@ const GetRestaurants = () => {
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Restaurants List</h2>
-        <Link
-          to={`/dashboard/${userId}/create-restaurant`}
-          className="btn btn-primary"
-        >
+        <Link to={`/${username}/manage-restaurants/create-restaurant`} className="btn btn-primary">
           Create New
         </Link>
       </div>
@@ -62,7 +60,7 @@ const GetRestaurants = () => {
       ) : (
         <>
           {restaurants.length === 0 ? (
-            <px>No restaurants found.</px>
+            <p>No restaurants found.</p>
           ) : (
             <table className="table table-striped mt-4">
               <thead>
@@ -97,12 +95,10 @@ const GetRestaurants = () => {
                     </td>
                     <td>{restaurant.name}</td>
                     <td>{restaurant.location}</td>
-                    <td>
-                      {new Date(restaurant.createdAt).toLocaleDateString()}
-                    </td>
+                    <td>{new Date(restaurant.createdAt).toLocaleDateString()}</td>
                     <td>
                       <Link
-                        to={`/dashboard/${userId}/${restaurant._id}/menus`}
+                        to={`/${username}/${restaurant.restaurantSlug}/menus`}
                         className="btn btn-sm btn-outline-secondary"
                         title="Menus"
                       >
@@ -110,24 +106,17 @@ const GetRestaurants = () => {
                       </Link>
                     </td>
                     <td>
-                      <Link
-                        to={`/${restaurant._id}`}
-                        className="btn btn-sm btn-outline-info me-1"
-                        title="Preview"
-                      >
+                      <Link to={`/${restaurant._id}`} className="btn btn-sm btn-outline-info me-1" title="Preview">
                         <MdVisibility />
                       </Link>
                       <Link
-                        to={`/dashboard/${userId}/restaurants/${restaurant._id}/update`}
+                        to={`/${username}/restaurants/${restaurant._id}/update`}
                         className="btn btn-sm btn-outline-warning me-1"
                         title="Update"
                       >
                         <MdEdit />
                       </Link>
-                      <DeleteRestaurantButton
-                        restaurantId={restaurant._id}
-                        onDeleteSuccess={fetchRestaurants}
-                      />
+                      <DeleteRestaurantButton restaurantId={restaurant._id} onDeleteSuccess={fetchRestaurants} />
                     </td>
                   </tr>
                 ))}
@@ -138,24 +127,13 @@ const GetRestaurants = () => {
           {total > limit && (
             <nav>
               <ul className="pagination">
-                {Array.from(
-                  { length: Math.ceil(total / limit) },
-                  (_, index) => (
-                    <li
-                      key={index}
-                      className={`page-item ${
-                        page === index + 1 ? "active" : ""
-                      }`}
-                    >
-                      <button
-                        className="page-link"
-                        onClick={() => handlePageChange(index + 1)}
-                      >
-                        {index + 1}
-                      </button>
-                    </li>
-                  )
-                )}
+                {Array.from({ length: Math.ceil(total / limit) }, (_, index) => (
+                  <li key={index} className={`page-item ${page === index + 1 ? "active" : ""}`}>
+                    <button className="page-link" onClick={() => handlePageChange(index + 1)}>
+                      {index + 1}
+                    </button>
+                  </li>
+                ))}
               </ul>
             </nav>
           )}

@@ -1,9 +1,11 @@
+import { jwtDecode } from "jwt-decode";
 import React from "react";
 import { Link } from "react-router-dom";
 
 const DashboardNavbar = () => {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const userId = user.userId;
+  const token = localStorage.getItem("token");
+  const decoded = jwtDecode(token);
+  const username = decoded.username;
 
   return (
     <>
@@ -41,19 +43,19 @@ const DashboardNavbar = () => {
       `}</style>
 
       <nav className="dashboard-navbar wrapper nav bg-light border-bottom container-fluid p-3">
-        <Link className="nav-link" to="/dashboard">
+        <Link className="nav-link" to={`/${username}`}>
           Dashboard
         </Link>
-        <Link className="nav-link" to={`/dashboard/${userId}/restaurants`}>
+        <Link className="nav-link" to={`/${username}/manage-restaurants`}>
           Manage Restaurants
         </Link>
-        <Link className="nav-link" to="/dashboard/add-manager">
+        <Link className="nav-link" to="/${username}/add-manager">
           Manage Users
         </Link>
-        <Link className="nav-link" to="/dashboard/settings">
+        <Link className="nav-link" to="/${username}/settings">
           Settings
         </Link>
-        <Link className="nav-link" to="/profile">
+        <Link className="nav-link" to="/${username}/profile">
           Profile
         </Link>
         <button className="btn btn-outline-danger">Logout</button>

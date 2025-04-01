@@ -1,9 +1,14 @@
-// models/Restaurant.js
 const mongoose = require("mongoose");
 
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, unique: true, required: true },
-  restaurantSlug: { type: String, unique: true, required: true },
+  restaurantSlug: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    unique: true,
+  },
   location: { type: String },
   logo: { type: Buffer },
   brandColors: {
@@ -20,15 +25,15 @@ const restaurantSchema = new mongoose.Schema({
   ],
   menus: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: String, // use menuSlug
       ref: "Menu",
     },
   ],
   createdBy: {
-    type: String,
-    ref: "User", // ref to User model
+    type: String, // store username
+    ref: "User",
     required: true,
-  }, // Admin who created the restaurant
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

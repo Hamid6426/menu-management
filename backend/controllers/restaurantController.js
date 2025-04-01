@@ -1,22 +1,30 @@
 const Restaurant = require("../models/Restaurant");
+const Menu = require("../models/Menu");
+const User = require("../models/User"); // Import User model
 const slugify = require("slugify");
-const Menu = require("../models/Menu"); // For use in deleteRestaurant
 
 // Create a new restaurant
 exports.createRestaurant = async (req, res) => {
   try {
     const { name, restaurantSlug, location, brandColors, languages } = req.body;
-    const { username } = req.params;
+    // Extract username and userId from authenticated request for security against params changing
+    const { userId, username } = req.user;
 
     if (!name || !languages || languages.length === 0) {
       return res.status(400).json({ message: "Name and at least one language are required." });
     }
 
-    // If no restaurantSlug provided, generate one from the name
+    // Ensure user exists (lookup by userId or username as needed)
+    const userExists = await User.findById(userId);
+    if (!userExists) {
+      return res.status(403).json({ message: "Unauthorized: User does not exist." });
+    }
+
+    // Generate slug if not provided
     const generatedSlug = slugify(name, { lower: true, strict: true });
     const finalSlug = restaurantSlug ? restaurantSlug : generatedSlug;
 
-    // Check if restaurantSlug already exists
+    // Check for duplicate restaurant name or slug
     const existingRestaurant = await Restaurant.findOne({ name });
     if (existingRestaurant) {
       return res.status(409).json({ message: "Name already taken. Choose a different one." });
@@ -28,7 +36,7 @@ exports.createRestaurant = async (req, res) => {
       brandColors,
       location,
       languages,
-      createdBy: username, // get it from params
+      createdBy: username, // Store username as creator
     });
 
     await restaurant.save();
@@ -64,64 +72,55 @@ exports.getAllRestaurants = async (req, res) => {
   }
 };
 
-// // Get a single restaurant by ID
-// exports.getRestaurantById = async (req, res) => {
-//   try {
-//     const { restaurantId } = req.params;
-
-//     const restaurant = await Restaurant.findById(restaurantId);
-//     if (!restaurant) {
-//       return res.status(404).json({ message: "Restaurant not found" });
-//     }
-
-//     res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
-//   } catch (error) {
-//     console.error("Get Restaurant By ID Error:", error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
-
+// Get a single restaurant by slug
 exports.getRestaurantBySlug = async (req, res) => {
   try {
     const { restaurantSlug } = req.params;
 
-    const restaurant = await Restaurant.findById(restaurantSlug);
+    // Use findOne with restaurantSlug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
     res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
   } catch (error) {
-    console.error("Get Restaurant By ID Error:", error);
+    console.error("Get Restaurant By Slug Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// Update a restaurant
+// Update a restaurant by slug
 exports.updateRestaurant = async (req, res) => {
   try {
-    const { restaurantId } = req.params;
+    const { restaurantSlug } = req.params;
     const { name, location, logo, brandColors, languages } = req.body;
 
-    // Find the restaurant
-    const restaurant = await Restaurant.findById(restaurantId);
+    // Find the restaurant by slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // Only Super Admin or the creator can update
-    if (req.user.role !== "superadmin" && req.user._id.toString() !== restaurant.createdBy.toString()) {
+    // Only Super Admin or the creator can update (compare usernames)
+    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
       return res.status(403).json({
         message: "Forbidden: You do not have permission to update this restaurant.",
       });
     }
 
-    // Update fields
+    // Update fields as needed
     if (name) restaurant.name = name;
     if (location) restaurant.location = location;
     if (logo) restaurant.logo = logo;
     if (brandColors) restaurant.brandColors = brandColors;
     if (languages && languages.length > 0) restaurant.languages = languages;
+
+    // Optionally, if name changes, update restaurantSlug too
+    if (name) {
+      const newSlug = slugify(name, { lower: true, strict: true });
+      restaurant.restaurantSlug = newSlug;
+    }
 
     await restaurant.save();
     res.status(200).json({ message: "Restaurant updated successfully", restaurant });
@@ -131,29 +130,29 @@ exports.updateRestaurant = async (req, res) => {
   }
 };
 
-// Delete a restaurant
+// Delete a restaurant by slug
 exports.deleteRestaurant = async (req, res) => {
   try {
-    const { restaurantId } = req.params;
+    const { restaurantSlug } = req.params;
 
-    // Find the restaurant
-    const restaurant = await Restaurant.findById(restaurantId);
+    // Find the restaurant by slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
     if (!restaurant) {
       return res.status(404).json({ message: "Restaurant not found" });
     }
 
     // Only Super Admin or the creator can delete
-    if (req.user.role !== "superadmin" && req.user._id.toString() !== restaurant.createdBy.toString()) {
+    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
       return res.status(403).json({
         message: "Forbidden: You do not have permission to delete this restaurant.",
       });
     }
 
-    // Delete associated menus
-    await Menu.deleteMany({ _id: { $in: restaurant.menus } });
+    // Delete associated menus by matching restaurantSlug in menus
+    await Menu.deleteMany({ restaurantSlug: restaurant.restaurantSlug });
 
     // Delete the restaurant
-    await Restaurant.findByIdAndDelete(restaurantId);
+    await Restaurant.findOneAndDelete({ restaurantSlug });
 
     res.status(200).json({ message: "Restaurant deleted successfully" });
   } catch (error) {
@@ -162,10 +161,10 @@ exports.deleteRestaurant = async (req, res) => {
   }
 };
 
-// Get restaurants created by the current user
+// Get restaurants created by the current user (by username)
 exports.getCurrentUserRestaurants = async (req, res) => {
   try {
-    const { username } = req.params; // userId passed in the URL
+    const { username } = req.params; // username passed in the URL
 
     const restaurants = await Restaurant.find({ createdBy: username }).sort({
       createdAt: -1,

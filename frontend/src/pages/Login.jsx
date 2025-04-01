@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // ensure default import
 
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -9,6 +9,37 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
+
+  // New useEffect to check for a stored token on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const username = decoded?.username;
+        const role = decoded?.role;
+        const allergies = decoded?.allergies;
+
+        if (username) {
+          setTimeout(() => {
+            if (["admin", "manager", "super-admin"].includes(role)) {
+              navigate(`/${username}`);
+            } else if (role) {
+              if (!Array.isArray(allergies) || allergies.length === 0) {
+                navigate(`/${username}/add-allergies`);
+              } else {
+                navigate("/top-restaurants");
+              }
+            } else {
+              setError("Invalid user role. Please contact support.");
+            }
+          }, 200);
+        }
+      } catch (err) {
+        console.error("Token decoding failed:", err);
+      }
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     // Reset error when user starts typing in the password field
@@ -37,7 +68,6 @@ const Login = () => {
       }
 
       const decoded = jwtDecode(token);
-      const userId = decoded?.userId;
       const username = decoded?.username;
       const role = decoded?.role;
       const allergies = decoded?.allergies;
@@ -50,7 +80,7 @@ const Login = () => {
           navigate(`/${username}`);
         } else if (role) {
           if (!Array.isArray(allergies) || allergies.length === 0) {
-            navigate(`/${userId}/add-allergies`);
+            navigate(`/${username}/add-allergies`);
           } else {
             navigate("/top-restaurants");
           }
@@ -101,9 +131,9 @@ const Login = () => {
           </div>
 
           <div className="text-end">
-            <a href="/forgot-password" className="text-danger text-decoration-none">
+            <Link to={"/forgot-password"} className="text-danger text-decoration-none">
               Forgot Password?
-            </a>
+            </Link>
           </div>
 
           <button type="submit" className="btn btn-danger w-100 mt-3" disabled={loading}>
@@ -123,7 +153,7 @@ const Login = () => {
 
         <div className="d-flex align-items-center">
           <p className="text-center mt-3">Don't have an account?</p>
-          <Link to="/register" className="mx-1 text-danger text-decoration-none">
+          <Link to={"/register"} className="mx-1 text-danger text-decoration-none">
             Register
           </Link>
         </div>
