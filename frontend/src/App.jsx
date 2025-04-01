@@ -18,7 +18,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-import TopRestaurants from "./pages/TopRestaurants";
+import Restaurants from "./pages/Restaurants";
 import PreviewRestaurant from "./pages/PreviewRestaurant";
 import PreviewMenu from "./pages/PreviewMenu";
 import PreviewDish from "./pages/PreviewDish";
@@ -54,7 +54,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/pricing" element={<Pricing />} />
-        <Route path="/top-restaurants" element={<TopRestaurants />} />
+        <Route path="/restaurants" element={<Restaurants />} />
         <Route path="/restaurant/:restaurantSlug" element={<PreviewRestaurant />} />
         <Route path="/menu/:restaurantSlug/:menuSlug" element={<PreviewMenu />} />
         <Route path="/dish/:restaurantSlug/:menuSlug/:dishId" element={<PreviewDish />} />

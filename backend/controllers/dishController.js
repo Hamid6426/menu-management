@@ -29,7 +29,7 @@ exports.createDish = async (req, res) => {
     // Generate dishSlug from name using slugify
     const generatedDishSlug = slugify(name, { lower: true, strict: true });
 
-    // Build dish data; add image if provided by multer
+    // Build dish data; add dishImage if provided by multer
     const dishData = {
       name,
       dishSlug: generatedDishSlug,
@@ -41,7 +41,7 @@ exports.createDish = async (req, res) => {
     };
 
     if (req.file) {
-      dishData.image = req.file.buffer;
+      dishData.dishImage = req.file.buffer;
     }
 
     // Create the dish
@@ -112,9 +112,9 @@ exports.updateDish = async (req, res) => {
       updates.dishSlug = slugify(updates.name, { lower: true, strict: true });
     }
 
-    // If an image file is provided in the update, add its buffer to updates
+    // If an dishImage file is provided in the update, add its buffer to updates
     if (req.file) {
-      updates.image = req.file.buffer;
+      updates.dishImage = req.file.buffer;
     }
 
     // Find and update the dish document by dishSlug

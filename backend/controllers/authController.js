@@ -6,7 +6,7 @@ const crypto = require("crypto"); // For generating reset tokens
 
 exports.userRegister = async (req, res) => {
   try {
-    const { name, username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -24,7 +24,7 @@ exports.userRegister = async (req, res) => {
     // Create new user
     const newUser = new User({
       name,
-      username,
+      username: regexedEmail,
       email,
       password: hashedPassword,
       role: "user",

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const navItems = [
+  { label: "Restaurants", href: "/restaurants" },
   { label: "Contact", href: "/contact" },
   { label: "Pricing", href: "/pricing" },
   { label: "Login", href: "/login" },
