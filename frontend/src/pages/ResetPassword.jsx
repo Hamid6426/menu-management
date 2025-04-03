@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 const ResetPassword = () => {
   const { resetToken } = useParams(); // Get token from URL params
   const navigate = useNavigate();
+  const { t } = useTranslation();  // Using the useTranslation hook
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,13 +30,13 @@ const ResetPassword = () => {
       setSuccess(response.data.message);
       setTimeout(() => navigate("/login"), 3000); // Redirect after success
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(err.response?.data?.message || t("resetPassword.error"));
     }
   };
 
   return (
     <div className="reset-password-form p-4 rounded shadow bg-white mx-auto" style={{ maxWidth: "400px" }}>
-      <h2 className="mb-4 text-center">Reset Password</h2>
+      <h2 className="mb-4 text-center">{t("resetPassword.title")}</h2>
 
       {/* Alert Messages */}
       {error && <div className="alert alert-danger">{error}</div>}
@@ -43,33 +45,33 @@ const ResetPassword = () => {
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Email</label>
+          <label className="form-label">{t("resetPassword.emailLabel")}</label>
           <input
             type="email"
             name="email"
             className="form-control"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder={t("resetPassword.placeholderEmail")}
             required
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">New Password</label>
+          <label className="form-label">{t("resetPassword.newPasswordLabel")}</label>
           <input
             type="password"
             name="newPassword"
             className="form-control"
             value={formData.newPassword}
             onChange={handleChange}
-            placeholder="Enter new password (min 6 characters)"
+            placeholder={t("resetPassword.placeholderNewPassword")}
             required
           />
         </div>
 
         <button type="submit" className="btn btn-primary w-100">
-          Reset Password
+          {t("resetPassword.resetButton")}
         </button>
       </form>
     </div>

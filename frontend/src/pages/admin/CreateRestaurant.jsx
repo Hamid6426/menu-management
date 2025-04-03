@@ -5,71 +5,132 @@ import { jwtDecode } from "jwt-decode";
 
 const CreateRestaurant = () => {
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
-  const username = decoded?.username;
-
-  // Initial state for form fields.
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    brandColors: "",
-    languages: "", // comma-separated values
-  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
 
-  // Handle changes for each input field.
+  const [formData, setFormData] = useState({
+    name: { en: "", it: "", ar: "" },
+    location: { en: "", it: "", ar: "" },
+    brandColors: { primary: "", secondary: "", tertiary: "" },
+    languages: [],
+  });
+
+  const availableLanguages = ["en", "it", "ar"];
+
+  const token = localStorage.getItem("token");
+  const username = jwtDecode(token)?.username;
+
+  // Handle multi-language inputs and brand color updates
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked, files, dataset } = e.target;
+
+    setFormData((prevState) => {
+      if (dataset.language) {
+        // Handle multi-language fields (name, location)
+        return {
+          ...prevState,
+          [name]: {
+            ...prevState[name],
+            [dataset.language]: value,
+          },
+        };
+      }
+
+      if (name === "languages") {
+        // Handle language checkboxes
+        const updatedLanguages = checked
+          ? [...prevState.languages, value]
+          : prevState.languages.filter((lang) => lang !== value);
+        return { ...prevState, languages: updatedLanguages };
+      }
+
+      if (["primary", "secondary", "tertiary"].includes(name)) {
+        // Handle brand colors
+        return {
+          ...prevState,
+          brandColors: {
+            ...prevState.brandColors,
+            [name]: value,
+          },
+        };
+      }
+
+      return prevState;
+    });
+
+    if (name === "image" && files[0]) {
+      handleImageUpload(files[0]);
+    }
   };
 
-  // On form submission, send a POST request to create a new restaurant.
+  // Handle image file selection and preview
+  const handleImageUpload = (file) => {
+    setImageFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  // Validate form fields before submission
+  const validateForm = () => {
+    if (!formData.name.en.trim()) return "Restaurant name in English is required.";
+    if (!formData.location.en.trim()) return "Location in English is required.";
+    if (!formData.languages.length) return "Please select at least one language.";
+    if (!formData.brandColors.primary || !formData.brandColors.secondary || !formData.brandColors.tertiary) {
+      return "All brand colors (primary, secondary, tertiary) are required.";
+    }
+    return null;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     setLoading(true);
 
-    // Convert languages from comma-separated string into array
-    const languagesArray = formData.languages
-      .split(",")
-      .map((lang) => lang.trim())
-      .filter(Boolean);
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      setLoading(false);
+      return;
+    }
 
     try {
-      const payload = {
-        ...formData,
-        languages: languagesArray,
-      };
+      const payload = new FormData();
+      Object.entries(formData.name).forEach(([lang, val]) => payload.append(`name[${lang}]`, val));
+      Object.entries(formData.location).forEach(([lang, val]) => payload.append(`location[${lang}]`, val));
+      payload.append("brandColors", JSON.stringify(formData.brandColors));
+      payload.append("languages", JSON.stringify(formData.languages));
+      if (imageFile) payload.append("image", imageFile);
 
-      const token = localStorage.getItem("token");
-      const decoded = jwtDecode(token);
-      const username = decoded?.username;
-      // POST to /restaurants/:username/create-restaurant
-      const response = await axiosInstance.post(
-        `/restaurants/${username}/create-restaurant`,
-        payload
-      );
-      setSuccess(response.data.message || "Restaurant created successfully");
-      setFormData({
-        name: "",
-        location: "",
-        brandColors: "",
-        languages: "",
+      const response = await axiosInstance.post(`/restaurants/${username}/create-restaurant`, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      // Optionally, redirect to a different page after creation
-      navigate(`/${username}/manage-restaurants`);
+
+      setSuccess(response.data.message || "Restaurant created successfully");
+      resetForm();
+      navigate(`/admin/manage-restaurants`);
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Error creating restaurant. Please try again."
-      );
+      setError(err.response?.data?.message || "Error creating restaurant. Please try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Reset form fields after submission
+  const resetForm = () => {
+    setFormData({
+      name: { en: "", it: "", ar: "" },
+      location: { en: "", it: "", ar: "" },
+      brandColors: { primary: "", secondary: "", tertiary: "" },
+      languages: [],
+    });
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   return (
@@ -78,55 +139,89 @@ const CreateRestaurant = () => {
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        {/* Restaurant Name */}
         <div className="mb-3">
           <label className="form-label">Restaurant Name</label>
-          <input
-            type="text"
-            name="name"
-            className="form-control"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter restaurant name"
-            required
-          />
+          {availableLanguages.map((lang) => (
+            <input
+              key={lang}
+              type="text"
+              name="name"
+              data-language={lang}
+              className="form-control mt-2"
+              value={formData.name[lang]}
+              onChange={handleChange}
+              placeholder={`Enter restaurant name in ${lang.toUpperCase()}`}
+              required={lang === "en"}
+            />
+          ))}
         </div>
 
+        {/* Location */}
         <div className="mb-3">
-          <label className="form-label">Location</label>
-          <input
-            type="text"
-            name="location"
-            className="form-control"
-            value={formData.location}
-            onChange={handleChange}
-            placeholder="Enter location"
-          />
+          <label className="form-label">Restaurant Location</label>
+          {availableLanguages.map((lang) => (
+            <input
+              key={lang}
+              type="text"
+              name="location"
+              data-language={lang}
+              className="form-control mt-2"
+              value={formData.location[lang]}
+              onChange={handleChange}
+              placeholder={`Enter location in ${lang.toUpperCase()}`}
+              required={lang === "en"}
+            />
+          ))}
         </div>
 
+        {/* Brand Colors */}
         <div className="mb-3">
           <label className="form-label">Brand Colors</label>
-          <input
-            type="text"
-            name="brandColors"
-            className="form-control"
-            value={formData.brandColors}
-            onChange={handleChange}
-            placeholder="Enter brand colors (e.g., #000, #fff)"
-          />
+          <div className="d-flex gap-3">
+            {["primary", "secondary", "tertiary"].map((color) => (
+              <div key={color} className="d-flex align-items-center gap-2">
+                <label>{color.charAt(0).toUpperCase() + color.slice(1)}</label>
+                <input
+                  type="color"
+                  name={color}
+                  className="form-control form-control-color"
+                  value={formData.brandColors[color]}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
+        {/* Language Selection */}
         <div className="mb-3">
           <label className="form-label">Languages</label>
-          <input
-            type="text"
-            name="languages"
-            className="form-control"
-            value={formData.languages}
-            onChange={handleChange}
-            placeholder="Enter languages separated by commas"
-            required
-          />
+          {availableLanguages.map((lang) => (
+            <div key={lang} className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id={`language-${lang}`}
+                name="languages"
+                value={lang}
+                checked={formData.languages.includes(lang)}
+                onChange={handleChange}
+              />
+              <label className="form-check-label" htmlFor={`language-${lang}`}>
+                {lang.toUpperCase()}
+              </label>
+            </div>
+          ))}
+        </div>
+
+        {/* Image Upload */}
+        <div className="mb-3">
+          <label className="form-label">Upload Restaurant Image</label>
+          <input type="file" className="form-control" name="image" accept="image/*" onChange={handleChange} />
+          {imagePreview && <img src={imagePreview} alt="Preview" className="img-thumbnail mt-2" style={{ maxWidth: "200px" }} />}
         </div>
 
         <button type="submit" className="btn btn-primary" disabled={loading}>

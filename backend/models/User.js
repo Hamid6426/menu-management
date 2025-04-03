@@ -33,10 +33,10 @@ const userSchema = new mongoose.Schema({
       type: String,
       trim: true,
       enum: [
-        "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish", "soy",
-        "eggs", "fish", "wheat", "sesame", "mustard", "celery", "lupin",
-        "molluscs", "sulphites", "corn", "latex", "kiwi", "banana", "avocado",
-        "crustaceans",
+        "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish", "soy", "eggs", "fish", 
+        "wheat", "sesame", "mustard", "celery", "lupin", "molluscs", "sulphites", "corn", "latex", 
+        "kiwi", "banana", "avocado", "crustaceans", "peach", "plum", "apples", "cherries", 
+        "almonds", "cashews", "pine nuts", "coconut", "poppy seeds", "sesame seeds", "papaya", "mango"     
       ],
     },
   ],

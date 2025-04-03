@@ -1,82 +1,165 @@
+const Restaurant = require("../models/Restaurant");
 const Dish = require("../models/Dish");
-const Menu = require("../models/Menu");
 const slugify = require("slugify");
 
-// Create a new dish
 exports.createDish = async (req, res) => {
   try {
-    // Expecting menuSlug in the request body instead of menuId
-    const { name, description, price, allergens, availability } = req.body;
-    const { menuSlug } = req.params;
+    // Expect multi-language objects for name, description, and category
+    const { name, description, price, kilocalories, category, allergens, availability } = req.body;
+    const { restaurantSlug } = req.params;
+    const { username } = req.user;
 
-    if (!name || !price || !menuSlug) {
-      return res.status(400).json({ message: "Name, price, and menu slug are required." });
+    // Ensure the English name is provided for the dishSlug requirement.
+    if (!name || !name.en) {
+      return res.status(400).json({ message: "English name is required" });
     }
 
-    // Check if the menu exists by slug
-    const menu = await Menu.findOne({ menuSlug });
-    if (!menu) {
-      return res.status(404).json({ message: "Menu not found." });
+    // Validate numeric fields
+    if (isNaN(price) || Number(price) <= 0) {
+      return res.status(400).json({ message: "Price must be a positive number." });
+    }
+    if (kilocalories && (isNaN(kilocalories) || Number(kilocalories) < 0)) {
+      return res.status(400).json({ message: "Kilocalories must be a positive number if provided." });
     }
 
-    // Only Admins or Super Admins can create dishes
-    if (req.user.role !== "super-admin" && req.user.role !== "admin") {
+    // Authorization check
+    if (!["super-admin", "admin"].includes(req.user.role)) {
       return res.status(403).json({
         message: "Forbidden: Only Admins or Super Admins can add dishes.",
       });
     }
 
-    // Generate dishSlug from name using slugify
-    const generatedDishSlug = slugify(name, { lower: true, strict: true });
+    // Verify restaurant exists
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found." });
+    }
 
-    // Build dish data; add dishImage if provided by multer
-    const dishData = {
-      name,
+    // Generate dish slug using the English name
+    const generatedDishSlug = slugify(name.en, { lower: true, strict: true });
+    const existingDish = await Dish.findOne({
       dishSlug: generatedDishSlug,
-      description,
-      price,
-      allergens,
-      availability,
-      menuSlug, // Use menuSlug instead of menuId
+      restaurantSlug,
+    });
+    if (existingDish) {
+      return res.status(400).json({
+        message: "A dish with this name already exists in this restaurant.",
+      });
+    }
+
+    name = JSON.parse(req.body.name);
+    description = JSON.parse(req.body.description);
+
+    // Build dish data using multi-language fields
+    const dishData = {
+      name: {
+        en: name.en,
+        it: name.it || "",
+        ar: name.ar || "",
+      },
+      description: {
+        en: (description && description.en) || "",
+        it: (description && description.it) || "",
+        ar: (description && description.ar) || "",
+      },
+      dishSlug: generatedDishSlug,
+      price: Number(price),
+      kilocalories: kilocalories ? Number(kilocalories) : undefined,
+      category,
+      allergens: allergens || [], // Allergens are be an array of strings ["fish", "dairy"]
+      availability, // Already converted in middleware
+      restaurantSlug,
+      createdBy: username,
     };
 
     if (req.file) {
       dishData.dishImage = req.file.buffer;
     }
 
-    // Create the dish
+    // Create and save the dish
     const dish = new Dish(dishData);
     await dish.save();
 
-    // Add dish reference to the menu (using dishSlug)
-    menu.dishes.push(dish.dishSlug);
-    await menu.save();
+    // Add dish reference to the restaurant
+    restaurant.dishes.push(dish.dishSlug);
+    await restaurant.save();
 
-    res.status(201).json({ message: "Dish created successfully", dish });
+    // Remove dish image from response to reduce payload size
+    const responseDish = dish.toObject();
+    delete responseDish.dishImage;
+
+    res.status(201).json({ message: "Dish created successfully", dish: responseDish });
   } catch (error) {
     console.error("Create Dish Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-// List all dishes for a given menu (using menuSlug)
-exports.listMenuDishes = async (req, res) => {
+exports.getCurrentRestaurantDishes = async (req, res) => {
   try {
-    const { menuSlug } = req.params;
+    const { restaurantSlug } = req.params;
+    const { lang = "en" } = req.query; // Default to English
 
-    // Verify that the menu exists by slug
-    const menu = await Menu.findOne({ menuSlug });
-    if (!menu) {
-      return res.status(404).json({ message: "Menu not found." });
+    if (!restaurantSlug) {
+      return res.status(400).json({ message: "Restaurant slug is required." });
     }
 
-    // Find dishes associated with the menuSlug
-    const dishes = await Dish.find({ menuSlug });
-    return res.status(200).json({ message: "Dishes fetched successfully", dishes });
+    // Verify that the restaurant exists
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found." });
+    }
+
+    // Retrieve dishes for the restaurant
+    const dishes = await Dish.find({ restaurantSlug });
+
+    // Format each dish to include the correct language fields with fallback
+    const formattedDishes = dishes.map((dish) => {
+      const dishObj = dish.toObject();
+
+      dishObj.name = dish.name[lang] || dish.name.en;
+      dishObj.description = dish.description[lang] || dish.description.en;
+      dishObj.category = dish.category[lang] || dish.category.en;
+
+      // If needed, process allergens as well (assuming allergens are stored similarly)
+      if (Array.isArray(dish.allergens)) {
+        dishObj.allergens = dish.allergens.map((allergen) => allergen[lang] || allergen.en);
+      }
+
+      return dishObj;
+    });
+
+    res.status(200).json({ message: "Dishes fetched successfully", dishes: formattedDishes });
   } catch (error) {
-    console.error("List Menu Dishes Error:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    console.error("Get All Dishes Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
+};
+
+exports.getCurrentRestaurantAllergens = async (req, res) => {
+  const { restaurantSlug } = req.params;
+
+  try {
+    // Find dishes for the restaurant and aggregate distinct allergens
+    const allergens = await Dish.aggregate([
+      { $match: { restaurantSlug } }, // Filter by restaurant
+      { $unwind: "$allergens" }, // Flatten the allergens array
+      { $group: { _id: "$allergens" } }, // Group by allergen
+      { $project: { allergen: "$_id", _id: 0 } }, // Project only the allergen field
+    ]);
+
+    res.json({ allergens: allergens.map((item) => item.allergen) });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching allergens." });
+  }
+};
+
+exports.getDishImage = async (req, res) => {
+  const dish = await Dish.findOne({ dishSlug: req.params.dishSlug });
+  if (!dish?.dishImage) return res.status(404).send();
+
+  res.set("Content-Type", "image/webp"); // Adjust if using WebP
+  res.send(dish.dishImage);
 };
 
 // Get a single dish by its slug (instead of its ID)
@@ -97,34 +180,78 @@ exports.getDishBySlug = async (req, res) => {
 // Update a dish by its slug
 exports.updateDish = async (req, res) => {
   try {
-    const { dishSlug } = req.params;
-    const updates = req.body;
+    const { dishSlug } = req.params; // Get dishSlug from params
+    const { name, description, price, kilocalories, category, allergens, availability } = req.body;
+    const { username } = req.user;
 
-    // Only Admins or Super Admins can update dishes
+    // Authorization check
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
         message: "Forbidden: Only Admins or Super Admins can update dishes.",
       });
     }
 
-    // If a new name is provided, update the dishSlug accordingly
-    if (updates.name) {
-      updates.dishSlug = slugify(updates.name, { lower: true, strict: true });
+    // Fetch the dish by its slug
+    let dish = await Dish.findOne({ dishSlug });
+    if (!dish) {
+      return res.status(404).json({ message: "Dish not found." });
     }
 
-    // If an dishImage file is provided in the update, add its buffer to updates
+    // Create an object for allowed updates
+    const updates = {};
+
+    if (name) {
+      updates.name = name;
+      updates.dishSlug = slugify(name, { lower: true, strict: true });
+
+      // Ensure the new dishSlug doesn't conflict with existing dishes
+      const existingDish = await Dish.findOne({ dishSlug: updates.dishSlug, restaurantSlug: dish.restaurantSlug });
+      if (existingDish && existingDish._id.toString() !== dish._id.toString()) {
+        return res.status(400).json({ message: "A dish with this name already exists in this restaurant." });
+      }
+    }
+
+    if (description) updates.description = description;
+    if (category) updates.category = category;
+    if (allergens) updates.allergens = allergens;
+    if (availability) {
+      const { startTime, endTime } = availability;
+      if (isNaN(startTime) || isNaN(endTime) || startTime < 0 || endTime > 1440 || startTime >= endTime) {
+        return res.status(400).json({
+          message: "Invalid availability times. Must be between 0-1440 with start before end.",
+        });
+      }
+      updates.availability = availability;
+    }
+
+    // Numeric validation
+    if (price !== undefined) {
+      if (isNaN(price) || price <= 0) {
+        return res.status(400).json({ message: "Price must be a positive number." });
+      }
+      updates.price = Number(price);
+    }
+
+    if (kilocalories !== undefined) {
+      if (isNaN(kilocalories) || kilocalories < 0) {
+        return res.status(400).json({ message: "Kilocalories must be a positive number." });
+      }
+      updates.kilocalories = Number(kilocalories);
+    }
+
+    // If a new dish image is provided, update it
     if (req.file) {
       updates.dishImage = req.file.buffer;
     }
 
-    // Find and update the dish document by dishSlug
+    // Perform update
     const updatedDish = await Dish.findOneAndUpdate({ dishSlug }, updates, {
       new: true,
       runValidators: true,
     });
 
     if (!updatedDish) {
-      return res.status(404).json({ message: "Dish not found." });
+      return res.status(404).json({ message: "Dish not found after update attempt." });
     }
 
     return res.status(200).json({ message: "Dish updated successfully", dish: updatedDish });
@@ -154,9 +281,6 @@ exports.deleteDish = async (req, res) => {
 
     // Remove the dish document from the database
     await dish.remove();
-
-    // Remove dish reference from the associated menu's dishes array (using menuSlug)
-    await Menu.findOneAndUpdate({ menuSlug: dish.menuSlug }, { $pull: { dishes: dishSlug } });
 
     return res.status(200).json({ message: "Dish deleted successfully" });
   } catch (error) {

@@ -1,0 +1,217 @@
+{
+  "home-page": {
+    "greetings": "أهلاً بك في الصفحة الرئيسية"
+  },
+  "signUpAs": {
+    "title": "التسجيل كـ",
+    "admin": {
+      "title": "مدير",
+      "description": "سجل كمدير لتملك مطعم، إنشاء قوائم طعام، أطباق وإدارة منشأتك.",
+      "button": "سجل كـ مدير"
+    },
+    "user": {
+      "title": "مستخدم",
+      "description": "سجل كعميل لاستكشاف المطاعم، طلب الأطباق، والاستمتاع بتجربة الطعام.",
+      "button": "سجل كـ مستخدم"
+    }
+  },
+  "login": {
+    "title": "تسجيل الدخول",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "loginButton": "تسجيل الدخول",
+    "loading": "جاري تسجيل الدخول...",
+    "successMessage": "تم تسجيل الدخول بنجاح!",
+    "errorMessage": "دور المستخدم غير صالح. يرجى الاتصال بالدعم.",
+    "noTokenError": "لم يتم استلام الرمز المميز. يرجى المحاولة مرة أخرى.",
+    "networkError": "خطأ في الشبكة. يرجى المحاولة مرة أخرى.",
+    "unexpectedError": "حدث خطأ غير متوقع.",
+    "registerPrompt": "لا تملك حسابًا؟",
+    "registerLink": "سجل الآن"
+  },
+  "userRegister": {
+    "title": "تسجيل المستخدم",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "registerButton": "سجل",
+    "registering": "جاري التسجيل...",
+    "successMessage": "تم التسجيل بنجاح! جارٍ إعادة التوجيه لتسجيل الدخول...",
+    "errorMessage": "حدث خطأ ما",
+    "loginPrompt": "هل لديك حساب؟",
+    "loginLink": "تسجيل الدخول"
+  },
+  "adminRegister": {
+    "title": "تسجيل المسؤول",
+    "name": "الاسم",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "registerButton": "سجل",
+    "registering": "جاري التسجيل...",
+    "successMessage": "تم التسجيل بنجاح! جارٍ إعادة التوجيه لتسجيل الدخول كمسؤول...",
+    "errorMessage": "حدث خطأ ما"
+  },
+  "addAllergies": {
+    "title": "تحديث حساسيّاتك",
+    "sessionExpired": "انتهت الجلسة. من فضلك قم بتسجيل الدخول مرة أخرى.",
+    "fetchError": "فشل في جلب الملف الشخصي. حاول مرة أخرى.",
+    "updateSuccess": "تم تحديث الحساسيات بنجاح!",
+    "updateFailure": "فشل في تحديث الحساسيات. حاول مرة أخرى.",
+    "submitError": "حدث خطأ. حاول مرة أخرى.",
+    "saveButton": "حفظ الحساسيات",
+    "skipButton": "تخطي"
+  },
+  "allergies": {
+    "gluten": "الغلوتين",
+    "dairy": "منتجات الألبان",
+    "nuts": "المكسرات",
+    "peanuts": "الفول السوداني",
+    "tree nuts": "المكسرات الشجرية",
+    "shellfish": "المأكولات البحرية",
+    "soy": "الصويا",
+    "eggs": "البيض",
+    "fish": "السمك",
+    "wheat": "القمح",
+    "sesame": "السمسم",
+    "mustard": "الخردل",
+    "celery": "الكرفس",
+    "lupin": "لوبيين",
+    "molluscs": "الرخويات",
+    "sulphites": "الكبريتات",
+    "corn": "الذرة",
+    "latex": "اللتيكس",
+    "kiwi": "الكيوي",
+    "banana": "الموز",
+    "avocado": "الأفوكادو",
+    "crustaceans": "القشريات",
+    "peach": "الخوخ",
+    "plum": "البرقوق",
+    "apples": "التفاح",
+    "cherries": "الكرز",
+    "almonds": "اللوز",
+    "cashews": "الكاجو",
+    "pine nuts": "الصنوبر",
+    "coconut": "جوز الهند",
+    "poppy seeds": "بذور الخشخاش",
+    "sesame seeds": "بذور السمسم",
+    "papaya": "بابايا",
+    "mango": "مانجو"
+  },
+  "forgotPassword": {
+    "title": "نسيت كلمة المرور",
+    "emailLabel": "البريد الإلكتروني",
+    "placeholderEmail": "أدخل بريدك الإلكتروني",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "error": "حدث خطأ ما",
+    "success": "تم إرسال رابط إعادة التعيين بنجاح!"
+  },
+  "resetPassword": {
+    "title": "إعادة تعيين كلمة المرور",
+    "emailLabel": "البريد الإلكتروني",
+    "newPasswordLabel": "كلمة المرور الجديدة",
+    "placeholderEmail": "أدخل بريدك الإلكتروني",
+    "placeholderNewPassword": "أدخل كلمة المرور الجديدة (6 أحرف على الأقل)",
+    "resetButton": "إعادة تعيين كلمة المرور",
+    "error": "حدث خطأ ما",
+    "success": "تم إعادة تعيين كلمة المرور بنجاح!"
+  },
+  "notFoundPage": {
+    "title": "404: الصفحة غير موجودة",
+    "message": "عذرًا، الصفحة التي تبحث عنها غير موجودة. يمكنك محاولة البحث عنها أو العودة إلى",
+    "home": "الصفحة الرئيسية"
+  },
+  "forbiddenPage": {
+    "title": "403: محظور",
+    "message": "آسف، ليس لديك إذن للوصول إلى هذه الصفحة. من فضلك ",
+    "loginLink": "تسجيل الدخول",
+    "contactLink": "فريق الدعم",
+    "assistance": "للمساعدة."
+  },
+  "internalServerErrorPage": {
+    "title": "500: خطأ في الخادم الداخلي",
+    "message": "نعتذر، حدث خطأ ما من طرفنا. يرجى المحاولة لاحقًا أو الاتصال بـ",
+    "support": "فريق الدعم"
+  },
+  "navbar": {
+    "restaurants": "المطاعم",
+    "contact": "اتصل",
+    "pricing": "التسعير",
+    "login": "تسجيل الدخول",
+    "getStarted": "ابدأ"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "اختر اللغة",
+    "english": "إنجليزي",
+    "italian": "إيطالي",
+    "arabic": "عربي"
+  },
+  "allergyFilter": {
+    "searchPlaceholder": "ابحث عن مسببات الحساسية...",
+    "show": "إظهار",
+    "hide": "إخفاء"
+  },
+  "breadcrumbs": {
+    "home": "الصفحة الرئيسية"
+  },  
+  "dashboardNavbar": {
+    "dashboard": "لوحة القيادة",
+    "manageRestaurants": "إدارة المطاعم",
+    "manageStaff": "إدارة الموظفين",
+    "settings": "الإعدادات",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج"
+  },
+  "deleteRestaurantButton": {
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا المطعم؟",
+    "errorMessage": "خطأ في حذف المطعم. الرجاء المحاولة مرة أخرى."
+  },
+  "searchBar": {
+    "placeholder": "ابحث عن الأطباق..."
+  },
+  "categories": {
+    "starter": "مقبلات",
+    "mainCourse": "الوجبة الرئيسية",
+    "dessert": "حلوى",
+    "beverage": "مشروب",
+    "sideDish": "طبق جانبي",
+    "special": "خاص"
+  },
+  "allergens": {
+    "gluten": "جلوتين",
+    "dairy": "مشتقات الألبان",
+    "nuts": "مكسرات",
+    "peanuts": "فول سوداني",
+    "tree nuts": "مكسرات شجرية",
+    "shellfish": "قشريات",
+    "soy": "صويا",
+    "eggs": "بيض",
+    "fish": "سمك",
+    "wheat": "قمح",
+    "sesame": "سمسم",
+    "mustard": "خردل",
+    "celery": "كرفس",
+    "lupin": "لوبين",
+    "molluscs": "رخويات",
+    "sulphites": "كبريتيت",
+    "corn": "ذرة",
+    "latex": "لاتكس",
+    "kiwi": "كيوي",
+    "banana": "موز",
+    "avocado": "أفوكادو",
+    "crustaceans": "قشريات",
+    "peach": "خوخ",
+    "plum": "برقوق",
+    "apples": "تفاح",
+    "cherries": "كرز",
+    "almonds": "لوز",
+    "cashews": "كاجو",
+    "pine nuts": "صنوبر",
+    "coconut": "جوز الهند",
+    "poppy seeds": "بذور الخشخاش",
+    "sesame seeds": "بذور السمسم",
+    "papaya": "بابايا",
+    "mango": "مانجو"
+  }
+}

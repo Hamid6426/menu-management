@@ -4,26 +4,27 @@ import axiosInstance from "../../utils/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
 const CreateDish = () => {
-  const { restaurantSlug, menuSlug } = useParams();
+  const { restaurantSlug } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const { username } = jwtDecode(token);
+
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    name: { en: "", it: "", ar: "" },
+    description: { en: "", it: "", ar: "" },
+    category: "",
     price: "",
+    kilocalories: "",
     isEnabled: true,
     image: null,
-    startTime: "", // in "HH:mm" format
-    endTime: "", // in "HH:mm" format
-    menuSlug: menuSlug,
+    startTime: "", // "HH:mm" format
+    endTime: "", // "HH:mm" format
     allergens: [],
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
-  const username = decoded.username;
 
   const allergensList = [
     "gluten",
@@ -50,15 +51,16 @@ const CreateDish = () => {
     "crustaceans",
   ];
 
-  // Helper to convert time string ("HH:mm") to minutes since midnight
-  const timeStringToMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    return hours * 60 + minutes;
-  };
-
-  const handleChange = (e) => {
+  const handleChange = (e, field, lang = null) => {
     const { name, value, type, checked, files } = e.target;
-    if (type === "checkbox" && name === "allergens") {
+
+    // For multi-language fields (name, description, category)
+    if (lang) {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: { ...prev[field], [lang]: value },
+      }));
+    } else if (type === "checkbox" && name === "allergens") {
       let newAllergens = [...formData.allergens];
       if (checked) {
         newAllergens.push(value);
@@ -78,55 +80,59 @@ const CreateDish = () => {
     setError("");
     setSuccess("");
 
-    if (!formData.name || !formData.price) {
-      setError("Dish name and price are required.");
+    // Validate required multi-language fields (ensure English version is provided)
+    if (!formData.name.en || !formData.description.en || !formData.category || !formData.price || !restaurantSlug) {
+      setError("English name, description, category, price, and restaurant slug are required.");
       return;
     }
 
     setLoading(true);
     try {
-      // Convert times to minutes
-      const startMinutes = timeStringToMinutes(formData.startTime);
-      const endMinutes = timeStringToMinutes(formData.endTime);
+      const availability = {
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+      };
 
-      // Prepare form data for multipart upload
       const data = new FormData();
-      data.append("name", formData.name);
-      data.append("description", formData.description);
+      // Append multi-language objects as JSON strings if your backend expects JSON
+      data.append("name", JSON.stringify(formData.name));
+      data.append("description", JSON.stringify(formData.description));
+      data.append("category", JSON.stringify(formData.category));
       data.append("price", formData.price);
+      if (formData.kilocalories) {
+        data.append("kilocalories", formData.kilocalories);
+      }
       data.append("isEnabled", formData.isEnabled);
-      data.append("menuSlug", formData.menuSlug);
-      data.append("availability", JSON.stringify({ startTime: startMinutes, endTime: endMinutes }));
-
-      // Append each allergen individually
+      data.append("availability", JSON.stringify(availability));
       formData.allergens.forEach((allergen) => {
         data.append("allergens", allergen);
       });
-
       if (formData.image) {
         data.append("image", formData.image);
       }
 
-      // POST endpoint for creating a dish
-      const response = await axiosInstance.post(`/dishes/${menuSlug}`, data, {
+      const response = await axiosInstance.post(`/dishes/${restaurantSlug}`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
+
       setSuccess(response.data.message);
+      // Reset form or redirect
       setFormData({
-        name: "",
-        description: "",
+        name: { en: "", it: "", ar: "" },
+        description: { en: "", it: "", ar: "" },
+        category: "",
         price: "",
+        kilocalories: "",
         isEnabled: true,
         image: null,
         startTime: "",
         endTime: "",
-        menuSlug: menuSlug,
         allergens: [],
       });
-      navigate(`/${username}/manage-restaurants/${restaurantSlug}/${menuSlug}/dishes`);
+      navigate(`/admin/manage-restaurants/${restaurantSlug}/dishes`);
     } catch (err) {
       setError(err.response?.data?.message || "Error creating dish");
     } finally {
@@ -135,40 +141,62 @@ const CreateDish = () => {
   };
 
   return (
-    <div className="container my-4">
+    <div className="container-fluid my-2 px-3">
       <h2 className="mb-4">Create Dish</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
       <form onSubmit={handleSubmit}>
+        {/* Multi-language fields */}
         <div className="mb-3">
-          <label htmlFor="name" className="form-label">
-            Dish Name
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
+          <label className="form-label">Dish Name</label>
+          {["en", "it", "ar"].map((lang) => (
+            <div key={lang}>
+              <input
+                type="text"
+                className="form-control mb-1"
+                placeholder={`Name (${lang.toUpperCase()})`}
+                value={formData.name[lang]}
+                onChange={(e) => handleChange(e, "name", lang)}
+                required={lang === "en"}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Description</label>
+          {["en", "it", "ar"].map((lang) => (
+            <div key={lang}>
+              <textarea
+                className="form-control mb-1"
+                placeholder={`Description (${lang.toUpperCase()})`}
+                value={formData.description[lang]}
+                onChange={(e) => handleChange(e, "description", lang)}
+                rows="2"
+                required={lang === "en"}
+              ></textarea>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Category</label>
+          <select
+            className="form-select mb-1"
+            value={formData.category}
+            onChange={(e) => handleChange(e, "category")} 
             required
-          />
+          >
+            <option value="">Select Category</option>
+            {["Starter", "Main Course", "Dessert", "Beverage", "Side Dish", "Special"].map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
         </div>
 
-        <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
-          <textarea
-            className="form-control"
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows="3"
-          ></textarea>
-        </div>
-
+        {/* Other fields */}
         <div className="mb-3">
           <label htmlFor="price" className="form-label">
             Price
@@ -181,6 +209,20 @@ const CreateDish = () => {
             value={formData.price}
             onChange={handleChange}
             required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="kilocalories" className="form-label">
+            Kilocalories (optional)
+          </label>
+          <input
+            type="number"
+            className="form-control"
+            id="kilocalories"
+            name="kilocalories"
+            value={formData.kilocalories}
+            onChange={handleChange}
           />
         </div>
 

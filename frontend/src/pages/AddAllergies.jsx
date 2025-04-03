@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { useTranslation } from 'react-i18next';
 
 const AddAllergies = () => {
+  const { t } = useTranslation();
   const [selectedAllergies, setSelectedAllergies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const allowedAllergies = [
-    "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish",
-    "soy", "eggs", "fish", "wheat", "sesame", "mustard", "celery",
-    "lupin", "molluscs", "sulphites", "corn", "latex", "kiwi",
-    "banana", "avocado", "crustaceans",
+    "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish", "soy", "eggs", "fish", 
+    "wheat", "sesame", "mustard", "celery", "lupin", "molluscs", "sulphites", "corn", "latex", 
+    "kiwi", "banana", "avocado", "crustaceans", "peach", "plum", "apples", "cherries", 
+    "almonds", "cashews", "pine nuts", "coconut", "poppy seeds", "sesame seeds", "papaya", "mango"     
   ];
 
   // Fetch user profile & set allergies
@@ -22,7 +24,7 @@ const AddAllergies = () => {
         const token = localStorage.getItem("token");
 
         if (!token) {
-          alert("Session expired. Please log in again.");
+          alert(t("addAllergies.sessionExpired"));
           return navigate("/login");
         }
 
@@ -33,21 +35,19 @@ const AddAllergies = () => {
         setSelectedAllergies(response.data.user.allergies || []);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
-        setError("Error fetching profile. Please try again.");
+        setError(t("addAllergies.fetchError"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, [navigate, t]);
 
   // Handle checkbox changes
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    setSelectedAllergies((prev) =>
-      checked ? [...prev, value] : prev.filter((allergy) => allergy !== value)
-    );
+    setSelectedAllergies((prev) => (checked ? [...prev, value] : prev.filter((allergy) => allergy !== value)));
   };
 
   // Handle form submission
@@ -62,14 +62,14 @@ const AddAllergies = () => {
       );
 
       if (response.status === 200) {
-        alert("Allergies updated successfully!");
+        alert(t("addAllergies.updateSuccess"));
         navigate("/restaurants");
       } else {
-        alert("Failed to update allergies. Please try again.");
+        alert(t("addAllergies.updateFailure"));
       }
     } catch (error) {
       console.error("Error updating allergies:", error);
-      setError("An error occurred. Please try again.");
+      setError(t("addAllergies.submitError"));
     }
   };
 
@@ -82,7 +82,7 @@ const AddAllergies = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">Update Your Allergies</h2>
+      <h2 className="mb-3">{t("addAllergies.title")}</h2>
 
       {/* Error Message */}
       {error && <div className="alert alert-danger">{error}</div>}
@@ -101,7 +101,7 @@ const AddAllergies = () => {
                   className="form-check-input"
                 />
                 <label className="form-check-label" htmlFor={allergy}>
-                  {allergy}
+                  {t(`allergies.${allergy}`) || allergy}
                 </label>
               </div>
             </div>
@@ -110,10 +110,10 @@ const AddAllergies = () => {
 
         <div className="mt-4">
           <button type="submit" className="btn btn-primary me-2">
-            Save Allergies
+            {t("addAllergies.saveButton")}
           </button>
           <button type="button" className="btn btn-secondary" onClick={() => navigate("/restaurants")}>
-            Skip
+            {t("addAllergies.skipButton")}
           </button>
         </div>
       </form>

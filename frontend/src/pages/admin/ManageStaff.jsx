@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function PreviewDish() {
+export default function ManageStaff() {
   return (
     <div>
       

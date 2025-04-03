@@ -19,21 +19,15 @@ const ManageRestaurants = () => {
 
   const fetchRestaurants = async () => {
     setLoading(true);
-    setError(null);
-
+    setError("");
     try {
-      const token = localStorage.getItem("token");
-      const decoded = jwtDecode(token);
-      const username = decoded?.username;
-      // const response = await axiosInstance.get(`/restaurants/${username}?page=${page}&limit=${limit}`);
-      const response = await axiosInstance.get(`/restaurants/${username}?page=${page}&limit=${limit}`);
-      setRestaurants(response.data.restaurants);
-      setTotal(response.data.total);
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Error fetching restaurants. Please try again."
+      const response = await axiosInstance.get(
+        `/restaurants/${username}?page=${page}&limit=${limit}`
       );
+      // Assume the response returns an array of restaurants under response.data.restaurants
+      setRestaurants(response.data.restaurants);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to load restaurants.");
     } finally {
       setLoading(false);
     }
@@ -48,11 +42,11 @@ const ManageRestaurants = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-3">
+    <div className="container-fluid">
+      <div className="d-flex justify-content-between align-items-center">
         <h2>Restaurants List</h2>
         <Link
-          to={`/${username}/manage-restaurants/create-restaurant`}
+          to={`/admin/manage-restaurants/create-restaurant`}
           className="btn btn-primary"
         >
           Create New
@@ -70,7 +64,7 @@ const ManageRestaurants = () => {
           {restaurants.length === 0 ? (
             <p>No restaurants found.</p>
           ) : (
-            <table className="table table-striped mt-4">
+            <table className="table table-striped mt-3">
               <thead>
                 <tr>
                   <th>#</th>
@@ -90,7 +84,7 @@ const ManageRestaurants = () => {
                       {restaurant.logo ? (
                         <img
                           src={restaurant.logo}
-                          alt={restaurant.name}
+                          alt={restaurant.name.en}
                           style={{
                             width: "50px",
                             height: "50px",
@@ -101,14 +95,14 @@ const ManageRestaurants = () => {
                         "N/A"
                       )}
                     </td>
-                    <td>{restaurant.name}</td>
-                    <td>{restaurant.location}</td>
+                    <td>{restaurant.name.en}</td>
+                    <td>{restaurant.location.en}</td>
                     <td>
                       {new Date(restaurant.createdAt).toLocaleDateString()}
                     </td>
                     <td>
                       <Link
-                        to={`/${username}/manage-restaurants/${restaurant.restaurantSlug}/menus`}
+                        to={`/admin/manage-restaurants/${restaurant.restaurantSlug}/dishes`}
                         className="btn btn-sm btn-outline-secondary"
                         title="Menus"
                       >
@@ -117,14 +111,14 @@ const ManageRestaurants = () => {
                     </td>
                     <td>
                       <Link
-                        to={`/${restaurant._id}`}
+                        to={`/${restaurant.restaurantSlug}`}
                         className="btn btn-sm btn-outline-info me-1"
                         title="Preview"
                       >
                         <MdVisibility />
                       </Link>
                       <Link
-                        to={`/${username}/restaurants/${restaurant._id}/update`}
+                        to={`/${username}/restaurants/${restaurant.restaurantSlug}/update`}
                         className="btn btn-sm btn-outline-warning me-1"
                         title="Update"
                       >

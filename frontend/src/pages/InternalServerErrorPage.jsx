@@ -1,14 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";  // Import useTranslation hook
 
 const InternalServerErrorPage = () => {
+  const { t } = useTranslation();  // Initialize useTranslation
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="text-center">
-        <h1 className="display-4 fw-bold mb-4">500: Internal Server Error</h1>
+        <h1 className="display-4 fw-bold mb-4">{t("internalServerErrorPage.title")}</h1>
         <p className="lead mb-4">
-          Sorry, something went wrong on our end. Please try again later or contact our{" "}
+          {t("internalServerErrorPage.message")}{" "}
           <a href="/contact" className="text-decoration-underline">
-            support team
+            {t("internalServerErrorPage.support")}
           </a>.
         </p>
       </div>

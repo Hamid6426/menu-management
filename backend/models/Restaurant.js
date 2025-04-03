@@ -1,7 +1,16 @@
 const mongoose = require("mongoose");
 
 const restaurantSchema = new mongoose.Schema({
-  name: { type: String, unique: true, required: true },
+  name: {
+    en: { type: String, required: true },
+    it: { type: String, default: "" },
+    ar: { type: String, default: "" },
+  },
+  location: {
+    en: { type: String },
+    it: { type: String, default: "" },
+    ar: { type: String, default: "" },
+  },
   restaurantSlug: {
     type: String,
     required: true,
@@ -9,8 +18,6 @@ const restaurantSchema = new mongoose.Schema({
     lowercase: true,
     unique: true,
   },
-  location: { type: String },
-  logo: { type: Buffer },
   brandColors: {
     primary: String,
     secondary: String,
@@ -23,12 +30,8 @@ const restaurantSchema = new mongoose.Schema({
       required: true,
     },
   ],
-  menus: [
-    {
-      type: String, // use menuSlug
-      ref: "Menu",
-    },
-  ],
+  dishes: [{ type: String, ref: "Dish" }], // use dishSlug
+  restaurantLogo: { type: Buffer },
   createdBy: {
     type: String, // store username
     ref: "User",

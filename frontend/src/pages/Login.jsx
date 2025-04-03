@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { jwtDecode } from "jwt-decode"; // ensure default import
+import { useTranslation } from "react-i18next";  // Add this import
 
 const Login = () => {
+  const { t } = useTranslation();  // Initialize translation
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -23,15 +25,15 @@ const Login = () => {
         if (username) {
           setTimeout(() => {
             if (["admin", "manager", "super-admin"].includes(role)) {
-              navigate(`/${username}`);
+              navigate(`/admin/dashboard`);
             } else if (role) {
               if (!Array.isArray(allergies) || allergies.length === 0) {
-                navigate(`/${username}/add-allergies`);
+                navigate(`/settings/add-allergies`);
               } else {
-                navigate("/top-restaurants");
+                navigate("/restaurants");
               }
             } else {
-              setError("Invalid user role. Please contact support.");
+              setError(t('login.errorMessage'));  // Translated error message
             }
           }, 200);
         }
@@ -39,10 +41,9 @@ const Login = () => {
         console.error("Token decoding failed:", err);
       }
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   const handleChange = (e) => {
-    // Reset error when user starts typing in the password field
     if (e.target.name === "password" && error) {
       setError(null);
     }
@@ -63,7 +64,7 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       if (!token) {
-        setError("No token received. Please try again.");
+        setError(t('login.noTokenError'));  // Translated error message
         return;
       }
 
@@ -72,26 +73,26 @@ const Login = () => {
       const role = decoded?.role;
       const allergies = decoded?.allergies;
 
-      setSuccess("Login successful!");
+      setSuccess(t('login.successMessage'));  // Translated success message
       setFormData({ email: "", password: "" });
 
       setTimeout(() => {
         if (["admin", "manager", "super-admin"].includes(role)) {
-          navigate(`/${username}`);
+          navigate(`/admin/dashboard`);
         } else if (role) {
           if (!Array.isArray(allergies) || allergies.length === 0) {
-            navigate(`/${username}/add-allergies`);
+            navigate(`/settings/add-allergies`);
           } else {
-            navigate("/top-restaurants");
+            navigate("/restaurants");
           }
         } else {
-          setError("Invalid user role. Please contact support.");
+          setError(t('login.errorMessage'));  // Translated error message
         }
       }, 200);
     } catch (err) {
       const message =
         err.response?.data?.message ||
-        (err.request ? "Network error. Please try again." : "An unexpected error occurred.");
+        (err.request ? t('login.networkError') : t('login.unexpectedError')); // Translated error message
       setError(message);
     } finally {
       setLoading(false);
@@ -101,38 +102,38 @@ const Login = () => {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: "400px" }}>
-        <h2 className="text-center text-danger">Login</h2>
+        <h2 className="text-center text-danger">{t('login.title')}</h2>
 
         <form onSubmit={handleSubmit} className="mt-4">
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('login.email')}</label>
             <input
               type="email"
               name="email"
               className="form-control"
               value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder={t('login.email')}
               required
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Password</label>
+            <label className="form-label">{t('login.password')}</label>
             <input
               type="password"
               name="password"
               className="form-control"
               value={formData.password}
               onChange={handleChange}
-              placeholder="Enter your password"
+              placeholder={t('login.password')}
               required
             />
           </div>
 
           <div className="text-end">
             <Link to={"/forgot-password"} className="text-danger text-decoration-none">
-              Forgot Password?
+              {t('login.forgotPassword')}
             </Link>
           </div>
 
@@ -140,10 +141,10 @@ const Login = () => {
             {loading ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2"></span>
-                Logging in...
+                {t('login.loading')}
               </>
             ) : (
-              "Login"
+              t('login.loginButton')
             )}
           </button>
         </form>
@@ -152,9 +153,9 @@ const Login = () => {
         {success && <div className="alert alert-success mt-3">{success}</div>}
 
         <div className="d-flex align-items-center">
-          <p className="text-center mt-3">Don't have an account?</p>
+          <p className="text-center mt-3">{t('login.registerPrompt')}</p>
           <Link to={"/register"} className="mx-1 text-danger text-decoration-none">
-            Register
+            {t('login.registerLink')}
           </Link>
         </div>
       </div>

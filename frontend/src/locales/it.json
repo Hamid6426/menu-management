@@ -1,0 +1,217 @@
+{
+  "home-page": {
+    "greetings": "Benvenuto nella Home Page"
+  },
+  "signUpAs": {
+    "title": "Registrati come",
+    "admin": {
+      "title": "Amministratore",
+      "description": "Registrati come amministratore per possedere un ristorante, creare menu, piatti e gestire il tuo locale.",
+      "button": "Registrati come Amministratore"
+    },
+    "user": {
+      "title": "Utente",
+      "description": "Registrati come cliente per esplorare ristoranti, ordinare piatti e goderti l'esperienza gastronomica.",
+      "button": "Registrati come Utente"
+    }
+  },
+  "login": {
+    "title": "Accedi",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Hai dimenticato la password?",
+    "loginButton": "Accedi",
+    "loading": "Accesso in corso...",
+    "successMessage": "Accesso riuscito!",
+    "errorMessage": "Ruolo utente non valido. Si prega di contattare il supporto.",
+    "noTokenError": "Nessun token ricevuto. Riprova.",
+    "networkError": "Errore di rete. Riprova.",
+    "unexpectedError": "Si è verificato un errore imprevisto.",
+    "registerPrompt": "Non hai un account?",
+    "registerLink": "Registrati"
+  },
+  "userRegister": {
+    "title": "Registrazione utente",
+    "name": "Nome",
+    "email": "Email",
+    "password": "Password",
+    "registerButton": "Registrati",
+    "registering": "Registrazione in corso...",
+    "successMessage": "Registrazione avvenuta con successo! Reindirizzamento alla login...",
+    "errorMessage": "Qualcosa è andato storto",
+    "loginPrompt": "Hai già un account?",
+    "loginLink": "Accedi"
+  },
+  "adminRegister": {
+    "title": "Registrazione Admin",
+    "name": "Nome",
+    "username": "Nome utente",
+    "email": "Email",
+    "password": "Password",
+    "registerButton": "Registrati",
+    "registering": "Registrazione in corso...",
+    "successMessage": "Registrazione avvenuta con successo! Reindirizzamento alla login admin...",
+    "errorMessage": "Qualcosa è andato storto"
+  },
+  "addAllergies": {
+    "title": "Aggiorna le tue allergie",
+    "sessionExpired": "Sessione scaduta. Per favore, accedi di nuovo.",
+    "fetchError": "Errore nel recupero del profilo. Riprova.",
+    "updateSuccess": "Allergie aggiornate con successo!",
+    "updateFailure": "Impossibile aggiornare le allergie. Riprova.",
+    "submitError": "Si è verificato un errore. Riprova.",
+    "saveButton": "Salva Allergie",
+    "skipButton": "Salta"
+  },
+  "allergies": {
+    "gluten": "Glutine",
+    "dairy": "Latticini",
+    "nuts": "Frutta secca",
+    "peanuts": "Arachidi",
+    "tree nuts": "Frutta secca a guscio",
+    "shellfish": "Frutti di mare",
+    "soy": "Soia",
+    "eggs": "Uova",
+    "fish": "Pesce",
+    "wheat": "Grano",
+    "sesame": "Sesamo",
+    "mustard": "Senape",
+    "celery": "Sedano",
+    "lupin": "Lupino",
+    "molluscs": "Molluschi",
+    "sulphites": "Solfiti",
+    "corn": "Mais",
+    "latex": "Lattice",
+    "kiwi": "Kiwi",
+    "banana": "Banana",
+    "avocado": "Avocado",
+    "crustaceans": "Crosteacei",
+    "peach": "Pesca",
+    "plum": "Prugna",
+    "apples": "Mele",
+    "cherries": "Ciliegie",
+    "almonds": "Mandorle",
+    "cashews": "Anacardi",
+    "pine nuts": "Pinoli",
+    "coconut": "Cocco",
+    "poppy seeds": "Semi di papavero",
+    "sesame seeds": "Semi di sesamo",
+    "papaya": "Papaya",
+    "mango": "Mango"
+  },
+  "forgotPassword": {
+    "title": "Password dimenticata",
+    "emailLabel": "Email",
+    "placeholderEmail": "Inserisci la tua email",
+    "sendResetLink": "Invia il link per il reset",
+    "error": "Qualcosa è andato storto",
+    "success": "Link di reset inviato con successo!"
+  },
+  "resetPassword": {
+    "title": "Reimposta la password",
+    "emailLabel": "Email",
+    "newPasswordLabel": "Nuova password",
+    "placeholderEmail": "Inserisci la tua email",
+    "placeholderNewPassword": "Inserisci la nuova password (minimo 6 caratteri)",
+    "resetButton": "Reimposta la password",
+    "error": "Qualcosa è andato storto",
+    "success": "Password reimpostata con successo!"
+  },
+  "notFoundPage": {
+    "title": "404: Pagina non trovata",
+    "message": "Ci scusiamo, la pagina che stai cercando non esiste. Puoi provare a cercarla o tornare alla nostra",
+    "home": "Home"
+  },
+  "forbiddenPage": {
+    "title": "403: Vietato",
+    "message": "Ci scusiamo, non hai il permesso di accedere a questa pagina. Per favore ",
+    "loginLink": "accedi",
+    "contactLink": "team di supporto",
+    "assistance": "per assistenza."
+  },
+  "internalServerErrorPage": {
+    "title": "500: Errore del server interno",
+    "message": "Ci scusiamo, qualcosa è andato storto dalla nostra parte. Riprova più tardi o contatta il nostro",
+    "support": "team di supporto"
+  },
+  "navbar": {
+    "restaurants": "Ristoranti",
+    "contact": "Contatti",
+    "pricing": "Prezzi",
+    "login": "Accedi",
+    "getStarted": "INIZIA"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Seleziona Lingua",
+    "english": "Inglese",
+    "italian": "Italiano",
+    "arabic": "Arabo"
+  },
+  "allergyFilter": {
+    "searchPlaceholder": "Cerca allergeni...",
+    "show": "Mostra",
+    "hide": "Nascondi"
+  },
+  "breadcrumbs": {
+    "home": "Casa"
+  },
+  "dashboardNavbar": {
+    "dashboard": "Cruscotto",
+    "manageRestaurants": "Gestisci Ristoranti",
+    "manageStaff": "Gestisci Staff",
+    "settings": "Impostazioni",
+    "profile": "Profilo",
+    "logout": "Esci"
+  },
+  "deleteRestaurantButton": {
+    "confirmDelete": "Sei sicuro di voler eliminare questo ristorante?",
+    "errorMessage": "Errore nell'eliminazione del ristorante. Riprova."
+  },
+  "searchBar": {
+    "placeholder": "Cerca piatti..."
+  },
+  "categories": {
+    "starter": "Antipasto",
+    "mainCourse": "Portata principale",
+    "dessert": "Dessert",
+    "beverage": "Bevanda",
+    "sideDish": "Contorno",
+    "special": "Speciale"
+  },
+  "allergens": {
+    "gluten": "Glutine",
+    "dairy": "Latticini",
+    "nuts": "Noci",
+    "peanuts": "Arachidi",
+    "tree nuts": "Frutta a guscio",
+    "shellfish": "Crostacei",
+    "soy": "Soia",
+    "eggs": "Uova",
+    "fish": "Pesce",
+    "wheat": "Grano",
+    "sesame": "Sesamo",
+    "mustard": "Senape",
+    "celery": "Sedano",
+    "lupin": "Lupino",
+    "molluscs": "Molluschi",
+    "sulphites": "Solfiti",
+    "corn": "Mais",
+    "latex": "Lattice",
+    "kiwi": "Kiwi",
+    "banana": "Banana",
+    "avocado": "Avocado",
+    "crustaceans": "Crostacei",
+    "peach": "Pesca",
+    "plum": "Prugna",
+    "apples": "Mele",
+    "cherries": "Ciliegie",
+    "almonds": "Mandorle",
+    "cashews": "Anacardi",
+    "pine nuts": "Pinoli",
+    "coconut": "Cocco",
+    "poppy seeds": "Semi di papavero",
+    "sesame seeds": "Semi di sesamo",
+    "papaya": "Papaya",
+    "mango": "Mango"
+  }
+}

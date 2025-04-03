@@ -5,7 +5,7 @@ import { MdEdit, MdVisibility, MdDelete, MdAdd } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 
 const ManageDishes = () => {
-  const { restaurantSlug, menuSlug } = useParams();
+  const { restaurantSlug } = useParams();
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,19 +15,23 @@ const ManageDishes = () => {
   const username = decoded.username;
 
   const arrayBufferToBase64 = (buffer) => {
-    const binary = new Uint8Array(buffer).reduce((acc, byte) => acc + String.fromCharCode(byte), "");
-    return `data:image/jpeg;base64,${btoa(binary)}`;
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    bytes.forEach((byte) => (binary += String.fromCharCode(byte)));
+    return `data:image/webp;base64,${window.btoa(binary)}`;
   };
 
   const fetchDishes = async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axiosInstance.get(`/dishes/${menuSlug}/list-menu-dishes`);
+      const response = await axiosInstance.get(`/dishes/${restaurantSlug}`);
+
       const formattedDishes = response.data.dishes.map((dish) => ({
-        ...dish,  
-        imageUrl: dish.image ? arrayBufferToBase64(dish.image.data) : null,
+        ...dish,
+        imageUrl: dish.dishImage?.data ? arrayBufferToBase64(dish.dishImage.data) : null,
       }));
+
       setDishes(formattedDishes);
     } catch (err) {
       setError(err.response?.data?.message || "Error fetching dishes. Please try again.");
@@ -51,19 +55,16 @@ const ManageDishes = () => {
   };
 
   useEffect(() => {
-    if (restaurantSlug && menuSlug) {
+    if (restaurantSlug) {
       fetchDishes();
     }
-  }, [restaurantSlug, menuSlug]);
+  }, [restaurantSlug]);
 
   return (
-    <div className="container mt-4">
+    <div className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Dishes</h2>
-        <Link
-          to={`/${username}/manage-restaurants/${restaurantSlug}/${menuSlug}/create-dish`}
-          className="btn btn-primary"
-        >
+        <h2>Manage Dishes</h2>
+        <Link to={`/admin/manage-restaurants/${restaurantSlug}/create-dish`} className="btn btn-primary">
           <MdAdd /> Create New Dish
         </Link>
       </div>
@@ -77,38 +78,71 @@ const ManageDishes = () => {
       ) : dishes.length === 0 ? (
         <div className="alert alert-info">No dishes found.</div>
       ) : (
-        <div className="row">
-          {dishes.map((dish) => (
-            <div key={dish._id} className="col-md-6 col-lg-4 mb-4">
-              <div className="card shadow-sm">
-                {dish.imageUrl && (
-                  <img src={dish.imageUrl} alt={dish.name} className="card-img-top" style={{ height: "200px", objectFit: "cover" }} />
-                )}
-                <div className="card-body">
-                  <h5 className="card-title">{dish.name}</h5>
-                  {dish.description && <p className="card-text">{dish.description}</p>}
-                  <p className="mb-1"><strong>Price:</strong> ${dish.price}</p>
-                  <p className="mb-2"><strong>Status:</strong> {dish.isEnabled ? "Enabled" : "Disabled"}</p>
-                  
-                  <div className="d-flex justify-content-between">
-                    <Link to={`/${username}/${restaurantSlug}/${dish._id}/update-dish`} className="btn btn-sm btn-outline-warning">
-                      <MdEdit /> Update
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(dish._id)}
-                      className="btn btn-sm btn-outline-danger"
-                      disabled={loading}
+        <div className="table-responsive">
+          <table className="table table-striped table-bordered">
+            <thead className="thead-dark">
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price ($)</th>
+                <th>Calories</th>
+                <th>Category</th>
+                <th>Allergens</th>
+                <th>Availability</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dishes.map((dish) => (
+                <tr key={dish._id}>
+                  <td>
+                    <div>
+                      {dish.imageUrl ? (
+                        <img
+                          src={dish.imageUrl}
+                          alt={dish.name}
+                          style={{ width: "80px", height: "80px", objectFit: "cover", borderRadius: "5px" }}
+                        />
+                      ) : (
+                        "No Image"
+                      )}
+                    </div>
+                  </td>
+                  <td>{dish.name}</td>
+                  <td>{dish.description || "N/A"}</td>
+                  <td>{dish.price.toFixed(2)}</td>
+                  <td>{dish.kilocalories || "N/A"}</td>
+                  <td>{dish.category}</td>
+                  <td>{dish.allergens?.length > 0 ? dish.allergens.join(", ") : "None"}</td>
+                  <td>
+                    {dish.availability?.startTime && dish.availability?.endTime
+                      ? `${dish.availability.startTime} - ${dish.availability.endTime} min`
+                      : "N/A"}
+                  </td>
+                  <td>{dish.isEnabled ? "Enabled" : "Disabled"}</td>
+                  <td className="d-flex gap-2 h-100" style={{ borderRight:"1px solid #ddd", paddingBottom:"3.6rem" }}>
+                    <Link
+                      to={`/admin/${restaurantSlug}/${dish.dishSlug}/update-dish`}
+                      className="btn btn-sm btn-warning"
                     >
-                      <MdDelete /> Delete
-                    </button>
-                    <Link to={`/${username}/manage-restaurants/${restaurantSlug}/${dish.dishSlug}/view-dish`} className="btn btn-sm btn-outline-info">
-                      <MdVisibility /> View
+                      <MdEdit />
                     </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                    <button onClick={() => handleDelete(dish._id)} className="btn btn-sm btn-danger" disabled={loading}>
+                      <MdDelete />
+                    </button>
+                    <Link
+                      to={`/admin/manage-restaurants/${restaurantSlug}/${dish.dishSlug}/view-dish`}
+                      className="btn btn-sm btn-info"
+                    >
+                      <MdVisibility />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

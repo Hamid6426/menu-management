@@ -5,9 +5,9 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function DashboardLayout() {
   return (
-    <div className="d-flex flex-column justify-content-center">
+    <div className="container-fluid d-flex flex-column justify-content-center">
       <DashboardNavbar />
-      <main>
+      <main className="px-3">
         <Breadcrumbs/>
         <Outlet />
       </main>

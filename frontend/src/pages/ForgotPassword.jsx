@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axiosInstance from "../utils/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 const ForgotPassword = () => {
+  const { t } = useTranslation();  // Using the useTranslation hook to get localized text
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -16,7 +18,7 @@ const ForgotPassword = () => {
       setSuccess(response.data.message);
       setEmail("");
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(err.response?.data?.message || t("forgotPassword.error"));
     }
   };
 
@@ -31,28 +33,28 @@ const ForgotPassword = () => {
       }}
     >
       <div className="forgot-password-form p-4 rounded shadow bg-white mx-auto" style={{ maxWidth: "400px" }}>
-        <h2 className="mb-4 text-center text-danger">Forgot Password</h2>
+        <h2 className="mb-4 text-center text-danger">{t("forgotPassword.title")}</h2>
 
         {/* Alert Messages */}
         {error && <div className="alert alert-danger">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+        {success && <div className="alert alert-success">{t("forgotPassword.success")}</div>}
 
         {/* Form */}
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t("forgotPassword.emailLabel")}</label>
             <input
               type="email"
               className="form-control border-danger"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder={t("forgotPassword.placeholderEmail")}
               required
             />
           </div>
 
           <button type="submit" className="btn btn-danger w-100">
-            Send Reset Link
+            {t("forgotPassword.sendResetLink")}
           </button>
         </form>
       </div>

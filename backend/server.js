@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
-const menuRoutes = require("./routes/menuRoutes");
 const dishRoutes = require("./routes/dishRoutes");
 require("dotenv").config();
 
@@ -49,7 +48,6 @@ app.get("/api", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/restaurants", restaurantRoutes);
-app.use("/api/menus", menuRoutes);
 app.use("/api/dishes", dishRoutes);
 
 const PORT = process.env.PORT || 5000;

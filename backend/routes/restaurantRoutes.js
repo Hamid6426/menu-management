@@ -1,7 +1,7 @@
 const express = require("express");
 const restaurantController = require("../controllers/restaurantController");
 const { protectRoute, authorizeRoles } = require("../middlewares/middlewares");
-const upload = require("../middlewares/uploadMiddleware");
+const { upload, processImage } = require("../middlewares/uploadMiddleware") 
 
 const router = express.Router();
 
@@ -10,6 +10,8 @@ router.post(
   "/:username/create-restaurant",
   protectRoute,
   authorizeRoles("super-admin", "admin"),
+  upload.single("image"), // Loads the image into memory
+  processImage, // Processes the image (resize/convert to webp)
   restaurantController.createRestaurant
 );
 
@@ -25,7 +27,7 @@ router.get(
 );
 
 // Get a single restaurant by its slug
-router.get("/:restaurantSlug", restaurantController.getRestaurantBySlug);
+router.get("/:restaurantSlug/get", restaurantController.getRestaurantBySlug);
 
 // Update a restaurant by its slug
 router.put(

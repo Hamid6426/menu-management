@@ -1,0 +1,217 @@
+{
+  "home-page": {
+    "greetings": "Welcome to Home Page"
+  },
+  "signUpAs": {
+    "title": "Sign Up As",
+    "admin": {
+      "title": "Admin",
+      "description": "Sign up as an admin to own a restaurant, create menus, dishes, and manage your establishment.",
+      "button": "Sign Up as Admin"
+    },
+    "user": {
+      "title": "User",
+      "description": "Sign up as a customer to explore restaurants, order dishes, and enjoy the dining experience.",
+      "button": "Sign Up as User"
+    }
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "loginButton": "Login",
+    "loading": "Logging in...",
+    "successMessage": "Login successful!",
+    "errorMessage": "Invalid user role. Please contact support.",
+    "noTokenError": "No token received. Please try again.",
+    "networkError": "Network error. Please try again.",
+    "unexpectedError": "An unexpected error occurred.",
+    "registerPrompt": "Don't have an account?",
+    "registerLink": "Register"
+  },
+  "userRegister": {
+    "title": "User Registration",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "successMessage": "Registration successful! Redirecting to login...",
+    "errorMessage": "Something went wrong",
+    "loginPrompt": "Already have an account?",
+    "loginLink": "Login"
+  },
+  "adminRegister": {
+    "title": "Admin Registration",
+    "name": "Name",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "successMessage": "Registration successful! Redirecting to admin login...",
+    "errorMessage": "Something went wrong"
+  },
+  "addAllergies": {
+    "title": "Update Your Allergies",
+    "sessionExpired": "Session expired. Please log in again.",
+    "fetchError": "Error fetching profile. Please try again.",
+    "updateSuccess": "Allergies updated successfully!",
+    "updateFailure": "Failed to update allergies. Please try again.",
+    "submitError": "An error occurred. Please try again.",
+    "saveButton": "Save Allergies",
+    "skipButton": "Skip"
+  },
+  "allergies": {
+    "gluten": "Gluten",
+    "dairy": "Dairy",
+    "nuts": "Nuts",
+    "peanuts": "Peanuts",
+    "tree nuts": "Tree Nuts",
+    "shellfish": "Shellfish",
+    "soy": "Soy",
+    "eggs": "Eggs",
+    "fish": "Fish",
+    "wheat": "Wheat",
+    "sesame": "Sesame",
+    "mustard": "Mustard",
+    "celery": "Celery",
+    "lupin": "Lupin",
+    "molluscs": "Molluscs",
+    "sulphites": "Sulphites",
+    "corn": "Corn",
+    "latex": "Latex",
+    "kiwi": "Kiwi",
+    "banana": "Banana",
+    "avocado": "Avocado",
+    "crustaceans": "Crustaceans",
+    "peach": "Peach",
+    "plum": "Plum",
+    "apples": "Apples",
+    "cherries": "Cherries",
+    "almonds": "Almonds",
+    "cashews": "Cashews",
+    "pine nuts": "Pine Nuts",
+    "coconut": "Coconut",
+    "poppy seeds": "Poppy Seeds",
+    "sesame seeds": "Sesame Seeds",
+    "papaya": "Papaya",
+    "mango": "Mango"
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "emailLabel": "Email",
+    "placeholderEmail": "Enter your email",
+    "sendResetLink": "Send Reset Link",
+    "error": "Something went wrong",
+    "success": "Reset link sent successfully!"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "emailLabel": "Email",
+    "newPasswordLabel": "New Password",
+    "placeholderEmail": "Enter your email",
+    "placeholderNewPassword": "Enter new password (min 6 characters)",
+    "resetButton": "Reset Password",
+    "error": "Something went wrong",
+    "success": "Password reset successfully!"
+  },
+  "notFoundPage": {
+    "title": "404: Page Not Found",
+    "message": "Sorry, the page you're looking for doesn't exist. You can try searching for it or return to our",
+    "home": "Home"
+  },
+  "forbiddenPage": {
+    "title": "403: Forbidden",
+    "message": "Sorry, you don't have permission to access this page. Please ",
+    "loginLink": "log in",
+    "contactLink": "support team",
+    "assistance": "for assistance."
+  },
+  "internalServerErrorPage": {
+    "title": "500: Internal Server Error",
+    "message": "Sorry, something went wrong on our end. Please try again later or contact our",
+    "support": "support team"
+  },
+  "navbar": {
+    "restaurants": "Restaurants",
+    "contact": "Contact",
+    "pricing": "Pricing",
+    "login": "Login",
+    "getStarted": "GET STARTED"
+  },
+  "languageSwitcher": {
+    "selectLanguage": "Select Language",
+    "english": "English",
+    "italian": "Italiano",
+    "arabic": "Arabic"
+  },
+  "allergyFilter": {
+    "searchPlaceholder": "Search allergens...",
+    "show": "Show",
+    "hide": "Hide"
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  },
+  "dashboardNavbar": {
+    "dashboard": "Dashboard",
+    "manageRestaurants": "Manage Restaurants",
+    "manageStaff": "Manage Staff",
+    "settings": "Settings",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "deleteRestaurantButton": {
+    "confirmDelete": "Are you sure you want to delete this restaurant?",
+    "errorMessage": "Error deleting restaurant. Please try again."
+  },
+  "searchBar": {
+    "placeholder": "Search dishes..."
+  },
+  "categories": {
+    "starter": "Starter",
+    "mainCourse": "Main Course",
+    "dessert": "Dessert",
+    "beverage": "Beverage",
+    "sideDish": "Side Dish",
+    "special": "Special"
+  },
+  "allergens": {
+    "gluten": "Gluten",
+    "dairy": "Dairy",
+    "nuts": "Nuts",
+    "peanuts": "Peanuts",
+    "tree nuts": "Tree nuts",
+    "shellfish": "Shellfish",
+    "soy": "Soy",
+    "eggs": "Eggs",
+    "fish": "Fish",
+    "wheat": "Wheat",
+    "sesame": "Sesame",
+    "mustard": "Mustard",
+    "celery": "Celery",
+    "lupin": "Lupin",
+    "molluscs": "Molluscs",
+    "sulphites": "Sulphites",
+    "corn": "Corn",
+    "latex": "Latex",
+    "kiwi": "Kiwi",
+    "banana": "Banana",
+    "avocado": "Avocado",
+    "crustaceans": "Crustaceans",
+    "peach": "Peach",
+    "plum": "Plum",
+    "apples": "Apples",
+    "cherries": "Cherries",
+    "almonds": "Almonds",
+    "cashews": "Cashews",
+    "pine nuts": "Pine nuts",
+    "coconut": "Coconut",
+    "poppy seeds": "Poppy seeds",
+    "sesame seeds": "Sesame seeds",
+    "papaya": "Papaya",
+    "mango": "Mango"
+  }
+}

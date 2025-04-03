@@ -1,66 +1,61 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const DashboardNavbar = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+
+  if (!token) {
+    navigate("/login");
+    return null;
+  }
+
   const decoded = jwtDecode(token);
   const username = decoded.username;
 
-  return (
-    <>
-      <style>{`
-        .dashboard-navbar {
-          display: flex;
-          flex-wrap: nowrap;
-          align-items: center; /* Added missing semicolon */
-        }
-        .dashboard-navbar .nav-link {
-          font-weight: 600;
-          color: #90f;
-          background-color: #fff;
-          border: 1px solid #90f;
-          border-radius: 8px;
-          transition: background-color 0.2s ease-in-out;
-          margin-right: 0.5rem;
-          width: fit-content;
-          text-wrap: nowrap;
-        }
-        .dashboard-navbar .nav-link:hover {
-          background-color: #fff;
-          color: #f0f;
-          text-decoration: none;
-        }
-        /* Container for horizontal scrolling on small screens */
-        .wrapper {
-          overflow-x: auto;
-        }
-        @media (min-width: 800px) {
-          .wrapper {
-            overflow-x: visible;
-          }
-        }
-      `}</style>
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
-      <nav className="dashboard-navbar wrapper nav bg-light border-bottom container-fluid p-3">
-        <Link className="nav-link" to={`/${username}`}>
-          Dashboard
-        </Link>
-        <Link className="nav-link" to={`/${username}/manage-restaurants`}>
-          Manage Restaurants
-        </Link>
-        <Link className="nav-link" to="/${username}/add-manager">
-          Manage Users
-        </Link>
-        <Link className="nav-link" to="/${username}/settings">
-          Settings
-        </Link>
-        <Link className="nav-link" to="/${username}/profile">
-          Profile
-        </Link>
-        <button className="btn btn-outline-danger">Logout</button>
-      </nav>
-    </>
+  return (
+    <nav className="navbar navbar-expand-lg navbar-light bg-light border-bottom px-1">
+      <div className="container-fluid">
+        <ul className="navbar-nav me-auto gap-2">
+          <li className="nav-item">
+            <Link className="nav-link fw-semibold text-primary border border-primary rounded px-3 py-1" to="/admin/dashboard">
+              {t('dashboardNavbar.dashboard')}
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link fw-semibold text-primary border border-primary rounded px-3 py-1" to="/admin/manage-restaurants">
+              {t('dashboardNavbar.manageRestaurants')}
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link fw-semibold text-primary border border-primary rounded px-3 py-1" to="/admin/manage-staff">
+              {t('dashboardNavbar.manageStaff')}
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link fw-semibold text-primary border border-primary rounded px-3 py-1" to="/admin/settings">
+              {t('dashboardNavbar.settings')}
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link className="nav-link fw-semibold text-primary border border-primary rounded px-3 py-1" to="/admin/profile">
+              {t('dashboardNavbar.profile')}
+            </Link>
+          </li>
+        </ul>
+        <button onClick={handleLogout} className="btn btn-outline-danger btn-sm">
+          {t('dashboardNavbar.logout')}
+        </button>
+      </div>
+    </nav>
   );
 };
 
