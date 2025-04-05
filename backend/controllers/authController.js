@@ -8,7 +8,7 @@ exports.userRegister = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !username || !email || !password) {
+    if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -20,6 +20,10 @@ exports.userRegister = async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const regexedEmail = email
+      .split("@")[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
 
     // Create new user
     const newUser = new User({
@@ -106,7 +110,7 @@ exports.login = async (req, res) => {
 
     res.status(200).json({
       token,
-      user
+      user,
     });
   } catch (error) {
     console.error("Login Error:", error);
