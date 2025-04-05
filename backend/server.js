@@ -1,79 +1,100 @@
-  const express = require("express");
-  const cors = require("cors");
-  const mongoose = require("mongoose");
-  const authRoutes = require("./routes/authRoutes");
-  const userRoutes = require("./routes/userRoutes");
-  const restaurantRoutes = require("./routes/restaurantRoutes");
-  const dishRoutes = require("./routes/dishRoutes");
-  require("dotenv").config();
+require("dotenv").config();
+const express       = require("express");
+const cors          = require("cors");
+const helmet        = require("helmet");
+const compression   = require("compression");
+const mongoose      = require("mongoose");
+const authRoutes    = require("./routes/authRoutes");
+const userRoutes    = require("./routes/userRoutes");
+const restaurantRoutes = require("./routes/restaurantRoutes");
+const dishRoutes    = require("./routes/dishRoutes");
 
-  // Initialize Express app
-  const app = express();
+const app    = express();
+const isProd = process.env.NODE_ENV === "production";
+const PORT   = process.env.PORT || 3000;
 
-  // Middleware
-  app.use(express.json());
+//─── MIDDLEWARE ────────────────────────────────────────────────────────────────
+// parse JSON bodies
+app.use(express.json());
 
-  // CORS Middleware
-  app.use(
-    cors({
-      origin: (origin, callback) => {
-        const allowedOrigins = [
-          "http://localhost:5173",
-          "http://localhost:5174", // when using both vite projects
-          "http://localhost:4173", // vite preview (staging)
-          "http://localhost:5500",
-          "http://127.0.0.1:5500",
-          "https://menu-management-frontend-gu7f.onrender.com", // frontend production
-          "https://menu-management-lsqs.onrender.com", // backend production
-          process.env.BACKEND_URL,
-          process.env.FRONTEND_URL,
-        ];
-        if (allowedOrigins.includes(origin)) {
+// security & performance
+if (isProd) {
+  // only in production
+  app.use(helmet());
+  app.use(compression());
+} else {
+  // only in development
+  app.use((req, _res, next) => {
+    console.log(`[DEV] ${req.method} ${req.originalUrl}`);
+    next();
+  });
+}
+
+// CORS
+const devOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:4173",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+];
+
+const prodOrigin = process.env.CORS_ORIGIN || process.env.FRONTEND_URL;
+
+app.use(cors({
+  origin: isProd
+    // in prod: only allow the one frontend URL
+    ? prodOrigin
+    // in dev: allow localhost variants + tools (undefined origin)
+    : (origin, callback) => {
+        if (!origin || devOrigins.includes(origin)) {
           return callback(null, true);
         }
-        return callback(new Error("Not allowed by CORS"));
+        console.warn("[CORS] Blocked origin:", origin);
+        callback(new Error("Not allowed by CORS"));
       },
-      credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-      exposedHeaders: ["Content-Disposition"],
-    })
-  );
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
+  exposedHeaders: ["Content-Disposition"],
+}));
 
-  // Define Test API Routes
-  app.get("/", (_req, res) => {
-    res.json({ message: "Hello, This is menu-management web app server!" });
-  });
-  app.get("/api", (_req, res) => {
-    res.json({ message: "Hello, This is menu-management web app API route!" });
-  });
+//─── ROUTES ───────────────────────────────────────────────────────────────────
+app.get("/",      (_req, res) => res.json({ message: "Hello, this is the server!" }));
+app.get("/api",   (_req, res) => res.json({ message: "Hello, this is the API!" }));
 
-  // Authentication routes
-  app.use("/api/auth", authRoutes);
-  app.use("/api/users", userRoutes);
-  app.use("/api/restaurants", restaurantRoutes);
-  app.use("/api/dishes", dishRoutes);
+app.use("/api/auth",        authRoutes);
+app.use("/api/users",       userRoutes);
+app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/dishes",      dishRoutes);
 
-  const PORT = process.env.PORT || 3000;
+//─── GLOBAL ERROR HANDLER ─────────────────────────────────────────────────────
+app.use((err, _req, res, _next) => {
+  if (err.message === "Not allowed by CORS") {
+    return res.status(403).json({ error: err.message });
+  }
+  console.error("[ERROR]", err);
+  res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
+});
 
-  mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-      console.log("MongoDB Connected Successfully");
-      app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-    })
-    .catch((err) => {
-      console.error("MongoDB Connection Error:", err);
-      process.exit(1); // Exit if unable to connect
+//─── MONGOOSE CONNECTION ──────────────────────────────────────────────────────
+if (!process.env.MONGO_URI) {
+  console.error("❌  MONGO_URI is not set in environment");
+  process.exit(1);
+}
+
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("✅  MongoDB Connected");
+    app.listen(PORT, () => {
+      console.log(`🚀  Server running on port ${PORT} (${isProd ? "production" : "development"})`);
     });
-
-  mongoose.connection.on("connected", () => {
-    console.log("Mongoose is connected to the database.");
+  })
+  .catch((err) => {
+    console.error("❌  MongoDB Connection Error:", err);
+    process.exit(1);
   });
 
-  mongoose.connection.on("error", (err) => {
-    console.error("Mongoose connection error:", err);
-  });
-
-  mongoose.connection.on("disconnected", () => {
-    console.warn("Mongoose is disconnected from the database.");
-  });
+mongoose.connection.on("disconnected", () => {
+  console.warn("⚠️  Mongoose disconnected");
+});
