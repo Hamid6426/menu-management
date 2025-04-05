@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   // baseURL: "http://localhost:5000/api",
-  baseURL: "https://menu-management-lsqs.onrender.com",
+  baseURL: "https://menu-management-lsqs.onrender.com/api",
 });
 
 // Add a request interceptor to attach the token
