@@ -1,4 +1,6 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const Restaurant = require("../models/Restaurant");
 
 exports.getProfile = async (req, res) => {
   try {
@@ -185,5 +187,63 @@ exports.listAllAdminAssociatedManagers = async (req, res) => {
   } catch (error) {
     console.error("List Managers Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+exports.addUser = async (req, res) => {
+  try {
+   if (req.user.role !== "super-admin") {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const { name, username, email, password, role, restaurants = [], allergies = [] } = req.body;
+
+    if (!name || !username || !email || !password || !role) {
+      return res.status(400).json({ message: "All required fields must be provided" });
+    }
+
+    if (!["admin", "manager", "user"].includes(role)) {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      name,
+      username,
+      email,
+      password: hashedPassword,
+      role,
+      allergies,
+      restaurants: (role === "admin" || role === "manager") ? restaurants : []
+    });
+
+    await newUser.save();
+
+    return res.status(201).json({
+      message: `${role} created successfully`,
+      user: {
+        _id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        username: newUser.username,
+        role: newUser.role
+      }
+    });
+
+  } catch (error) {
+    console.error("Add User Error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

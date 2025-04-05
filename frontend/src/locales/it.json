@@ -170,6 +170,33 @@
   "searchBar": {
     "placeholder": "Cerca piatti..."
   },
+  "createDish": {
+    "title": "Crea Piatto",
+    "dishName": "Nome del piatto",
+    "namePlaceholder": "Inserisci il nome del piatto",
+    "description": "Descrizione",
+    "descriptionPlaceholder": "Inserisci la descrizione",
+    "category": "Categoria",
+    "selectCategory": "Seleziona Categoria",
+    "price": "Prezzo",
+    "kilocalories": "Chilocalorie (opzionale)",
+    "availability": "Disponibilità",
+    "availabilityHelp": "Seleziona l'orario di inizio e fine per la disponibilità del piatto.",
+    "image": "Immagine del piatto",
+    "allergens": "Allergeni",
+    "creating": "Creazione in corso...",
+    "createButton": "Crea Piatto",
+    "validationError": "Nome, descrizione in inglese, categoria, prezzo e slug del ristorante sono obbligatori.",
+    "errorMessage": "Errore durante la creazione del piatto"
+  },
+  "showRestaurantMenu": {
+    "pageTitle": "Menu del ristorante",
+    "searchPlaceholder": "Cerca piatti...",
+    "noDishesFound": "Nessun piatto trovato.",
+    "groupTitle": "Categoria",
+    "kcal": "kcal",
+    "all": "Tutti"
+  },
   "categories": {
     "starter": "Antipasto",
     "mainCourse": "Portata principale",

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 const CreateDish = () => {
+  const { t } = useTranslation();
   const { restaurantSlug } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -54,7 +56,6 @@ const CreateDish = () => {
   const handleChange = (e, field, lang = null) => {
     const { name, value, type, checked, files } = e.target;
 
-    // For multi-language fields (name, description, category)
     if (lang) {
       setFormData((prev) => ({
         ...prev,
@@ -67,11 +68,11 @@ const CreateDish = () => {
       } else {
         newAllergens = newAllergens.filter((item) => item !== value);
       }
-      setFormData({ ...formData, allergens: newAllergens });
+      setFormData((prev) => ({ ...prev, allergens: newAllergens }));
     } else if (type === "file") {
-      setFormData({ ...formData, image: files[0] });
+      setFormData((prev) => ({ ...prev, image: files[0] }));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -80,9 +81,9 @@ const CreateDish = () => {
     setError("");
     setSuccess("");
 
-    // Validate required multi-language fields (ensure English version is provided)
+    // Validate required multi-language fields (English version required)
     if (!formData.name.en || !formData.description.en || !formData.category || !formData.price || !restaurantSlug) {
-      setError("English name, description, category, price, and restaurant slug are required.");
+      setError(t("createDish.validationError"));
       return;
     }
 
@@ -94,10 +95,11 @@ const CreateDish = () => {
       };
 
       const data = new FormData();
-      // Append multi-language objects as JSON strings if your backend expects JSON
+      // Append multi-language objects as JSON strings
       data.append("name", JSON.stringify(formData.name));
       data.append("description", JSON.stringify(formData.description));
-      data.append("category", JSON.stringify(formData.category));
+      // Category is a plain string so no need to stringify it
+      data.append("category", formData.category);
       data.append("price", formData.price);
       if (formData.kilocalories) {
         data.append("kilocalories", formData.kilocalories);
@@ -119,7 +121,7 @@ const CreateDish = () => {
       });
 
       setSuccess(response.data.message);
-      // Reset form or redirect
+      // Reset form fields
       setFormData({
         name: { en: "", it: "", ar: "" },
         description: { en: "", it: "", ar: "" },
@@ -134,7 +136,7 @@ const CreateDish = () => {
       });
       navigate(`/admin/manage-restaurants/${restaurantSlug}/dishes`);
     } catch (err) {
-      setError(err.response?.data?.message || "Error creating dish");
+      setError(err.response?.data?.message || t("createDish.errorMessage"));
     } finally {
       setLoading(false);
     }
@@ -142,19 +144,19 @@ const CreateDish = () => {
 
   return (
     <div className="container-fluid my-2 px-3">
-      <h2 className="mb-4">Create Dish</h2>
+      <h2 className="mb-4">{t("createDish.title")}</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
       <form onSubmit={handleSubmit}>
-        {/* Multi-language fields */}
+        {/* Multi-language fields for Dish Name */}
         <div className="mb-3">
-          <label className="form-label">Dish Name</label>
+          <label className="form-label">{t("createDish.dishName")}</label>
           {["en", "it", "ar"].map((lang) => (
             <div key={lang}>
               <input
                 type="text"
                 className="form-control mb-1"
-                placeholder={`Name (${lang.toUpperCase()})`}
+                placeholder={`${t("createDish.namePlaceholder")} (${lang.toUpperCase()})`}
                 value={formData.name[lang]}
                 onChange={(e) => handleChange(e, "name", lang)}
                 required={lang === "en"}
@@ -163,13 +165,14 @@ const CreateDish = () => {
           ))}
         </div>
 
+        {/* Multi-language fields for Description */}
         <div className="mb-3">
-          <label className="form-label">Description</label>
+          <label className="form-label">{t("createDish.description")}</label>
           {["en", "it", "ar"].map((lang) => (
             <div key={lang}>
               <textarea
                 className="form-control mb-1"
-                placeholder={`Description (${lang.toUpperCase()})`}
+                placeholder={`${t("createDish.descriptionPlaceholder")} (${lang.toUpperCase()})`}
                 value={formData.description[lang]}
                 onChange={(e) => handleChange(e, "description", lang)}
                 rows="2"
@@ -179,27 +182,20 @@ const CreateDish = () => {
           ))}
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">Category</label>
-          <select
-            className="form-select mb-1"
-            value={formData.category}
-            onChange={(e) => handleChange(e, "category")} 
-            required
-          >
-            <option value="">Select Category</option>
-            {["Starter", "Main Course", "Dessert", "Beverage", "Side Dish", "Special"].map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Category Field */}
+        <select className="form-select mb-1" name="category" value={formData.category} onChange={handleChange} required>
+          <option value="">{t("createDish.selectCategory")}</option>
+          {["starter", "mainCourse", "dessert", "beverage", "sideDish", "special"].map((key) => (
+            <option key={key} value={key}>
+              {t(`categories.${key}`)}
+            </option>
+          ))}
+        </select>
 
-        {/* Other fields */}
+        {/* Price Field */}
         <div className="mb-3">
           <label htmlFor="price" className="form-label">
-            Price
+            {t("createDish.price")}
           </label>
           <input
             type="number"
@@ -212,9 +208,10 @@ const CreateDish = () => {
           />
         </div>
 
+        {/* Kilocalories Field */}
         <div className="mb-3">
           <label htmlFor="kilocalories" className="form-label">
-            Kilocalories (optional)
+            {t("createDish.kilocalories")}
           </label>
           <input
             type="number"
@@ -226,8 +223,9 @@ const CreateDish = () => {
           />
         </div>
 
+        {/* Availability Fields */}
         <div className="mb-3">
-          <label className="form-label">Availability</label>
+          <label className="form-label">{t("createDish.availability")}</label>
           <div className="row">
             <div className="col">
               <input
@@ -250,12 +248,13 @@ const CreateDish = () => {
               />
             </div>
           </div>
-          <small className="form-text text-muted">Select start and end times for dish availability.</small>
+          <small className="form-text text-muted">{t("createDish.availabilityHelp")}</small>
         </div>
 
+        {/* Image Upload */}
         <div className="mb-3">
           <label htmlFor="image" className="form-label">
-            Image
+            {t("createDish.image")}
           </label>
           <input
             type="file"
@@ -267,22 +266,23 @@ const CreateDish = () => {
           />
         </div>
 
+        {/* Allergens Checkboxes */}
         <div className="mb-3">
-          <label className="form-label">Allergens</label>
+          <label className="form-label">{t("createDish.allergens")}</label>
           <div className="form-check">
-            {allergensList.map((allergen) => (
-              <div key={allergen}>
+            {Object.keys(t("allergens", { returnObjects: true })).map((allergenKey) => (
+              <div key={allergenKey}>
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  id={`allergen-${allergen}`}
+                  id={`allergen-${allergenKey}`}
                   name="allergens"
-                  value={allergen}
-                  checked={formData.allergens.includes(allergen)}
+                  value={allergenKey}
+                  checked={formData.allergens.includes(allergenKey)}
                   onChange={handleChange}
                 />
-                <label className="form-check-label" htmlFor={`allergen-${allergen}`}>
-                  {allergen.charAt(0).toUpperCase() + allergen.slice(1)}
+                <label className="form-check-label" htmlFor={`allergen-${allergenKey}`}>
+                  {t(`allergens.${allergenKey}`)}
                 </label>
               </div>
             ))}
@@ -293,10 +293,10 @@ const CreateDish = () => {
           {loading ? (
             <>
               <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              &nbsp; Creating...
+              &nbsp; {t("createDish.creating")}
             </>
           ) : (
-            "Create Dish"
+            t("createDish.createButton")
           )}
         </button>
       </form>

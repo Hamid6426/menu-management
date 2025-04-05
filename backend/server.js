@@ -23,7 +23,8 @@ app.use(
         "http://localhost:4173", // vite preview (staging)
         "http://localhost:5500",
         "http://127.0.0.1:5500",
-        process.env.BACKEND_URL, 
+        "https://menu-management-frontend-gu7f.onrender.com",
+        process.env.BACKEND_URL,
         process.env.FRONTEND_URL,
       ];
       if (allowedOrigins.includes(origin)) {
@@ -32,7 +33,8 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    exposedHeaders: ['Content-Disposition']
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    exposedHeaders: ["Content-Disposition"],
   })
 );
 

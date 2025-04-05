@@ -45,13 +45,4 @@ router.delete(
   restaurantController.deleteRestaurant
 );
 
-// Upload restaurant logo
-router.post(
-  "/:restaurantSlug/add-logo",
-  protectRoute,
-  upload.single("logo"),
-  authorizeRoles("admin", "manager", "super-admin"),
-  restaurantController.uploadRestaurantLogo
-);
-
 module.exports = router;

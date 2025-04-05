@@ -91,7 +91,7 @@ exports.createRestaurant = async (req, res) => {
 // Get all restaurants with pagination
 exports.getAllRestaurants = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, lang = "en" } = req.query; // Default to English
 
     const restaurants = await Restaurant.find()
       .sort({ createdAt: -1 }) // Newest first
@@ -100,11 +100,11 @@ exports.getAllRestaurants = async (req, res) => {
 
     const totalRestaurants = await Restaurant.countDocuments();
 
-    // Format the response to return the correct language
+    // Format the response with proper language handling
     const formattedRestaurants = restaurants.map((restaurant) => ({
       ...restaurant.toObject(),
-      name: restaurant.name[lang] || restaurant.name.en, // Fallback to English if missing
-      location: restaurant.location[lang] || restaurant.location.en, // Fallback to English if missing
+      name: restaurant.name?.[lang] || restaurant.name?.en || "Unknown",
+      location: restaurant.location?.[lang] || restaurant.location?.en || "Unknown",
     }));
 
     res.status(200).json({
@@ -116,95 +116,6 @@ exports.getAllRestaurants = async (req, res) => {
     });
   } catch (error) {
     console.error("Get Restaurants Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// Get a single restaurant by slug
-exports.getRestaurantBySlug = async (req, res) => {
-  try {
-    const { restaurantSlug } = req.params;
-
-    // Use findOne with restaurantSlug
-    const restaurant = await Restaurant.findOne({ restaurantSlug });
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found" });
-    }
-
-    res.status(200).json({ message: "Restaurant fetched successfully", restaurant });
-  } catch (error) {
-    console.error("Get Restaurant By Slug Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// Update a restaurant by slug
-exports.updateRestaurant = async (req, res) => {
-  try {
-    const { restaurantSlug } = req.params;
-    const { name, location, logo, brandColors, languages } = req.body;
-
-    // Find the restaurant by slug
-    const restaurant = await Restaurant.findOne({ restaurantSlug });
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found" });
-    }
-
-    // Only Super Admin or the creator can update (compare usernames)
-    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
-      return res.status(403).json({
-        message: "Forbidden: You do not have permission to update this restaurant.",
-      });
-    }
-
-    // Update fields as needed
-    if (name) restaurant.name = name;
-    if (location) restaurant.location = location;
-    if (logo) restaurant.logo = logo;
-    if (brandColors) restaurant.brandColors = brandColors;
-    if (languages && languages.length > 0) restaurant.languages = languages;
-
-    // Optionally, if name changes, update restaurantSlug too
-    if (name) {
-      const newSlug = slugify(name, { lower: true, strict: true });
-      restaurant.restaurantSlug = newSlug;
-    }
-
-    await restaurant.save();
-    res.status(200).json({ message: "Restaurant updated successfully", restaurant });
-  } catch (error) {
-    console.error("Update Restaurant Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// Delete a restaurant by slug
-exports.deleteRestaurant = async (req, res) => {
-  try {
-    const { restaurantSlug } = req.params;
-
-    // Find the restaurant by slug
-    const restaurant = await Restaurant.findOne({ restaurantSlug });
-    if (!restaurant) {
-      return res.status(404).json({ message: "Restaurant not found" });
-    }
-
-    // Only Super Admin or the creator can delete
-    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
-      return res.status(403).json({
-        message: "Forbidden: You do not have permission to delete this restaurant.",
-      });
-    }
-
-    // Delete associated menus by matching restaurantSlug in menus
-    await Menu.deleteMany({ restaurantSlug: restaurant.restaurantSlug });
-
-    // Delete the restaurant
-    await Restaurant.findOneAndDelete({ restaurantSlug });
-
-    res.status(200).json({ message: "Restaurant deleted successfully" });
-  } catch (error) {
-    console.error("Delete Restaurant Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -227,38 +138,154 @@ exports.getCurrentUserRestaurants = async (req, res) => {
   }
 };
 
-// Upload restaurant logo using Multer and Sharp
-exports.uploadRestaurantLogo = async (req, res) => {
+// Get a single restaurant by slug
+exports.getRestaurantBySlug = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
-    }
-    const sharp = require("sharp");
-    const fs = require("fs");
-    const path = require("path");
+    const { restaurantSlug } = req.params;
+    const { lang = "en" } = req.query; // Default language is English
 
-    // Input file saved by multer
-    const inputPath = req.file.path;
-    const outputDir = path.join(__dirname, "../uploads");
-    const outputPath = path.join(outputDir, "optimized_" + req.file.filename);
-
-    // Ensure the output directory exists
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    // Find restaurant by slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug }).lean();
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
     }
 
-    // Resize and optimize the image
-    await sharp(inputPath).resize({ width: 300 }).toFile(outputPath);
-
-    // Optionally delete the original file
-    fs.unlinkSync(inputPath);
+    // Format the response with the correct language
+    const formattedRestaurant = {
+      ...restaurant,
+      name: restaurant.name?.[lang] || restaurant.name?.en || "Unknown",
+      location: restaurant.location?.[lang] || restaurant.location?.en || "Unknown",
+    };
 
     res.status(200).json({
-      message: "Logo uploaded successfully",
-      logoPath: outputPath,
+      message: "Restaurant fetched successfully",
+      restaurant: formattedRestaurant,
     });
   } catch (error) {
-    console.error("Upload Restaurant Logo Error:", error);
+    console.error("Get Restaurant By Slug Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Update a restaurant by slug
+exports.updateRestaurant = async (req, res) => {
+  try {
+    const { restaurantSlug } = req.params;
+    const { name, location, brandColors, languages } = req.body;
+    const { username } = req.user;
+
+    // Ensure restaurant exists
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // Only Super Admin or the creator can update (compare usernames)
+    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
+      return res.status(403).json({
+        message: "Forbidden: You do not have permission to update this restaurant.",
+      });
+    }
+
+     // Ensure 'name' contains at least the English name
+     if (name && (typeof name !== "object" || !name.en)) {
+      return res.status(400).json({ message: "Name must be an object with at least an English name (en)." });
+    }
+
+    // Validate languages input and ensure it's a valid array
+    let parsedLanguages;
+    if (languages) {
+      try {
+        parsedLanguages = typeof languages === "string" ? JSON.parse(languages) : languages;
+        if (!Array.isArray(parsedLanguages) || parsedLanguages.length === 0) {
+          throw new Error("Languages must be a non-empty array.");
+        }
+        const allowedLanguages = ["en", "it", "ar"];
+        if (!parsedLanguages.every((lang) => allowedLanguages.includes(lang))) {
+          return res.status(400).json({ message: "Invalid language selection." });
+        }
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid languages format." });
+      }
+    }
+
+    // Ensure brandColors is a valid object (parse if it's a string)
+    let parsedBrandColors;
+    if (brandColors) {
+      try {
+        parsedBrandColors = typeof brandColors === "string" ? JSON.parse(brandColors) : brandColors;
+        if (typeof parsedBrandColors !== "object") {
+          return res.status(400).json({ message: "Brand colors must be an object." });
+        }
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid brandColors format." });
+      }
+    }
+
+    // If the name is updated, regenerate the slug
+    if (name) {
+      const newSlug = slugify(name.en, { lower: true, strict: true });
+      // Check if the new slug already exists (to avoid duplicates)
+      const existingSlug = await Restaurant.findOne({ restaurantSlug: newSlug });
+      if (existingSlug && existingSlug.restaurantSlug !== restaurant.restaurantSlug) {
+        return res.status(409).json({ message: "Slug already taken, please choose a different name." });
+      }
+      restaurant.restaurantSlug = newSlug;
+    }
+
+    // Update fields as needed
+    if (name) restaurant.name = name;
+    if (location) restaurant.location = location;
+    if (parsedBrandColors) restaurant.brandColors = parsedBrandColors;
+    if (parsedLanguages && parsedLanguages.length > 0) restaurant.languages = parsedLanguages;
+
+    // Check if the logo file exists and update it
+    if (req.file) {
+      restaurant.restaurantLogo = req.file.buffer;
+    }
+
+    // Remove restaurant logo from response to reduce payload size
+    const responseRestaurant = restaurant.toObject();
+    delete responseRestaurant.restaurantLogo;
+
+    // Save the updated restaurant
+    await restaurant.save();
+
+    res.status(200).json({ message: "Restaurant updated successfully", restaurant: responseRestaurant });
+  } catch (error) {
+    console.error("Update Restaurant Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+// Delete a restaurant and its associatd dishes by slug
+exports.deleteRestaurant = async (req, res) => {
+  try {
+    const { restaurantSlug } = req.params;
+
+    // Find the restaurant by slug
+    const restaurant = await Restaurant.findOne({ restaurantSlug });
+    if (!restaurant) {
+      return res.status(404).json({ message: "Restaurant not found" });
+    }
+
+    // Only Super Admin or the creator can delete
+    if (req.user.role !== "super-admin" && req.user.username !== restaurant.createdBy) {
+      return res.status(403).json({
+        message: "Forbidden: You do not have permission to delete this restaurant.",
+      });
+    }
+
+    // Optionally, delete associated menus by matching restaurantSlug in menus
+    const Dish = require("../models/Dish"); // Import Menu model
+    await Dish.deleteMany({ restaurantSlug: restaurant.restaurantSlug });
+
+    // Delete the restaurant
+    await Restaurant.findOneAndDelete({ restaurantSlug });
+
+    res.status(200).json({ message: "Restaurant deleted successfully" });
+  } catch (error) {
+    console.error("Delete Restaurant Error:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };

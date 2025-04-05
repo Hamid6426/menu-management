@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
+import { useTranslation } from "react-i18next";
 
 const ShowRestaurant = () => {
   const { restaurantSlug } = useParams();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en"; // Use the global language from i18n
+
   const [restaurant, setRestaurant] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert ArrayBuffer to Base64
+  // Convert ArrayBuffer to Base64 (if restaurantLogo is stored as binary data)
   const arrayBufferToBase64 = (buffer) => {
     let binary = "";
     const bytes = new Uint8Array(buffer);
@@ -17,11 +21,14 @@ const ShowRestaurant = () => {
   };
 
   useEffect(() => {
-    const fetchRestaurant = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const response = await axiosInstance.get(`/restaurants/${restaurantSlug}/get`);
+    if (!restaurantSlug) return;
+
+    setLoading(true);
+    setError("");
+
+    axiosInstance
+      .get(`/restaurants/${restaurantSlug}/get?lang=${currentLang}`)
+      .then((response) => {
         let restaurantData = response.data?.restaurant || null;
 
         // Convert restaurantLogo if available
@@ -32,15 +39,14 @@ const ShowRestaurant = () => {
         }
 
         setRestaurant(restaurantData);
-      } catch (err) {
+      })
+      .catch((err) => {
         setError(err.response?.data?.message || "Error fetching restaurant details.");
-      } finally {
+      })
+      .finally(() => {
         setLoading(false);
-      }
-    };
-
-    if (restaurantSlug) fetchRestaurant();
-  }, [restaurantSlug]);
+      });
+  }, [restaurantSlug, currentLang]);
 
   if (loading) {
     return (
@@ -81,24 +87,35 @@ const ShowRestaurant = () => {
       <div className="container-fluid my-3">
         <div className="restaurant-details text-center">
           <h2 className="mb-3">{restaurant.name}</h2>
-          <p><strong>Location:</strong> {restaurant.location || "N/A"}</p>
+          <p>
+            <strong>Location:</strong> {restaurant.location || "N/A"}
+          </p>
 
           {restaurant.brandColors && (
             <div className="mb-3">
               <strong>Brand Colors:</strong>
               <div className="d-flex justify-content-center mt-2">
                 {restaurant.brandColors?.primary && (
-                  <span className="color-badge me-2" style={{ backgroundColor: restaurant.brandColors.primary }}>
+                  <span
+                    className="color-badge me-2"
+                    style={{ backgroundColor: restaurant.brandColors.primary }}
+                  >
                     Primary
                   </span>
                 )}
                 {restaurant.brandColors?.secondary && (
-                  <span className="color-badge me-2" style={{ backgroundColor: restaurant.brandColors.secondary }}>
+                  <span
+                    className="color-badge me-2"
+                    style={{ backgroundColor: restaurant.brandColors.secondary }}
+                  >
                     Secondary
                   </span>
                 )}
                 {restaurant.brandColors?.tertiary && (
-                  <span className="color-badge" style={{ backgroundColor: restaurant.brandColors.tertiary }}>
+                  <span
+                    className="color-badge"
+                    style={{ backgroundColor: restaurant.brandColors.tertiary }}
+                  >
                     Tertiary
                   </span>
                 )}

@@ -4,8 +4,12 @@ import axiosInstance from "../../utils/axiosInstance";
 import { MdVisibility, MdEdit, MdMenu } from "react-icons/md";
 import DeleteRestaurantButton from "../../components/DeleteRestaurantButton";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 const ManageRestaurants = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || "en"; // Get the current language from i18n
+
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,7 +18,7 @@ const ManageRestaurants = () => {
   const [total, setTotal] = useState(0);
 
   const token = localStorage.getItem("token");
-  const decoded = jwtDecode(token);
+  const decoded = token ? jwtDecode(token) : null;
   const username = decoded?.username;
 
   const fetchRestaurants = async () => {
@@ -22,10 +26,10 @@ const ManageRestaurants = () => {
     setError("");
     try {
       const response = await axiosInstance.get(
-        `/restaurants/${username}?page=${page}&limit=${limit}`
+        `/restaurants/${username}?page=${page}&limit=${limit}&lang=${currentLang}`
       );
-      // Assume the response returns an array of restaurants under response.data.restaurants
       setRestaurants(response.data.restaurants);
+      setTotal(response.data.total);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load restaurants.");
     } finally {
@@ -35,7 +39,7 @@ const ManageRestaurants = () => {
 
   useEffect(() => {
     if (username) fetchRestaurants();
-  }, [username, page, limit]);
+  }, [username, page, limit, currentLang]);
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -84,7 +88,7 @@ const ManageRestaurants = () => {
                       {restaurant.logo ? (
                         <img
                           src={restaurant.logo}
-                          alt={restaurant.name.en}
+                          alt={restaurant.name?.[currentLang] || restaurant.name?.en || "Unknown"}
                           style={{
                             width: "50px",
                             height: "50px",
@@ -95,11 +99,9 @@ const ManageRestaurants = () => {
                         "N/A"
                       )}
                     </td>
-                    <td>{restaurant.name.en}</td>
-                    <td>{restaurant.location.en}</td>
-                    <td>
-                      {new Date(restaurant.createdAt).toLocaleDateString()}
-                    </td>
+                    <td>{restaurant.name?.[currentLang] || restaurant.name?.en || "Unknown"}</td>
+                    <td>{restaurant.location?.[currentLang] || restaurant.location?.en || "Unknown"}</td>
+                    <td>{new Date(restaurant.createdAt).toLocaleDateString()}</td>
                     <td>
                       <Link
                         to={`/admin/manage-restaurants/${restaurant.restaurantSlug}/dishes`}
@@ -143,9 +145,7 @@ const ManageRestaurants = () => {
                   (_, index) => (
                     <li
                       key={index}
-                      className={`page-item ${
-                        page === index + 1 ? "active" : ""
-                      }`}
+                      className={`page-item ${page === index + 1 ? "active" : ""}`}
                     >
                       <button
                         className="page-link"

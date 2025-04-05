@@ -3,12 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { MdEdit, MdVisibility, MdDelete, MdAdd } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 const ManageDishes = () => {
   const { restaurantSlug } = useParams();
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const token = localStorage.getItem("token");
   const decoded = jwtDecode(token);
@@ -114,15 +116,20 @@ const ManageDishes = () => {
                   <td>{dish.description || "N/A"}</td>
                   <td>{dish.price.toFixed(2)}</td>
                   <td>{dish.kilocalories || "N/A"}</td>
-                  <td>{dish.category}</td>
-                  <td>{dish.allergens?.length > 0 ? dish.allergens.join(", ") : "None"}</td>
+                  {/* Translate the category using the translation hook */}
+                  <td>{t(`categories.${dish.category}`)}</td>
+                  <td>
+                    {dish.allergens?.length > 0
+                      ? dish.allergens.map((allergen, index) => t(`allergens.${allergen}`)).join(", ")
+                      : "None"}
+                  </td>
                   <td>
                     {dish.availability?.startTime && dish.availability?.endTime
                       ? `${dish.availability.startTime} - ${dish.availability.endTime} min`
                       : "N/A"}
                   </td>
                   <td>{dish.isEnabled ? "Enabled" : "Disabled"}</td>
-                  <td className="d-flex gap-2 h-100" style={{ borderRight:"1px solid #ddd", paddingBottom:"3.6rem" }}>
+                  <td className="d-flex gap-2 h-100" style={{ borderRight: "1px solid #ddd", paddingBottom: "3.6rem" }}>
                     <Link
                       to={`/admin/${restaurantSlug}/${dish.dishSlug}/update-dish`}
                       className="btn btn-sm btn-warning"

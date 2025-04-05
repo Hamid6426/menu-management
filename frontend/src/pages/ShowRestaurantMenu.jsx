@@ -4,6 +4,7 @@ import axiosInstance from "../utils/axiosInstance";
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
 import AllergyFilter from "../components/AllergyFilter";
+import { useTranslation } from "react-i18next";
 
 const ShowRestaurantMenu = () => {
   const { restaurantSlug } = useParams();
@@ -16,6 +17,8 @@ const ShowRestaurantMenu = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAllergens, setSelectedAllergens] = useState([]);
   const [availableAllergens, setAvailableAllergens] = useState([]);
+
+  const { t } = useTranslation();
 
   const arrayBufferToBase64 = (buffer) => {
     let binary = "";
@@ -37,7 +40,7 @@ const ShowRestaurantMenu = () => {
       setFilteredDishes(formattedDishes);
 
       // Extract categories from the dishes
-      const uniqueCategories = ["All", ...new Set(formattedDishes.map((dish) => dish.category))];
+      const uniqueCategories = [t("showRestaurantMenu.all"), ...new Set(formattedDishes.map((dish) => dish.category))];
       setCategories(uniqueCategories);
 
       // Extract unique allergens from all dishes
@@ -59,7 +62,7 @@ const ShowRestaurantMenu = () => {
     let filtered = [...dishes];
 
     // Filter by category
-    if (selectedCategory !== "All") {
+    if (selectedCategory !== t("showRestaurantMenu.all")) { // Using translated "All" here
       filtered = filtered.filter((dish) => dish.category === selectedCategory);
     }
 
@@ -106,7 +109,7 @@ const ShowRestaurantMenu = () => {
       {error && <div className="alert alert-danger">{error}</div>}
 
       <div className="mt-3 d-flex align-items-start gap-2">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} placeholder={t("showRestaurantMenu.searchPlaceholder")} />
         <CategoryFilter
           categories={categories}
           selectedCategory={selectedCategory}
@@ -124,11 +127,11 @@ const ShowRestaurantMenu = () => {
           <div className="spinner-border text-primary"></div>
         </div>
       ) : filteredDishes.length === 0 ? (
-        <div className="alert alert-info">No dishes found.</div>
+        <div className="alert alert-info">{t("showRestaurantMenu.noDishesFound")}</div>
       ) : (
         Object.entries(groupedDishes).map(([category, dishesInCategory]) => (
           <div key={category} className="mb-3">
-            <h2 className="fw-bold fst-italic my-3">{category}</h2>
+            <h2 className="fw-bold fst-italic my-3">{t(`categories.${category}`, category)}</h2>
             <div className="row row-cols-1 row-cols-md-4 g-4">
               {dishesInCategory.map((dish) => (
                 <div className="col" key={dish._id}>
@@ -148,18 +151,20 @@ const ShowRestaurantMenu = () => {
                         {dish.description || "No description available"}
                       </div>
                       <div className="fw-bold mt-2" style={{ fontSize: "0.8rem" }}>
-                        {dish.kilocalories} kcal
+                        {dish.kilocalories} {t("showRestaurantMenu.kcal")}
                       </div>
                       <div className="mt-2">
                         <div className="d-flex flex-row align-items-center flex-wrap gap-2">
-                          {dish.allergens && dish.allergens.length > 1 ? (
+                          {dish.allergens && dish.allergens.length > 0 ? (
                             dish.allergens.map((allergen, index) => (
                               <div key={index} className="badge bg-warning text-dark">
-                                {allergen}
+                                {t(`allergens.${allergen}`)}
                               </div>
                             ))
                           ) : (
-                            <li className="badge bg-success text-white">No Allergens</li>
+                            <li className="badge bg-success text-white">
+                              {t("allergens.none", "No Allergens")}
+                            </li>
                           )}
                         </div>
                       </div>

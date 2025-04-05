@@ -4,13 +4,20 @@ const slugify = require("slugify");
 
 exports.createDish = async (req, res) => {
   try {
-    // Expect multi-language objects for name, description, and category
-    const { name, description, price, kilocalories, category, allergens, availability } = req.body;
+    // Expect multi-language objects for name and description
+    let { name, description, price, kilocalories, category, allergens, availability } = req.body;
     const { restaurantSlug } = req.params;
     const { username } = req.user;
 
-    // Ensure the English name is provided for the dishSlug requirement.
-    if (!name || !name.en) {
+    console.log("Received Name:", name);
+
+    if (typeof name === "string") {
+      name = JSON.parse(name); // Parse the stringified JSON object
+    }
+    if (typeof description === "string") {
+      description = JSON.parse(description);
+    }
+    if (!name.en) {
       return res.status(400).json({ message: "English name is required" });
     }
 
@@ -47,10 +54,7 @@ exports.createDish = async (req, res) => {
       });
     }
 
-    name = JSON.parse(req.body.name);
-    description = JSON.parse(req.body.description);
-
-    // Build dish data using multi-language fields
+    // Build dish data using multi-language fields directly, no need to parse
     const dishData = {
       name: {
         en: name.en,
@@ -65,9 +69,9 @@ exports.createDish = async (req, res) => {
       dishSlug: generatedDishSlug,
       price: Number(price),
       kilocalories: kilocalories ? Number(kilocalories) : undefined,
-      category,
-      allergens: allergens || [], // Allergens are be an array of strings ["fish", "dairy"]
-      availability, // Already converted in middleware
+      category, // category remains a single language string per schema
+      allergens: allergens || [], // allergens as an array of strings
+      availability, // Assume already processed by middleware
       restaurantSlug,
       createdBy: username,
     };
@@ -80,7 +84,7 @@ exports.createDish = async (req, res) => {
     const dish = new Dish(dishData);
     await dish.save();
 
-    // Add dish reference to the restaurant
+    // Optionally add dish reference to the restaurant if required
     restaurant.dishes.push(dish.dishSlug);
     await restaurant.save();
 
@@ -117,14 +121,13 @@ exports.getCurrentRestaurantDishes = async (req, res) => {
     const formattedDishes = dishes.map((dish) => {
       const dishObj = dish.toObject();
 
+      // For multi-language fields: name and description
       dishObj.name = dish.name[lang] || dish.name.en;
       dishObj.description = dish.description[lang] || dish.description.en;
-      dishObj.category = dish.category[lang] || dish.category.en;
 
-      // If needed, process allergens as well (assuming allergens are stored similarly)
-      if (Array.isArray(dish.allergens)) {
-        dishObj.allergens = dish.allergens.map((allergen) => allergen[lang] || allergen.en);
-      }
+      // Category and allergens are not multilingual so they remain unchanged
+      // dishObj.category remains a string (e.g., "Starter")
+      // dishObj.allergens remains an array of strings
 
       return dishObj;
     });
@@ -136,31 +139,34 @@ exports.getCurrentRestaurantDishes = async (req, res) => {
   }
 };
 
-exports.getCurrentRestaurantAllergens = async (req, res) => {
-  const { restaurantSlug } = req.params;
-
+exports.getAllDishes = async (_req, res) => {
+  
   try {
-    // Find dishes for the restaurant and aggregate distinct allergens
-    const allergens = await Dish.aggregate([
-      { $match: { restaurantSlug } }, // Filter by restaurant
-      { $unwind: "$allergens" }, // Flatten the allergens array
-      { $group: { _id: "$allergens" } }, // Group by allergen
-      { $project: { allergen: "$_id", _id: 0 } }, // Project only the allergen field
-    ]);
-
-    res.json({ allergens: allergens.map((item) => item.allergen) });
-  } catch (err) {
-    res.status(500).json({ message: "Error fetching allergens." });
+    const dishes = await Dish.find();
+    res.status(200).json({ dishes });
+  } catch (error) {
+    console.error("Get All Dishes Error:", error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-exports.getDishImage = async (req, res) => {
-  const dish = await Dish.findOne({ dishSlug: req.params.dishSlug });
-  if (!dish?.dishImage) return res.status(404).send();
+// exports.getCurrentRestaurantAllergens = async (req, res) => {
+//   const { restaurantSlug } = req.params;
 
-  res.set("Content-Type", "image/webp"); // Adjust if using WebP
-  res.send(dish.dishImage);
-};
+//   try {
+//     // Find dishes for the restaurant and aggregate distinct allergens
+//     const allergens = await Dish.aggregate([
+//       { $match: { restaurantSlug } }, // Filter by restaurant
+//       { $unwind: "$allergens" }, // Flatten the allergens array
+//       { $group: { _id: "$allergens" } }, // Group by allergen
+//       { $project: { allergen: "$_id", _id: 0 } }, // Project only the allergen field
+//     ]);
+
+//     res.json({ allergens: allergens.map((item) => item.allergen) });
+//   } catch (err) {
+//     res.status(500).json({ message: "Error fetching allergens." });
+//   }
+// };
 
 // Get a single dish by its slug (instead of its ID)
 exports.getDishBySlug = async (req, res) => {
@@ -184,7 +190,7 @@ exports.updateDish = async (req, res) => {
     const { name, description, price, kilocalories, category, allergens, availability } = req.body;
     const { username } = req.user;
 
-    // Authorization check
+    // Authorization check: Only Admins or Super Admins can update dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
         message: "Forbidden: Only Admins or Super Admins can update dishes.",
@@ -197,20 +203,25 @@ exports.updateDish = async (req, res) => {
       return res.status(404).json({ message: "Dish not found." });
     }
 
-    // Create an object for allowed updates
+    // Prepare update object
     const updates = {};
 
+    // Update name and regenerate the dishSlug
     if (name) {
       updates.name = name;
-      updates.dishSlug = slugify(name, { lower: true, strict: true });
+      const newDishSlug = slugify(name.en, { lower: true, strict: true });
+      updates.dishSlug = newDishSlug;
 
       // Ensure the new dishSlug doesn't conflict with existing dishes
-      const existingDish = await Dish.findOne({ dishSlug: updates.dishSlug, restaurantSlug: dish.restaurantSlug });
+      const existingDish = await Dish.findOne({ dishSlug: newDishSlug, restaurantSlug: dish.restaurantSlug });
       if (existingDish && existingDish._id.toString() !== dish._id.toString()) {
-        return res.status(400).json({ message: "A dish with this name already exists in this restaurant." });
+        return res.status(400).json({
+          message: "A dish with this name already exists in this restaurant.",
+        });
       }
     }
 
+    // Update description, category, allergens, and availability
     if (description) updates.description = description;
     if (category) updates.category = category;
     if (allergens) updates.allergens = allergens;
@@ -224,7 +235,7 @@ exports.updateDish = async (req, res) => {
       updates.availability = availability;
     }
 
-    // Numeric validation
+    // Validate and update price
     if (price !== undefined) {
       if (isNaN(price) || price <= 0) {
         return res.status(400).json({ message: "Price must be a positive number." });
@@ -232,6 +243,7 @@ exports.updateDish = async (req, res) => {
       updates.price = Number(price);
     }
 
+    // Validate and update kilocalories
     if (kilocalories !== undefined) {
       if (isNaN(kilocalories) || kilocalories < 0) {
         return res.status(400).json({ message: "Kilocalories must be a positive number." });
@@ -239,52 +251,58 @@ exports.updateDish = async (req, res) => {
       updates.kilocalories = Number(kilocalories);
     }
 
-    // If a new dish image is provided, update it
+    // Handle new dish image upload if available
     if (req.file) {
       updates.dishImage = req.file.buffer;
     }
 
-    // Perform update
+    // Perform the update
     const updatedDish = await Dish.findOneAndUpdate({ dishSlug }, updates, {
       new: true,
-      runValidators: true,
+      runValidators: true, // Ensure that schema validations are run
     });
 
     if (!updatedDish) {
       return res.status(404).json({ message: "Dish not found after update attempt." });
     }
 
-    return res.status(200).json({ message: "Dish updated successfully", dish: updatedDish });
+    return res.status(200).json({
+      message: "Dish updated successfully",
+      dish: updatedDish,
+    });
   } catch (error) {
     console.error("Update Dish Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+
+
 // Delete a dish by its slug
 exports.deleteDish = async (req, res) => {
   try {
-    const { dishSlug } = req.params;
+    const { dishSlug } = req.params; // Extract the dishSlug from params
 
-    // Only Admins or Super Admins can delete dishes
+    // Authorization check: Only Admins or Super Admins can delete dishes
     if (req.user.role !== "super-admin" && req.user.role !== "admin") {
       return res.status(403).json({
         message: "Forbidden: Only Admins or Super Admins can delete dishes.",
       });
     }
 
-    // Find the dish to delete by its slug
+    // Check if the dish exists
     const dish = await Dish.findOne({ dishSlug });
     if (!dish) {
       return res.status(404).json({ message: "Dish not found." });
     }
 
-    // Remove the dish document from the database
+    // Remove the dish from the database
     await dish.remove();
 
     return res.status(200).json({ message: "Dish deleted successfully" });
   } catch (error) {
-    console.error("Delete Dish Error:", error);
+    console.error("Delete Dish Error:", error); // Log any error that occurs
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+

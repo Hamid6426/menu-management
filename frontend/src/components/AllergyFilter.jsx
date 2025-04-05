@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AllergyFilter = ({ availableAllergens, selectedAllergens, setSelectedAllergens }) => {
   const { t } = useTranslation();
@@ -41,17 +41,13 @@ const AllergyFilter = ({ availableAllergens, selectedAllergens, setSelectedAller
         <input
           type="text"
           className="form-control"
-          placeholder={t('allergyFilter.searchPlaceholder')}
+          placeholder={t("allergyFilter.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           style={{ height: "40px" }}
         />
-        <button 
-          className="btn btn-secondary ms-2" 
-          style={{ height: "40px" }} 
-          onClick={() => setIsVisible(!isVisible)}
-        >
-          {isVisible ? t('allergyFilter.hide') : t('allergyFilter.show')}
+        <button className="btn btn-secondary ms-2" style={{ height: "40px" }} onClick={() => setIsVisible(!isVisible)}>
+          {isVisible ? t("allergyFilter.hide") : t("allergyFilter.show")}
         </button>
       </div>
       {isVisible && (
@@ -78,7 +74,7 @@ const AllergyFilter = ({ availableAllergens, selectedAllergens, setSelectedAller
                 onChange={() => handleCheckboxChange(allergen)}
               />
               <label htmlFor={allergen} className="ms-2">
-                {allergen.charAt(0).toUpperCase() + allergen.slice(1)}
+                {t(`allergens.${allergen}`, allergen.charAt(0).toUpperCase() + allergen.slice(1))}
               </label>
             </div>
           ))}

@@ -1,0 +1,77 @@
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
+
+const ResetPassword = () => {
+  const { resetToken } = useParams();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    newPassword: "",
+  });
+
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await axiosInstance.post(`/auth/reset-password/${resetToken}`, formData);
+      setSuccess(response.data.message || "Password has been reset.");
+      setTimeout(() => navigate("/login"), 3000);
+    } catch (err) {
+      setError(err.response?.data?.message || "Something went wrong.");
+    }
+  };
+
+  return (
+    <div className="reset-password-form p-4 rounded shadow bg-white mx-auto" style={{ maxWidth: "400px" }}>
+      <h2 className="mb-4 text-center">Reset Password</h2>
+
+      {error && <div className="alert alert-danger">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
+
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
+          <label className="form-label">Email Address</label>
+          <input
+            type="email"
+            name="email"
+            className="form-control"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">New Password</label>
+          <input
+            type="password"
+            name="newPassword"
+            className="form-control"
+            value={formData.newPassword}
+            onChange={handleChange}
+            placeholder="Enter new password"
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-primary w-100">
+          Reset Password
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default ResetPassword;

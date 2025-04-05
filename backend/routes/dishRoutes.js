@@ -4,7 +4,7 @@ const {
   protectRoute,
   authorizeRoles,
   convertAvailabilityTime,
-  convertToObjectId,
+  // convertToObjectId,
 } = require("../middlewares/middlewares");
 const { upload, processImage } = require("../middlewares/uploadMiddleware");
 
@@ -23,9 +23,11 @@ router.post(
 
 // List all dishes for a given menu by its slug
 router.get("/:restaurantSlug", dishController.getCurrentRestaurantDishes);
-router.get("/:restaurantSlug/allergens", dishController.getCurrentRestaurantAllergens);
 
-router.get("/:dishSlug/image", dishController.getDishImage);
+// router.get("/:restaurantSlug/allergens", dishController.getCurrentRestaurantAllergens);
+
+router.get("/", dishController.getAllDishes);
+// router.get("/:dishSlug/image", dishController.getDishImage);
 
 // Get a single dish by its slug
 router.get("/:dishSlug", protectRoute, dishController.getDishBySlug);

@@ -170,6 +170,33 @@
   "searchBar": {
     "placeholder": "ابحث عن الأطباق..."
   },
+  "createDish": {
+    "title": "إنشاء طبق",
+    "dishName": "اسم الطبق",
+    "namePlaceholder": "أدخل اسم الطبق",
+    "description": "الوصف",
+    "descriptionPlaceholder": "أدخل الوصف",
+    "category": "الفئة",
+    "selectCategory": "اختر الفئة",
+    "price": "السعر",
+    "kilocalories": "السعرات الحرارية (اختياري)",
+    "availability": "التوافر",
+    "availabilityHelp": "حدد وقت البدء والانتهاء لتوافر الطبق.",
+    "image": "صورة الطبق",
+    "allergens": "المواد المسببة للحساسية",
+    "creating": "جاري الإنشاء...",
+    "createButton": "إنشاء طبق",
+    "validationError": "الاسم والوصف باللغة الإنجليزية، الفئة، السعر، وSlug المطعم مطلوبة.",
+    "errorMessage": "حدث خطأ أثناء إنشاء الطبق"
+  },
+  "showRestaurantMenu": {
+    "pageTitle": "قائمة الطعام",
+    "searchPlaceholder": "ابحث عن الأطباق...",
+    "noDishesFound": "لم يتم العثور على أطباق.",
+    "groupTitle": "الفئة",
+    "kcal": "كيلو كالوري",
+    "all": "الكل"
+  },
   "categories": {
     "starter": "مقبلات",
     "mainCourse": "الوجبة الرئيسية",

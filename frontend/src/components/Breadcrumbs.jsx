@@ -13,7 +13,7 @@ const Breadcrumbs = () => {
       <ol className="breadcrumb bg-light rounded p-2 d-flex align-items-center shadow-sm">
         <li className="breadcrumb-item">
           <Link to="/" className="text-decoration-none text-dark fw-bold d-flex align-items-center">
-            <MdHome size={18} className="me-1" /> {t('breadcrumbs.home')}
+            <MdHome size={18} className="me-1" /> Home
           </Link>
         </li>
         {pathnames.map((value, index) => {

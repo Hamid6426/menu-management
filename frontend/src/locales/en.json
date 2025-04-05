@@ -170,6 +170,33 @@
   "searchBar": {
     "placeholder": "Search dishes..."
   },
+  "createDish": {
+    "title": "Create Dish",
+    "dishName": "Dish Name",
+    "namePlaceholder": "Enter dish name",
+    "description": "Description",
+    "descriptionPlaceholder": "Enter description",
+    "category": "Category",
+    "selectCategory": "Select Category",
+    "price": "Price",
+    "kilocalories": "Kilocalories (optional)",
+    "availability": "Availability",
+    "availabilityHelp": "Select start and end times for dish availability.",
+    "image": "Dish Image",
+    "allergens": "Allergens",
+    "creating": "Creating...",
+    "createButton": "Create Dish",
+    "validationError": "English name, description, category, price, and restaurant slug are required.",
+    "errorMessage": "Error creating dish"
+  },
+  "showRestaurantMenu": {
+    "pageTitle": "Restaurant Menu",
+    "searchPlaceholder": "Search dishes...",
+    "noDishesFound": "No dishes found.",
+    "groupTitle": "Category",
+    "kcal": "kcal",
+    "all": "All"
+  },
   "categories": {
     "starter": "Starter",
     "mainCourse": "Main Course",
