@@ -139,7 +139,8 @@
     "contact": "Contact",
     "pricing": "Pricing",
     "login": "Login",
-    "getStarted": "GET STARTED"
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard"
   },
   "languageSwitcher": {
     "selectLanguage": "Select Language",

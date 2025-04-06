@@ -9,3 +9,18 @@ body {
   min-height: 100vh;
   font-family: 'Roboto', sans-serif;
 }
+
+:root {
+  --color-text-dark: #2C1810;
+  --color-text-muted: #6B4F4F;
+  --color-orange: #E86A33;
+  --color-orange-light: #FF8551;
+  --color-cream: #FFF8F3;
+  --color-cream-dark: #FFE6D4;
+  --color-white: #ffffff;
+  --color-footer-bg: #2C1810;
+  --color-footer-link: #FFE6D4;
+
+  --shadow-light: rgba(232, 106, 51, 0.1);
+  --shadow-muted: rgba(44, 24, 16, 0.1);
+}

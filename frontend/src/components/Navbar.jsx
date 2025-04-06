@@ -1,17 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // Import useTranslation hook
+import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const navItems = [
   { labelKey: "navbar.restaurants", href: "/restaurants" },
   { labelKey: "navbar.contact", href: "/contact" },
   { labelKey: "navbar.pricing", href: "/pricing" },
-  { labelKey: "navbar.login", href: "/login" },
+  { labelKey: "navbar.login", href: "/login", authOnly: false }, // Login shown only when no token
 ];
 
 const Navbar = () => {
-  const { t } = useTranslation();  // Initialize useTranslation
+  const { t } = useTranslation();
+  const token = localStorage.getItem("token");
 
   return (
     <nav className="container-Fluid px-3 d-flex justify-content-between align-items-center navbar navbar-expand-lg bg-white shadow-sm border-bottom rounded-bottom">
@@ -37,19 +38,30 @@ const Navbar = () => {
       <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
         <LanguageSwitcher />
         <ul className="navbar-nav align-items-center">
-          {navItems.map((item, index) => (
-            <li key={index} className="nav-item mx-2">
-              <Link className="nav-link text-dark fw-medium py-2 rounded hover-bg-light" to={item.href}>
-                {t(item.labelKey)}  {/* Using t() to get translated text */}
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item, index) => {
+            // Skip login if token exists
+            if (item.href === "/login" && token) return null;
 
-          {/* Get Started Button */}
-          <li className="nav-item ms-3">
-            <Link to={"/signup-as"} className="btn btn-primary px-3 py-2 fw-semibold shadow-sm">
-              {t("navbar.getStarted")}  {/* Using t() to get translated text */}
-            </Link>
+            return (
+              <li key={index} className="nav-item ">
+                <Link className="nav-link text-dark fw-medium py-2 rounded hover-bg-light mx-2" to={item.href}>
+                  {t(item.labelKey)}
+                </Link>
+              </li>
+            );
+          })}
+
+          {/* Auth Buttons */}
+          <li className="nav-item">
+            {token ? (
+              <Link to={"/dashboard/admin"} className="btn btn-primary px-3 py-2 fw-semibold shadow-sm">
+                Dashboard
+              </Link>
+            ) : (
+              <Link to={"/signup-as"} className="nav-link text-dark fw-medium py-2 rounded hover-bg-light mx-2">
+                {t("navbar.getStarted")}
+              </Link>
+            )}
           </li>
         </ul>
       </div>

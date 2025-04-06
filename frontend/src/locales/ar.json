@@ -139,7 +139,8 @@
     "contact": "اتصل",
     "pricing": "التسعير",
     "login": "تسجيل الدخول",
-    "getStarted": "ابدأ"
+    "getStarted": "ابدأ",
+    "dashboard": "لوحة التحكم"
   },
   "languageSwitcher": {
     "selectLanguage": "اختر اللغة",
@@ -154,7 +155,7 @@
   },
   "breadcrumbs": {
     "home": "الصفحة الرئيسية"
-  },  
+  },
   "dashboardNavbar": {
     "dashboard": "لوحة القيادة",
     "manageRestaurants": "إدارة المطاعم",
