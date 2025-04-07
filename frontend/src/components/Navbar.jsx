@@ -6,7 +6,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 const navItems = [
   { labelKey: "navbar.restaurants", href: "/restaurants" },
   { labelKey: "navbar.contact", href: "/contact" },
-  { labelKey: "navbar.pricing", href: "/pricing" },
+  { labelKey: "navbar.about", href: "/about" },
   { labelKey: "navbar.login", href: "/login", authOnly: false }, // Login shown only when no token
 ];
 
@@ -54,7 +54,7 @@ const Navbar = () => {
           {/* Auth Buttons */}
           <li className="nav-item">
             {token ? (
-              <Link to={"/dashboard/admin"} className="btn btn-primary px-3 py-2 fw-semibold shadow-sm">
+              <Link to={"/admin/dashboard"} className="btn btn-primary px-3 py-2 fw-semibold shadow-sm">
                 Dashboard
               </Link>
             ) : (

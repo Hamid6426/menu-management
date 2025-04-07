@@ -40,6 +40,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import Profile from "./pages/Profile";
 import Pricing from "./pages/Pricing";
+import Demo from "./pages/Demo";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="/restaurants" element={<Restaurants />} />
         <Route path="/:restaurantSlug" element={<ShowRestaurant />} />
         <Route path="/:restaurantSlug/menu" element={<ShowRestaurantMenu />} />

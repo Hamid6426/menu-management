@@ -1,0 +1,45 @@
+/* Color Theme */
+:root {
+  --main-bg: #ffe6d4;
+  --main-orange: #f63;
+  --secondary-orange: #f52;
+  --white: #fff;
+}
+
+/* Section Background */
+.hero-section {
+  background-color: var(--main-bg);
+}
+
+/* Custom Colors */
+.text-main {
+  color: var(--main-orange);
+}
+
+.btn-primary.custom-btn {
+  background-color: var(--main-orange);
+  border-color: var(--main-orange);
+  color: var(--white);
+}
+
+.btn-primary.custom-btn:hover {
+  background-color: var(--secondary-orange);
+  border-color: var(--secondary-orange);
+}
+
+.btn-outline-primary.custom-btn {
+  color: var(--main-orange);
+  border-color: var(--main-orange);
+}
+
+.btn-outline-primary.custom-btn:hover {
+  background-color: var(--secondary-orange);
+  border-color: var(--secondary-orange);
+  color: var(--white);
+}
+
+/* Image Enhancements */
+.hero-image {
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
