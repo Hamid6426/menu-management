@@ -1,100 +1,116 @@
-  require("dotenv").config();
-  const express       = require("express");
-  const cors          = require("cors");
-  const helmet        = require("helmet");
-  const compression   = require("compression");
-  const mongoose      = require("mongoose");
-  const authRoutes    = require("./routes/authRoutes");
-  const userRoutes    = require("./routes/userRoutes");
-  const restaurantRoutes = require("./routes/restaurantRoutes");
-  const dishRoutes    = require("./routes/dishRoutes");
+require('dotenv').config();
+const express        = require('express');
+const cors           = require('cors');
+const helmet         = require('helmet');
+const compression    = require('compression');
+const mongoose       = require('mongoose');
+const authRoutes     = require('./routes/authRoutes');
+const userRoutes     = require('./routes/userRoutes');
+const restaurantRoutes = require('./routes/restaurantRoutes');
+const dishRoutes     = require('./routes/dishRoutes');
 
-  const app    = express();
-  const isProd = process.env.NODE_ENV === "production";
-  const PORT   = process.env.PORT || 3000;
+// 1. Configuration
+const {
+  NODE_ENV = 'development',
+  PORT = 3000,
+  MONGO_URI,
+  CORS_ORIGIN,
+  FRONTEND_URL
+} = process.env;
 
-  //─── MIDDLEWARE ────────────────────────────────────────────────────────────────
-  // parse JSON bodies
-  app.use(express.json());
+const isProduction  = NODE_ENV === 'production';
+const isDevelopment = NODE_ENV === 'development';
 
-  // security & performance
-  if (isProd) {
-    // only in production
-    app.use(helmet());
-    app.use(compression());
-  } else {
-    // only in development
-    app.use((req, _res, next) => {
-      console.log(`[DEV] ${req.method} ${req.originalUrl}`);
-      next();
-    });
-  }
+if (!MONGO_URI) {
+  console.error('✖ MONGO_URI is not defined');
+  process.exit(1);
+}
 
-  // CORS
-  const devOrigins = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:4173",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-  ];
+// 2. Express App & Middleware
+const app = express();
 
-  const prodOrigin = process.env.CORS_ORIGIN || process.env.FRONTEND_URL;
+// Body parsers
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  app.use(cors({
-    origin: isProd
-      // in prod: only allow the one frontend URL
-      ? prodOrigin
-      // in dev: allow localhost variants + tools (undefined origin)
-      : (origin, callback) => {
-          if (!origin || devOrigins.includes(origin)) {
-            return callback(null, true);
-          }
-          console.warn("[CORS] Blocked origin:", origin);
-          callback(new Error("Not allowed by CORS"));
-        },
-    credentials: true,
-    methods: ["GET","POST","PUT","DELETE","PATCH","OPTIONS"],
-    exposedHeaders: ["Content-Disposition"],
-  }));
-
-  //─── ROUTES ───────────────────────────────────────────────────────────────────
-  app.get("/",      (_req, res) => res.json({ message: "Hello, this is the server!" }));
-  app.get("/api",   (_req, res) => res.json({ message: "Hello, this is the API!" }));
-
-  app.use("/api/auth",        authRoutes);
-  app.use("/api/users",       userRoutes);
-  app.use("/api/restaurants", restaurantRoutes);
-  app.use("/api/dishes",      dishRoutes);
-
-  //─── GLOBAL ERROR HANDLER ─────────────────────────────────────────────────────
-  app.use((err, _req, res, _next) => {
-    if (err.message === "Not allowed by CORS") {
-      return res.status(403).json({ error: err.message });
-    }
-    console.error("[ERROR]", err);
-    res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
+// Dev‑only logger
+if (isDevelopment) {
+  app.use((req, _, next) => {
+    console.log(`[DEV] ${req.method} ${req.originalUrl}`);
+    next();
   });
+}
 
-  //─── MONGOOSE CONNECTION ──────────────────────────────────────────────────────
-  if (!process.env.MONGO_URI) {
-    console.error("❌  MONGO_URI is not set in environment");
+// Prod‑only security & compression
+if (isProduction) {
+  app.use(helmet());
+  app.use(compression());
+}
+
+// CORS
+const devOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174'
+];
+const allowedOrigin = isProduction
+  ? (CORS_ORIGIN || FRONTEND_URL)
+  : undefined;
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (isProduction) {
+      return origin === allowedOrigin
+        ? callback(null, true)
+        : callback(new Error('CORS: Origin not allowed'));
+    }
+    if (!origin || devOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.warn('CORS: Blocked origin', origin);
+    callback(new Error('CORS: Origin not allowed'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  exposedHeaders: ['Content-Disposition']
+}));
+
+// 3. Routes
+app.get('/',  (_req, res) => res.json({ message: 'Server is running' }));
+app.get('/api', (_req, res) => res.json({ message: 'API is running' }));
+
+app.use('/api/auth',        authRoutes);
+app.use('/api/users',       userRoutes);
+app.use('/api/restaurants', restaurantRoutes);
+app.use('/api/dishes',      dishRoutes);
+
+// 4. Global Error Handler
+app.use((err, _req, res, _next) => {
+  if (err.message.startsWith('CORS')) {
+    return res.status(403).json({ error: err.message });
+  }
+  console.error('Error:', err);
+  res.status(err.status || 500).json({ error: err.message || 'Internal Server Error' });
+});
+
+// 5. DB Connection & Server Start
+async function startServer() {
+  try {
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('✔ MongoDB connected');
+    app.listen(PORT, () => {
+      console.log(`✔ Server listening on port ${PORT} [${NODE_ENV}]`);
+    });
+  } catch (error) {
+    console.error('✖ Failed to connect to MongoDB:', error);
     process.exit(1);
   }
+}
 
-  mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-      console.log("✅  MongoDB Connected");
-      app.listen(PORT, () => {
-        console.log(`🚀  Server running on port ${PORT} (${isProd ? "production" : "development"})`);
-      });
-    })
-    .catch((err) => {
-      console.error("❌  MongoDB Connection Error:", err);
-      process.exit(1);
-    });
+startServer();
 
-  mongoose.connection.on("disconnected", () => {
-    console.warn("⚠️  Mongoose disconnected");
-  });
+module.exports = app;

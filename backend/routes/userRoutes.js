@@ -10,6 +10,9 @@ router.get("/profile", protectRoute, userController.getProfile);
 router.put("/profile/update", protectRoute, userController.updateProfile);
 router.put("/profile/allergies", protectRoute, userController.updateAllergies);
 
+router.get("/:username", protectRoute, authorizeRoles("super-admin"), userController.getUserByUsername);
+router.put("/update-user/:username",  protectRoute, authorizeRoles("super-admin"), userController.updateUserByUsername);
+
 router.get("/:userId", protectRoute, authorizeRoles("admin", "manager", "super-admin"), userController.getUserById);
 router.get(
   "/:username",

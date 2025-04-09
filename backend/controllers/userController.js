@@ -103,7 +103,9 @@ exports.updateUserRole = async (req, res) => {
       return res.status(400).json({ message: "Invalid role" });
     }
 
-    const user = await User.findByIdAndUpdate(username, { role }, { new: true, runValidators: true }).select("-password");
+    const user = await User.findByIdAndUpdate(username, { role }, { new: true, runValidators: true }).select(
+      "-password"
+    );
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -190,10 +192,9 @@ exports.listAllAdminAssociatedManagers = async (req, res) => {
   }
 };
 
-
 exports.addUser = async (req, res) => {
   try {
-   if (req.user.role !== "super-admin") {
+    if (req.user.role !== "super-admin") {
       return res.status(403).json({ message: "Access denied" });
     }
 
@@ -226,7 +227,7 @@ exports.addUser = async (req, res) => {
       password: hashedPassword,
       role,
       allergies,
-      restaurants: (role === "admin" || role === "manager") ? restaurants : []
+      restaurants: role === "admin" || role === "manager" ? restaurants : [],
     });
 
     await newUser.save();
@@ -238,12 +239,49 @@ exports.addUser = async (req, res) => {
         name: newUser.name,
         email: newUser.email,
         username: newUser.username,
-        role: newUser.role
-      }
+        role: newUser.role,
+      },
     });
-
   } catch (error) {
     console.error("Add User Error:", error);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getUserByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const user = await User.findOne({ username });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// PUT /users/update-user/:username
+exports.updateUserByUsername = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const updateData = req.body;
+
+    // If password exists, hash it
+    if (updateData.password) {
+      const bcrypt = require("bcryptjs");
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    } else {
+      delete updateData.password; // Don't overwrite with empty
+    }
+
+    const updatedUser = await User.findOneAndUpdate({ username }, { $set: updateData }, { new: true });
+
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ message: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating user" });
   }
 };

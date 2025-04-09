@@ -36,12 +36,9 @@ export default function GetAllDishes() {
   };
 
   return (
-    <div className="py-4 px-4 container">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="container-fluid mt-5">
+      <div className="d-flex gap-4 align-items-center">
         <h2>Manage All Dishes</h2>
-        <Link to="/dashboard/manage-dishes/add-dish" className="btn btn-primary">
-          Add New Dish
-        </Link>
       </div>
 
       {loading && (
@@ -52,22 +49,20 @@ export default function GetAllDishes() {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {!loading && !error && dishes.length === 0 && (
-        <div className="alert alert-info">No dishes found.</div>
-      )}
+      {!loading && !error && dishes.length === 0 && <div className="alert alert-info">No dishes found.</div>}
 
       {!loading && !error && dishes.length > 0 && (
-        <div className="table-responsive" style={{ overflowX: "auto" }}>
-          <table
-            className="table table-bordered table-hover align-middle"
-            style={{ minWidth: "1536px" }} // Force horizontal scroll if needed
-          >
-            <thead className="table-dark">
+        <div className="table-responsive mt-3">
+          <table className="table table-striped table-bordered align-middle">
+            <thead className="table-dark text-nowrap">
               <tr>
                 <th>#</th>
                 <th>Name (EN)</th>
                 <th>Name (IT)</th>
                 <th>Name (AR)</th>
+                <th>Description (EN)</th>
+                <th>Description (IT)</th>
+                <th>Description  (AR)</th>
                 <th>Slug</th>
                 <th>Price</th>
                 <th>Kilocalories</th>
@@ -80,39 +75,24 @@ export default function GetAllDishes() {
                 <th className="text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-nowrap">
               {dishes.map((dish, index) => (
                 <tr key={dish._id}>
                   <td>{index + 1}</td>
-                  <td>
-                    {typeof dish.name === "object"
-                      ? dish.name.en || "-"
-                      : dish.name || "-"}
-                  </td>
-                  <td>
-                    {typeof dish.name === "object"
-                      ? dish.name.it || "-"
-                      : "-"}
-                  </td>
-                  <td>
-                    {typeof dish.name === "object"
-                      ? dish.name.ar || "-"
-                      : "-"}
-                  </td>
+                  <td>{typeof dish.name === "object" ? dish.name.en || "-" : dish.name || "-"}</td>
+                  <td>{typeof dish.name === "object" ? dish.name.it || "-" : "-"}</td>
+                  <td>{typeof dish.name === "object" ? dish.name.ar || "-" : "-"}</td>
+                  <td>{typeof dish.description === "object" ? dish.description.en || "-" : dish.description || "-"}</td>
+                  <td>{typeof dish.description === "object" ? dish.description.it || "-" : "-"}</td>
+                  <td>{typeof dish.description === "object" ? dish.description.ar || "-" : "-"}</td>
                   <td>{dish.dishSlug || "-"}</td>
-                  <td>
-                    {dish.price != null
-                      ? `$${dish.price.toFixed(2)}`
-                      : "-"}
-                  </td>
+                  <td>{dish.price != null ? `$${dish.price.toFixed(2)}` : "-"}</td>
                   <td>{dish.kilocalories != null ? dish.kilocalories : "-"}</td>
                   <td>{dish.category || "-"}</td>
                   <td>{dish.allergens?.join(", ") || "-"}</td>
                   <td>
                     {dish.availability
-                      ? `${dish.availability.startTime || "-"} - ${
-                          dish.availability.endTime || "-"
-                        }`
+                      ? `${dish.availability.startTime || "-"} - ${dish.availability.endTime || "-"}`
                       : "-"}
                   </td>
                   <td>
@@ -123,14 +103,11 @@ export default function GetAllDishes() {
                   <td>{dish.createdBy || "-"}</td>
                   <td>{new Date(dish.createdAt).toLocaleString()}</td>
                   <td className="text-center">
-                    <div className="d-flex justify-content-center gap-2 flex-wrap">
+                    <div className="d-flex justify-content-center gap-2 flex-nowrap">
                       <Link to={`/dashboard/manage-dishes/${dish.dishSlug}`} className="btn btn-sm btn-warning">
                         Edit
                       </Link>
-                      <button
-                        onClick={() => handleDelete(dish.dishSlug)}
-                        className="btn btn-sm btn-danger"
-                      >
+                      <button onClick={() => handleDelete(dish.dishSlug)} className="btn btn-sm btn-danger">
                         Delete
                       </button>
                     </div>

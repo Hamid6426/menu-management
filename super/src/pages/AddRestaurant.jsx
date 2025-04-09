@@ -134,100 +134,107 @@ const AddRestaurant = () => {
   };
 
   return (
-    <div className="container my-4">
-      <h2>Create New Restaurant</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+    <div className="container" style={{ marginTop: "5rem" }}>
+      <div className="card shadow-lg mx-auto" style={{ maxWidth: "500px" }}>
+        <div className="card-body">
+          <h4 className="card-title text-center mb-4">Create New Restaurant</h4>
 
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        {/* Restaurant Name */}
-        <div className="mb-3">
-          <label className="form-label">Restaurant Name</label>
-          {availableLanguages.map((lang) => (
-            <input
-              key={lang}
-              type="text"
-              name="name"
-              data-language={lang}
-              className="form-control mt-2"
-              value={formData.name[lang]}
-              onChange={handleChange}
-              placeholder={`Enter restaurant name in ${lang.toUpperCase()}`}
-              required={lang === "en"}
-            />
-          ))}
-        </div>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
 
-        {/* Location */}
-        <div className="mb-3">
-          <label className="form-label">Restaurant Location</label>
-          {availableLanguages.map((lang) => (
-            <input
-              key={lang}
-              type="text"
-              name="location"
-              data-language={lang}
-              className="form-control mt-2"
-              value={formData.location[lang]}
-              onChange={handleChange}
-              placeholder={`Enter location in ${lang.toUpperCase()}`}
-              required={lang === "en"}
-            />
-          ))}
-        </div>
-
-        {/* Brand Colors */}
-        <div className="mb-3">
-          <label className="form-label">Brand Colors</label>
-          <div className="d-flex gap-3">
-            {["primary", "secondary", "tertiary"].map((color) => (
-              <div key={color} className="d-flex align-items-center gap-2">
-                <label>{color.charAt(0).toUpperCase() + color.slice(1)}</label>
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
+            {/* Restaurant Name */}
+            <div className="mb-3">
+              <label className="form-label">Restaurant Name</label>
+              {availableLanguages.map((lang) => (
                 <input
-                  type="color"
-                  name={color}
-                  className="form-control form-control-color"
-                  value={formData.brandColors[color]}
+                  key={lang}
+                  type="text"
+                  name="name"
+                  data-language={lang}
+                  className="form-control mb-2"
+                  value={formData.name[lang]}
                   onChange={handleChange}
-                  required
+                  placeholder={`Name (${lang.toUpperCase()})`}
+                  required={lang === "en"}
                 />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Language Selection */}
-        <div className="mb-3">
-          <label className="form-label">Languages</label>
-          {availableLanguages.map((lang) => (
-            <div key={lang} className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                id={`language-${lang}`}
-                name="languages"
-                value={lang}
-                checked={formData.languages.includes(lang)}
-                onChange={handleChange}
-              />
-              <label className="form-check-label" htmlFor={`language-${lang}`}>
-                {lang.toUpperCase()}
-              </label>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Image Upload */}
-        <div className="mb-3">
-          <label className="form-label">Upload Restaurant Image</label>
-          <input type="file" className="form-control" name="image" accept="image/*" onChange={handleChange} />
-          {imagePreview && <img src={imagePreview} alt="Preview" className="img-thumbnail mt-2" style={{ maxWidth: "200px" }} />}
-        </div>
+            {/* Location */}
+            <div className="mb-3">
+              <label className="form-label">Location</label>
+              {availableLanguages.map((lang) => (
+                <input
+                  key={lang}
+                  type="text"
+                  name="location"
+                  data-language={lang}
+                  className="form-control mb-2"
+                  value={formData.location[lang]}
+                  onChange={handleChange}
+                  placeholder={`Location (${lang.toUpperCase()})`}
+                  required={lang === "en"}
+                />
+              ))}
+            </div>
 
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? "Creating..." : "Create Restaurant"}
-        </button>
-      </form>
+            {/* Brand Colors */}
+            <div className="mb-3">
+              <label className="form-label">Brand Colors</label>
+              <div className="d-flex gap-3">
+                {["primary", "secondary", "tertiary"].map((color) => (
+                  <div key={color} className="d-flex align-items-center gap-2">
+                    <label>{color.charAt(0).toUpperCase() + color.slice(1)}</label>
+                    <input
+                      type="color"
+                      name={color}
+                      className="form-control form-control-color"
+                      value={formData.brandColors[color]}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Languages */}
+            <div className="mb-3">
+              <label className="form-label">Languages</label>
+              {availableLanguages.map((lang) => (
+                <div key={lang} className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id={`language-${lang}`}
+                    name="languages"
+                    value={lang}
+                    checked={formData.languages.includes(lang)}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label" htmlFor={`language-${lang}`}>
+                    {lang.toUpperCase()}
+                  </label>
+                </div>
+              ))}
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-3">
+              <label className="form-label">Restaurant Image</label>
+              <input type="file" className="form-control" name="image" accept="image/*" onChange={handleChange} />
+              {imagePreview && (
+                <img src={imagePreview} alt="Preview" className="img-thumbnail mt-2" style={{ maxWidth: "200px" }} />
+              )}
+            </div>
+
+            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+              {loading ? "Creating..." : "Create Restaurant"}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

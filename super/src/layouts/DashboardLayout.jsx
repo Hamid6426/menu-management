@@ -1,18 +1,43 @@
-import React from "react";
-import DashboardNavbar from "../components/DashboardNavbar";
+import React, { useEffect, useState } from "react";
+import DashboardSidebar from "../components/DashboardSidebar";
 import { Outlet } from "react-router-dom";
 
 export default function DashboardLayout() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // Function to update the isMobile state based on window width
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+
+  // Attach resize event listener
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
-    <div className="d-flex" style={{ minHeight: "100vh", overflowX: "hidden" }}>
-      <div style={{ width: "240px" }}>
-        <DashboardNavbar />
-      </div>
-      <div className="p-4 flex-grow-1" style={{ overflowX: "auto", backgroundColor: "#333"  }}>
-        <main className="py-3 px-4 bg-dark border-1 rounded-4 min-vh-100 text-white" style={{ }}>
+    <div className="flex min-vh-100">
+      {!isMobile ? (
+        <div style={{ width: "15rem" }}>
+          <DashboardSidebar />
+        </div>
+      ) : (
+        <div>
+          <DashboardSidebar />
+        </div>
+      )}
+
+      {!isMobile ? (
+        <div className="min-vh-100 p-2" style={{ marginLeft: "15rem" }}>
           <Outlet />
-        </main>
-      </div>
+        </div>
+      ) : (
+        <div className="min-vh-100 p-2">
+          <Outlet />
+        </div>
+      )}
     </div>
   );
 }

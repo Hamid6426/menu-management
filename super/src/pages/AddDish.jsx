@@ -27,9 +27,28 @@ const AddDish = () => {
   const [success, setSuccess] = useState("");
 
   const allergensList = [
-    "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish", "soy", "eggs",
-    "fish", "wheat", "sesame", "mustard", "celery", "lupin", "molluscs", "sulphites",
-    "corn", "latex", "kiwi", "banana", "avocado", "crustaceans"
+    "gluten",
+    "dairy",
+    "nuts",
+    "peanuts",
+    "tree nuts",
+    "shellfish",
+    "soy",
+    "eggs",
+    "fish",
+    "wheat",
+    "sesame",
+    "mustard",
+    "celery",
+    "lupin",
+    "molluscs",
+    "sulphites",
+    "corn",
+    "latex",
+    "kiwi",
+    "banana",
+    "avocado",
+    "crustaceans",
   ];
 
   const handleChange = (e, field, lang = null) => {
@@ -42,9 +61,7 @@ const AddDish = () => {
       }));
     } else if (type === "checkbox" && name === "allergens") {
       let newAllergens = [...formData.allergens];
-      checked
-        ? newAllergens.push(value)
-        : newAllergens = newAllergens.filter((item) => item !== value);
+      checked ? newAllergens.push(value) : (newAllergens = newAllergens.filter((item) => item !== value));
       setFormData((prev) => ({ ...prev, allergens: newAllergens }));
     } else if (type === "file") {
       setFormData((prev) => ({ ...prev, image: files[0] }));
@@ -106,125 +123,154 @@ const AddDish = () => {
   };
 
   return (
-    <div className="container-fluid my-2 px-3">
-      <h2>Create Dish</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+    <div className="container" style={{ marginTop: "5rem" }}>
+      <div className="card shadow-lg mx-auto" style={{ maxWidth: "500px" }}>
+        <div className="card-body">
+          <h4 className="card-title text-center mb-4">Create Dish</h4>
 
-      <form onSubmit={handleSubmit}>
-        {/* Dish Name */}
-        <div className="mb-3">
-          <label>Dish Name</label>
-          {["en", "it", "ar"].map((lang) => (
-            <input
-              key={lang}
-              type="text"
-              className="form-control mb-1"
-              placeholder={`Name (${lang.toUpperCase()})`}
-              value={formData.name[lang]}
-              onChange={(e) => handleChange(e, "name", lang)}
-              required={lang === "en"}
-            />
-          ))}
-        </div>
+          {error && <div className="alert alert-danger">{error}</div>}
+          {success && <div className="alert alert-success">{success}</div>}
 
-        {/* Description */}
-        <div className="mb-3">
-          <label>Description</label>
-          {["en", "it", "ar"].map((lang) => (
-            <textarea
-              key={lang}
-              className="form-control mb-1"
-              placeholder={`Description (${lang.toUpperCase()})`}
-              value={formData.description[lang]}
-              onChange={(e) => handleChange(e, "description", lang)}
-              rows="2"
-              required={lang === "en"}
-            ></textarea>
-          ))}
-        </div>
+          <form onSubmit={handleSubmit}>
+            {/* Dish Name */}
+            <div className="mb-3">
+              <label className="form-label">Dish Name</label>
+              {["en", "it", "ar"].map((lang) => (
+                <input
+                  key={lang}
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder={`Name (${lang.toUpperCase()})`}
+                  value={formData.name[lang]}
+                  onChange={(e) => handleChange(e, "name", lang)}
+                  required={lang === "en"}
+                />
+              ))}
+            </div>
 
-        {/* Category */}
-        <select
-          className="form-select mb-3"
-          name="category"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select Category</option>
-          <option value="starter">Starter</option>
-          <option value="mainCourse">Main Course</option>
-          <option value="dessert">Dessert</option>
-          <option value="beverage">Beverage</option>
-          <option value="sideDish">Side Dish</option>
-          <option value="special">Special</option>
-        </select>
+            {/* Description */}
+            <div className="mb-3">
+              <label className="form-label">Description</label>
+              {["en", "it", "ar"].map((lang) => (
+                <textarea
+                  key={lang}
+                  className="form-control mb-2"
+                  placeholder={`Description (${lang.toUpperCase()})`}
+                  value={formData.description[lang]}
+                  onChange={(e) => handleChange(e, "description", lang)}
+                  rows="2"
+                  required={lang === "en"}
+                ></textarea>
+              ))}
+            </div>
 
-        {/* Price */}
-        <input
-          type="number"
-          className="form-control mb-3"
-          placeholder="Price"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
+            {/* Category */}
+            <div className="mb-3">
+              <label className="form-label">Category</label>
+              <select
+                className="form-select"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Category</option>
+                <option value="starter">Starter</option>
+                <option value="mainCourse">Main Course</option>
+                <option value="dessert">Dessert</option>
+                <option value="beverage">Beverage</option>
+                <option value="sideDish">Side Dish</option>
+                <option value="special">Special</option>
+              </select>
+            </div>
 
-        {/* Kilocalories */}
-        <input
-          type="number"
-          className="form-control mb-3"
-          placeholder="Kilocalories"
-          name="kilocalories"
-          value={formData.kilocalories}
-          onChange={handleChange}
-        />
-
-        {/* Availability */}
-        <div className="mb-3">
-          <label>Availability</label>
-          <div className="d-flex gap-2">
-            <input type="time" name="startTime" className="form-control" value={formData.startTime} onChange={handleChange} required />
-            <input type="time" name="endTime" className="form-control" value={formData.endTime} onChange={handleChange} required />
-          </div>
-        </div>
-
-        {/* Image */}
-        <input
-          type="file"
-          className="form-control mb-3"
-          name="image"
-          accept="image/*"
-          onChange={handleChange}
-        />
-
-        {/* Allergens */}
-        <div className="mb-3">
-          <label>Allergens</label>
-          {allergensList.map((a) => (
-            <div key={a} className="form-check">
+            {/* Price */}
+            <div className="mb-3">
+              <label className="form-label">Price</label>
               <input
-                className="form-check-input"
-                type="checkbox"
-                id={`allergen-${a}`}
-                name="allergens"
-                value={a}
-                checked={formData.allergens.includes(a)}
+                type="number"
+                className="form-control"
+                placeholder="Price"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            {/* Kilocalories */}
+            <div className="mb-3">
+              <label className="form-label">Kilocalories</label>
+              <input
+                type="number"
+                className="form-control"
+                placeholder="Kilocalories"
+                name="kilocalories"
+                value={formData.kilocalories}
                 onChange={handleChange}
               />
-              <label className="form-check-label" htmlFor={`allergen-${a}`}>
-                {a}
-              </label>
             </div>
-          ))}
-        </div>
 
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? "Creating..." : "Create Dish"}
-        </button>
-      </form>
+            {/* Availability */}
+            <div className="mb-3">
+              <label className="form-label">Availability</label>
+              <div className="d-flex gap-2">
+                <input
+                  type="time"
+                  name="startTime"
+                  className="form-control"
+                  value={formData.startTime}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="time"
+                  name="endTime"
+                  className="form-control"
+                  value={formData.endTime}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Image Upload */}
+            <div className="mb-3">
+              <label className="form-label">Dish Image</label>
+              <input type="file" className="form-control" name="image" accept="image/*" onChange={handleChange} />
+            </div>
+
+            {/* Allergens */}
+            <div className="mb-3">
+              <label className="form-label">Allergens</label>
+              <div className="row">
+                {allergensList.map((a) => (
+                  <div className="col-6 col-md-4" key={a}>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`allergen-${a}`}
+                        name="allergens"
+                        value={a}
+                        checked={formData.allergens.includes(a)}
+                        onChange={handleChange}
+                      />
+                      <label className="form-check-label" htmlFor={`allergen-${a}`}>
+                        {a}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+              {loading ? "Creating..." : "Create Dish"}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

@@ -37,8 +37,8 @@ const ManageAllRestaurants = () => {
   };
 
   return (
-    <div className="py-4 px-4 container">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="container-fluid mt-5">
+      <div className="d-flex gap-4 align-items-center">
         <h2>Manage All Restaurants</h2>
         <Link to="/dashboard/manage-restaurants/add-restaurant" className="btn btn-primary">
           Add New Restaurant
@@ -56,12 +56,9 @@ const ManageAllRestaurants = () => {
       {!loading && !error && restaurants.length === 0 && <div className="alert alert-info">No restaurants found.</div>}
 
       {!loading && !error && restaurants.length > 0 && (
-        <div className="table-responsive" style={{ overflowX: "auto" }}>
-          <table
-            className="table table-bordered table-hover align-middle"
-            style={{ minWidth: "1536px" }} // Force scroll trigger
-          >
-            <thead className="table-dark">
+        <div className="table-responsive mt-3">
+          <table className="table table-striped table-bordered align-middle">
+            <thead className="table-dark text-nowrap">
               <tr>
                 <th>#</th>
                 <th>Name</th>
@@ -76,7 +73,7 @@ const ManageAllRestaurants = () => {
                 <th className="text-center">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-nowrap">
               {restaurants.map((restaurant, index) => (
                 <tr key={restaurant._id}>
                   <td>{index + 1}</td>
@@ -122,22 +119,28 @@ const ManageAllRestaurants = () => {
                   <td>{new Date(restaurant.createdAt).toLocaleString()}</td>
                   <td>{restaurant.dishes?.length || 0}</td>
                   <td className="text-center">
-                    <div className="d-flex justify-content-center gap-2 flex-wrap">
-                      <Link
-                        to={`/dashboard/manage-dishes/${restaurant.restaurantSlug}`}
-                        className="btn btn-sm btn-info text-white"
-                      >
-                        Dishes
-                      </Link>
+                    <div className="d-flex justify-content-center gap-2 flex-nowrap">
                       <Link
                         to={`/dashboard/manage-restaurants/${restaurant.restaurantSlug}`}
                         className="btn btn-sm btn-warning"
                       >
-                        Edit
+                        Edit Restaurant
                       </Link>
                       <button onClick={() => handleDelete(restaurant.restaurantSlug)} className="btn btn-sm btn-danger">
-                        Delete
+                        Delete Restaurant
                       </button>
+                      <Link
+                        to={`/dashboard/manage-dishes/${restaurant.restaurantSlug}/add-dish`}
+                        className="btn btn-sm btn-info text-white"
+                      >
+                        Add Dish
+                      </Link>
+                      <Link
+                        to={`/dashboard/manage-dishes/${restaurant.restaurantSlug}`}
+                        className="btn btn-sm btn-info text-white"
+                      >
+                        Check Dishes
+                      </Link>
                     </div>
                   </td>
                 </tr>

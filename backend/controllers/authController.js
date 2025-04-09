@@ -2,30 +2,28 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
-const crypto = require("crypto"); // For generating reset tokens
+const crypto = require("crypto");
 
 exports.userRegister = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    console.log("User registration request received for email:", email); // Do not log password or full request body
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     const regexedEmail = email
       .split("@")[0]
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
 
-    // Create new user
     const newUser = new User({
       name,
       username: regexedEmail,
@@ -35,6 +33,7 @@ exports.userRegister = async (req, res) => {
     });
     await newUser.save();
 
+    console.log("User registered successfully:", { name: newUser.name, email: newUser.email });
     res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     console.error("Register Error:", error);
@@ -45,6 +44,7 @@ exports.userRegister = async (req, res) => {
 exports.adminRegister = async (req, res) => {
   try {
     const { name, username, email, password } = req.body;
+    console.log("Admin registration request received for email:", email);
 
     if (!name || !username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -57,7 +57,6 @@ exports.adminRegister = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new admin who will create a restaurant later
     const newAdmin = new User({
       name,
       username,
@@ -67,6 +66,7 @@ exports.adminRegister = async (req, res) => {
     });
 
     await newAdmin.save();
+    console.log("Admin registered successfully:", { name: newAdmin.name, email: newAdmin.email });
     res.status(201).json({ message: `Admin registered successfully` });
   } catch (error) {
     console.error("Admin Register Error:", error);
@@ -76,38 +76,37 @@ exports.adminRegister = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body; // Removed role from destructuring
+    const { email, password } = req.body;
+    console.log("Login request received for email:", email); // Do not log password
 
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Find user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // Generate Token (using role from DB)
     const token = jwt.sign(
       {
         userId: user._id,
         username: user.username,
         email: user.email,
         name: user.name,
-        role: user.role, // Role from DB
+        role: user.role,
         allergies: user.allergies,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    console.log("User logged in successfully:", { name: user.name, email: user.email });
     res.status(200).json({
       token,
       user,
@@ -118,10 +117,10 @@ exports.login = async (req, res) => {
   }
 };
 
-// Forgot Password (Send Reset Email)
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("Forgot password request received for email:", email);
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
@@ -132,20 +131,17 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
-
-    // Save token temporarily (should be saved in DB with expiry in a real-world app)
     user.resetPasswordToken = resetToken;
-    user.resetPasswordTokenExpire = Date.now() + 3600000; // 1 hour expiration
+    user.resetPasswordTokenExpire = Date.now() + 3600000;
     await user.save();
 
-    // Send Email
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     const htmlContent = `<p>Click <a href="${resetUrl}">here</a> to reset your password.</p>`;
 
     try {
       await sendEmail(email, "Password Reset Request", htmlContent);
+      console.log("Password reset email sent successfully to:", email);
       res.status(200).json({ message: "Password reset email sent" });
     } catch (emailError) {
       console.error("Email Sending Error:", emailError);
@@ -160,31 +156,27 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// Reset Password
 exports.resetPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     const { resetToken } = req.params;
+    console.log("Reset password request received for email:", email);
 
     if (!email || !resetToken || !newPassword || newPassword.length < 6) {
       return res.status(400).json({ message: "Invalid request" });
     }
 
-    // Find user by email
     const user = await User.findOne({ email });
-
     if (!user || user.resetPasswordToken !== resetToken || user.resetPasswordTokenExpire < Date.now()) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash new password
     user.password = await bcrypt.hash(newPassword, 10);
-
-    // Clear reset token
     user.resetPasswordToken = null;
     user.resetPasswordTokenExpire = null;
-
     await user.save();
+
+    console.log("Password reset successfully for email:", email);
     res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
     console.error("Reset Password Error:", error);

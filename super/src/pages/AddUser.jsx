@@ -35,8 +35,8 @@ const AddUser = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="card bg-dark text-white shadow-lg mx-auto" style={{ maxWidth: "500px" }}>
+    <div className="container" style={{ marginTop: "5rem" }}>
+      <div className="card shadow-lg mx-auto" style={{ maxWidth: "500px" }}>
         <div className="card-body">
           <h4 className="card-title text-center mb-4">Add New User</h4>
 
@@ -48,7 +48,7 @@ const AddUser = () => {
               <input
                 type="text"
                 name="name"
-                className="form-control bg-dark text-white border-secondary"
+                className="form-control     border-secondary"
                 placeholder="Full Name"
                 onChange={handleChange}
                 required
@@ -60,7 +60,7 @@ const AddUser = () => {
               <input
                 type="text"
                 name="username"
-                className="form-control bg-dark text-white border-secondary"
+                className="form-control     border-secondary"
                 placeholder="Username"
                 onChange={handleChange}
                 required
@@ -72,7 +72,7 @@ const AddUser = () => {
               <input
                 type="email"
                 name="email"
-                className="form-control bg-dark text-white border-secondary"
+                className="form-control     border-secondary"
                 placeholder="Email"
                 onChange={handleChange}
                 required
@@ -84,7 +84,7 @@ const AddUser = () => {
               <input
                 type="password"
                 name="password"
-                className="form-control bg-dark text-white border-secondary"
+                className="form-control     border-secondary"
                 placeholder="Password"
                 onChange={handleChange}
                 required
@@ -93,14 +93,14 @@ const AddUser = () => {
 
             <div className="mb-4">
               <label className="form-label">Role</label>
-              <select name="role" className="form-select bg-dark text-white border-secondary" onChange={handleChange}>
+              <select name="role" className="form-select     border-secondary" onChange={handleChange}>
                 <option value="user">User</option>
                 <option value="manager">Manager</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
             <div className="mb-4">
-              <label className="form-label text-white">Allergies</label>
+              <label className="form-label   ">Allergies</label>
               <div className="row">
                 {[
                   "gluten",
@@ -139,7 +139,7 @@ const AddUser = () => {
                   "mango",
                 ].map((allergy) => (
                   <div className="col-6 col-md-4" key={allergy}>
-                    <div className="form-check text-white">
+                    <div className="form-check   ">
                       <input
                         className="form-check-input"
                         type="checkbox"

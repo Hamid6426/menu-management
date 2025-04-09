@@ -55,9 +55,9 @@ function App() {
           <Route path="/dashboard/manage-restaurants/add-restaurant" element={<AddRestaurant />} />
           <Route path="/dashboard/manage-dishes/:restaurantSlug/add-dish" element={<AddDish />} />
 
-          <Route path="/dashboard/manage-users/:username" element={<UpdateUser />} />
-          <Route path="/dashboard/manage-restaurants/:restaurantSlug" element={<UpdateRestaurant />} />
-          <Route path="/dashboard/manage-dishes/:restaurantSlug/:dishSlug" element={<UpdateDish />} />
+          <Route path="/dashboard/manage-users/:username/update" element={<UpdateUser />} />
+          <Route path="/dashboard/manage-restaurants/:restaurantSlug/update" element={<UpdateRestaurant />} />
+          <Route path="/dashboard/manage-dishes/:restaurantSlug/:dishSlug/update" element={<UpdateDish />} />
         </Route>
       </Route>
 
