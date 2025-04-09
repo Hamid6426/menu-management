@@ -1,12 +1,8 @@
 const express = require("express");
 const dishController = require("../controllers/dishController");
-const {
-  protectRoute,
-  authorizeRoles,
-  convertAvailabilityTime,
-  // convertToObjectId,
-} = require("../middlewares/middlewares");
+const { protectRoute, authorizeRoles } = require("../middlewares/authMiddlewares");
 const { upload, processImage } = require("../middlewares/uploadMiddleware");
+const { convertAvailabilityTime } = require("../middlewares/otherMiddlewares");
 
 const router = express.Router();
 

@@ -1,6 +1,6 @@
 const express = require("express");
 const restaurantController = require("../controllers/restaurantController");
-const { protectRoute, authorizeRoles } = require("../middlewares/middlewares");
+const { protectRoute, authorizeRoles } = require("../middlewares/authMiddlewares");
 const { upload, processImage } = require("../middlewares/uploadMiddleware") 
 
 const router = express.Router();

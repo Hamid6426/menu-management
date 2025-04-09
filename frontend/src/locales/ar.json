@@ -140,10 +140,13 @@
     "pricing": "التسعير",
     "login": "تسجيل الدخول",
     "getStarted": "ابدأ",
-    "dashboard": "لوحة التحكم"
+    "dashboard": "لوحة التحكم",
+    "logout": "تسجيل الخروج",
+    "profile": "الملف الشخصي",
+    "language": "اللغة"
   },
   "languageSwitcher": {
-    "selectLanguage": "اختر اللغة",
+    "selectLanguage": "اللغة",
     "english": "إنجليزي",
     "italian": "إيطالي",
     "arabic": "عربي"

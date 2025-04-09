@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { jwtDecode } from "jwt-decode"; // ensure default import
-import { useTranslation } from "react-i18next";  // Add this import
+import { useTranslation } from "react-i18next"; // Add this import
 
 const Login = () => {
-  const { t } = useTranslation();  // Initialize translation
+  const { t } = useTranslation(); // Initialize translation
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -33,7 +33,7 @@ const Login = () => {
                 navigate("/restaurants");
               }
             } else {
-              setError(t('login.errorMessage'));  // Translated error message
+              setError(t("login.errorMessage")); // Translated error message
             }
           }, 200);
         }
@@ -64,7 +64,7 @@ const Login = () => {
       localStorage.setItem("token", token);
 
       if (!token) {
-        setError(t('login.noTokenError'));  // Translated error message
+        setError(t("login.noTokenError")); // Translated error message
         return;
       }
 
@@ -73,7 +73,7 @@ const Login = () => {
       const role = decoded?.role;
       const allergies = decoded?.allergies;
 
-      setSuccess(t('login.successMessage'));  // Translated success message
+      setSuccess(t("login.successMessage")); // Translated success message
       setFormData({ email: "", password: "" });
 
       setTimeout(() => {
@@ -86,13 +86,12 @@ const Login = () => {
             navigate("/restaurants");
           }
         } else {
-          setError(t('login.errorMessage'));  // Translated error message
+          setError(t("login.errorMessage")); // Translated error message
         }
       }, 200);
     } catch (err) {
       const message =
-        err.response?.data?.message ||
-        (err.request ? t('login.networkError') : t('login.unexpectedError')); // Translated error message
+        err.response?.data?.message || (err.request ? t("login.networkError") : t("login.unexpectedError")); // Translated error message
       setError(message);
     } finally {
       setLoading(false);
@@ -100,66 +99,84 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="bg-white shadow-lg rounded p-4 w-100" style={{ maxWidth: "400px" }}>
-        <h2 className="text-center text-danger">{t('login.title')}</h2>
+    <div
+    className="container bg-white shadow-lg rounded p-4"
+    style={{ maxWidth: "400px", borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}
+  >
+        <h2 className="text-center mb-4" style={{ color: "#ff6600" }}>
+          {t("login.title")}
+        </h2>
 
-        <form onSubmit={handleSubmit} className="mt-4">
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">{t('login.email')}</label>
+            <label className="form-label">{t("login.email")}</label>
             <input
               type="email"
               name="email"
               className="form-control"
+              style={{ borderColor: "#ffa500" }}
               value={formData.email}
               onChange={handleChange}
-              placeholder={t('login.email')}
+              placeholder={t("login.email")}
               required
             />
           </div>
 
           <div className="mb-3">
-            <label className="form-label">{t('login.password')}</label>
+            <label className="form-label">{t("login.password")}</label>
             <input
               type="password"
               name="password"
               className="form-control"
+              style={{ borderColor: "#ffa500" }}
               value={formData.password}
               onChange={handleChange}
-              placeholder={t('login.password')}
+              placeholder={t("login.password")}
               required
             />
           </div>
 
           <div className="text-end">
-            <Link to={"/forgot-password"} className="text-danger text-decoration-none">
-              {t('login.forgotPassword')}
+            <Link to="/forgot-password" className="text-decoration-none" style={{ color: "#ff6600" }}>
+              {t("login.forgotPassword")}
             </Link>
           </div>
 
-          <button type="submit" className="btn btn-danger w-100 mt-3" disabled={loading}>
+          <button
+            type="submit"
+            className="btn w-100 mt-3"
+            disabled={loading}
+            style={{ backgroundColor: "#ff6600", color: "white" }}
+          >
             {loading ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2"></span>
-                {t('login.loading')}
+                {t("login.loading")}
               </>
             ) : (
-              t('login.loginButton')
+              t("login.loginButton")
             )}
           </button>
         </form>
 
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-        {success && <div className="alert alert-success mt-3">{success}</div>}
+        {error && (
+          <div className="alert mt-3" style={{ backgroundColor: "#ffe6e6", color: "#cc0000" }}>
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="alert mt-3" style={{ backgroundColor: "#e6ffe6", color: "#007700" }}>
+            {success}
+          </div>
+        )}
 
-        <div className="d-flex align-items-center">
-          <p className="text-center mt-3">{t('login.registerPrompt')}</p>
-          <Link to={"/register"} className="mx-1 text-danger text-decoration-none">
-            {t('login.registerLink')}
+        <div className="d-flex justify-content-center align-items-center mt-3">
+          <p className="mb-0">{t("login.registerPrompt")}</p>
+          <Link to="/signup-as" className="ms-1 text-decoration-none" style={{ color: "#ff6600" }}>
+            {t("login.registerLink")}
           </Link>
         </div>
       </div>
-    </div>
   );
 };
 

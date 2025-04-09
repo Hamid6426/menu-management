@@ -140,10 +140,13 @@
     "pricing": "Prezzi",
     "login": "Accedi",
     "getStarted": "Inizia",
-    "dashboard": "Pannello di Controllo"
+    "dashboard": "Pannello di Controllo",
+    "logout": "Esci",
+    "profile": "Profilo",
+    "language": "Lingua"
   },
   "languageSwitcher": {
-    "selectLanguage": "Seleziona Lingua",
+    "selectLanguage": "Lingua",
     "english": "Inglese",
     "italian": "Italiano",
     "arabic": "Arabo"

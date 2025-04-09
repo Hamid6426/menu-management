@@ -140,10 +140,13 @@
     "pricing": "Pricing",
     "login": "Login",
     "getStarted": "Get Started",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "logout": "Logout",
+    "profile": "Profile",
+    "language": "Language"
   },
   "languageSwitcher": {
-    "selectLanguage": "Select Language",
+    "selectLanguage": "Language",
     "english": "English",
     "italian": "Italiano",
     "arabic": "Arabic"

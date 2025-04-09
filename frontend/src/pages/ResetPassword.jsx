@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const ResetPassword = () => {
   const { resetToken } = useParams(); // Get token from URL params
   const navigate = useNavigate();
-  const { t } = useTranslation();  // Using the useTranslation hook
+  const { t } = useTranslation(); // Using the useTranslation hook
 
   const [formData, setFormData] = useState({
     email: "",
@@ -35,46 +35,51 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="reset-password-form p-4 rounded shadow bg-white mx-auto" style={{ maxWidth: "400px" }}>
-      <h2 className="mb-4 text-center">{t("resetPassword.title")}</h2>
+    <div
+    className="container bg-white shadow-lg rounded p-4"
+    style={{ maxWidth: "400px", borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}
+  >
+        <h2 className="mb-4 text-center" style={{ color: "#ff6600" }}>
+          {t("resetPassword.title")}
+        </h2>
 
-      {/* Alert Messages */}
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
 
-      {/* Form */}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">{t("resetPassword.emailLabel")}</label>
-          <input
-            type="email"
-            name="email"
-            className="form-control"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder={t("resetPassword.placeholderEmail")}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">{t("resetPassword.emailLabel")}</label>
+            <input
+              type="email"
+              name="email"
+              className="form-control"
+              style={{ borderColor: "#ffa500" }}
+              value={formData.email}
+              onChange={handleChange}
+              placeholder={t("resetPassword.placeholderEmail")}
+              required
+            />
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("resetPassword.newPasswordLabel")}</label>
-          <input
-            type="password"
-            name="newPassword"
-            className="form-control"
-            value={formData.newPassword}
-            onChange={handleChange}
-            placeholder={t("resetPassword.placeholderNewPassword")}
-            required
-          />
-        </div>
+          <div className="mb-3">
+            <label className="form-label">{t("resetPassword.newPasswordLabel")}</label>
+            <input
+              type="password"
+              name="newPassword"
+              className="form-control"
+              style={{ borderColor: "#ffa500" }}
+              value={formData.newPassword}
+              onChange={handleChange}
+              placeholder={t("resetPassword.placeholderNewPassword")}
+              required
+            />
+          </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          {t("resetPassword.resetButton")}
-        </button>
-      </form>
-    </div>
+          <button type="submit" className="btn w-100" style={{ backgroundColor: "#ff6600", color: "white" }}>
+            {t("resetPassword.resetButton")}
+          </button>
+        </form>
+      </div>
   );
 };
 
