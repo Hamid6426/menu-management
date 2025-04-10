@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const AddAllergies = () => {
   const { t } = useTranslation();
@@ -11,10 +11,40 @@ const AddAllergies = () => {
   const navigate = useNavigate();
 
   const allowedAllergies = [
-    "gluten", "dairy", "nuts", "peanuts", "tree nuts", "shellfish", "soy", "eggs", "fish", 
-    "wheat", "sesame", "mustard", "celery", "lupin", "molluscs", "sulphites", "corn", "latex", 
-    "kiwi", "banana", "avocado", "crustaceans", "peach", "plum", "apples", "cherries", 
-    "almonds", "cashews", "pine nuts", "coconut", "poppy seeds", "sesame seeds", "papaya", "mango"     
+    "gluten",
+    "dairy",
+    "nuts",
+    "peanuts",
+    "tree nuts",
+    "shellfish",
+    "soy",
+    "eggs",
+    "fish",
+    "wheat",
+    "sesame",
+    "mustard",
+    "celery",
+    "lupin",
+    "molluscs",
+    "sulphites",
+    "corn",
+    "latex",
+    "kiwi",
+    "banana",
+    "avocado",
+    "crustaceans",
+    "peach",
+    "plum",
+    "apples",
+    "cherries",
+    "almonds",
+    "cashews",
+    "pine nuts",
+    "coconut",
+    "poppy seeds",
+    "sesame seeds",
+    "papaya",
+    "mango",
   ];
 
   // Fetch user profile & set allergies
@@ -28,9 +58,7 @@ const AddAllergies = () => {
           return navigate("/login");
         }
 
-        const response = await axiosInstance.get("/users/profile", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axiosInstance.get("/users/profile");
 
         setSelectedAllergies(response.data.user.allergies || []);
       } catch (error) {
@@ -63,7 +91,7 @@ const AddAllergies = () => {
 
       if (response.status === 200) {
         alert(t("addAllergies.updateSuccess"));
-        navigate("/restaurants");
+        navigate("/");
       } else {
         alert(t("addAllergies.updateFailure"));
       }

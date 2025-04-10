@@ -24,3 +24,23 @@ body {
   --shadow-light: rgba(232, 106, 51, 0.1);
   --shadow-muted: rgba(44, 24, 16, 0.1);
 }
+
+.btn-primary {
+  background-color: #ff6600;
+  border-color: #ff6600;
+}
+.btn-primary:hover {
+  background-color: #e65c00;
+  border-color: #e65c00;
+}
+.page-link {
+  color: #ff6600;
+}
+.page-link:hover {
+  color: #e65c00;
+}
+.page-item.active .page-link {
+  background-color: #ff6600;
+  border-color: #ff6600;
+  color: white;
+}

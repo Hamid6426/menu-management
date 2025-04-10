@@ -18,7 +18,7 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 
-import Restaurants from "./pages/Restaurants";
+import Restaurants from "./pages/RestaurantList";
 import ShowRestaurant from "./pages/ShowRestaurant";
 import ShowRestaurantMenu from "./pages/ShowRestaurantMenu";
 
@@ -57,8 +57,8 @@ function App() {
         <Route path="/:restaurantSlug/menu" element={<ShowRestaurantMenu />} />
         {/* Protected route */}
         <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin", "manager", "user"]} />}>
-          <Route path="/settings" element={<Profile />} />
-          <Route path="/settings/add-allergies" element={<AddAllergies />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/add-allergies" element={<AddAllergies />} />
         </Route>
       </Route>
 

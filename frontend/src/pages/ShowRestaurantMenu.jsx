@@ -62,7 +62,8 @@ const ShowRestaurantMenu = () => {
     let filtered = [...dishes];
 
     // Filter by category
-    if (selectedCategory !== t("showRestaurantMenu.all")) { // Using translated "All" here
+    if (selectedCategory !== t("showRestaurantMenu.all")) {
+      // Using translated "All" here
       filtered = filtered.filter((dish) => dish.category === selectedCategory);
     }
 
@@ -108,18 +109,28 @@ const ShowRestaurantMenu = () => {
     <div className="container-fluid">
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="mt-3 d-flex align-items-start gap-2">
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} placeholder={t("showRestaurantMenu.searchPlaceholder")} />
-        <CategoryFilter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-        />
-        <AllergyFilter
-          availableAllergens={availableAllergens}
-          selectedAllergens={selectedAllergens}
-          setSelectedAllergens={setSelectedAllergens}
-        />
+      <div className="mt-3 d-flex flex-column flex-lg-row align-items-start gap-2">
+        <div>
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            placeholder={t("showRestaurantMenu.searchPlaceholder")}
+          />
+        </div>
+        <div>
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+        </div>
+        <div>
+          <AllergyFilter
+            availableAllergens={availableAllergens}
+            selectedAllergens={selectedAllergens}
+            setSelectedAllergens={setSelectedAllergens}
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -130,7 +141,7 @@ const ShowRestaurantMenu = () => {
         <div className="alert alert-info">{t("showRestaurantMenu.noDishesFound")}</div>
       ) : (
         Object.entries(groupedDishes).map(([category, dishesInCategory]) => (
-          <div key={category} className="mb-3">
+          <div key={category} className="mb-3 container">
             <h2 className="fw-bold fst-italic my-3">{t(`categories.${category}`, category)}</h2>
             <div className="row row-cols-1 row-cols-md-4 g-4">
               {dishesInCategory.map((dish) => (
@@ -162,9 +173,7 @@ const ShowRestaurantMenu = () => {
                               </div>
                             ))
                           ) : (
-                            <li className="badge bg-success text-white">
-                              {t("allergens.none", "No Allergens")}
-                            </li>
+                            <li className="badge bg-success text-white">{t("allergens.none", "No Allergens")}</li>
                           )}
                         </div>
                       </div>

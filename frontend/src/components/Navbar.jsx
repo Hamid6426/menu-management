@@ -22,8 +22,9 @@ const Navbar = () => {
     { labelKey: "navbar.contact", href: "/contact", icon: <FaPhone style={{ fontSize: "1.25rem" }} /> },
     { labelKey: "navbar.login", href: "/login", icon: <FaSignInAlt style={{ fontSize: "1.25rem" }} /> },
   ];
-
   const loggedNavItems = [
+    { labelKey: "navbar.contact", href: "/contact", icon: <FaPhone style={{ fontSize: "1.25rem" }} /> },
+    { labelKey: "navbar.restaurants", href: "/restaurants", icon: <FaUtensils style={{ fontSize: "1.25rem" }} /> },
     { labelKey: "navbar.dashboard", href: "/admin/dashboard", icon: <MdDashboard style={{ fontSize: "1.25rem" }} /> },
     { labelKey: "navbar.profile", href: "/profile", icon: <RiAccountCircleFill style={{ fontSize: "1.25rem" }} /> },
   ];

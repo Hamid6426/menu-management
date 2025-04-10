@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { MdHome, MdChevronRight } from "react-icons/md";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 const Breadcrumbs = () => {
   const { t } = useTranslation();
@@ -9,8 +9,8 @@ const Breadcrumbs = () => {
   const pathnames = location.pathname.split("/").filter((segment) => segment);
 
   return (
-    <nav aria-label="breadcrumb" className="pt-3">
-      <ol className="breadcrumb bg-light rounded p-2 d-flex align-items-center shadow-sm">
+    <nav aria-label="breadcrumb" style={{ backgroundColor: "#eee", width: "100%" }}>
+      <ol className="breadcrumb rounded p-2 d-flex align-items-center" style={{ backgroundColor: "#eee", width: "100%" }}>
         <li className="breadcrumb-item">
           <Link to="/" className="text-decoration-none text-dark fw-bold d-flex align-items-center">
             <MdHome size={18} className="me-1" /> Home
