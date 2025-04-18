@@ -101,10 +101,10 @@ const ShowRestaurantMenu = () => {
       )}
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end mb-6">
+        {/* SearchBar component integration */}
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          placeholder={t("showRestaurantMenu.searchPlaceholder")}
         />
         <CategoryFilter
           categories={categories}

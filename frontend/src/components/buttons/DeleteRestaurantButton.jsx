@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MdDelete } from "react-icons/md";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../../../../super/src/utils/axiosInstance";
 
 const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
   const [loading, setLoading] = useState(false);

@@ -110,7 +110,7 @@ const AddAllergies = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold text-orange-600 mb-6">{t("addAllergies.title")}</h2>
+      <h2 className="text-2xl font-bold text-red-600 mb-6">{t("addAllergies.title")}</h2>
 
       {/* Error Message */}
       {error && <div className="alert alert-danger text-red-500 mb-4">{error}</div>}
@@ -125,7 +125,7 @@ const AddAllergies = () => {
                 value={allergy}
                 checked={selectedAllergies.includes(allergy)}
                 onChange={handleCheckboxChange}
-                className="form-checkbox h-5 w-5 text-orange-600"
+                className="form-checkbox h-5 w-5 text-red-600"
               />
               <label className="ml-2 text-sm text-gray-700" htmlFor={allergy}>
                 {t(`allergies.${allergy}`) || allergy}
@@ -137,7 +137,7 @@ const AddAllergies = () => {
         <div className="flex justify-between items-center mt-4">
           <button
             type="submit"
-            className="w-1/2 bg-orange-600 text-white font-semibold py-2 rounded-md hover:bg-orange-700 transition duration-200"
+            className="w-1/2 bg-red-600 text-white font-semibold py-2 rounded-md hover:bg-red-700 transition duration-200"
           >
             {t("addAllergies.saveButton")}
           </button>

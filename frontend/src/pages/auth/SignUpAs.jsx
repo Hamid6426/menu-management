@@ -6,40 +6,38 @@ export default function SignUpAs() {
   const { t } = useTranslation();
 
   return (
-    <div className="container">
-      <h2 className="text-center mb-4" style={{ color: "#ff6600" }}>
+    <div className="max-w-5xl mx-auto px-4 py-10">
+      <h2 className="text-2xl sm:text-3xl font-bold text-center text-red-600 mb-8">
         {t("signUpAs.title")}
       </h2>
 
-      <div className="row">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Admin Sign Up Card */}
-        <div className="col-md-6 mb-3">
-          <div className="card shadow-sm h-100" style={{ borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }} >
-            <div className="card-body d-flex flex-column justify-content-center text-center">
-              <h5 className="card-title" style={{ color: "#ff6600" }}>
-                {t("signUpAs.admin.title")}
-              </h5>
-              <p className="card-text">{t("signUpAs.admin.description")}</p>
-              <Link to="/admin-register" className="btn mt-auto" style={{ backgroundColor: "#ff6600", color: "white" }}>
-                {t("signUpAs.admin.button")}
-              </Link>
-            </div>
-          </div>
+        <div className="bg-white rounded-lg shadow-md border-t-4 border-b-4 border-red-500 flex flex-col p-6 text-center">
+          <h5 className="text-xl font-semibold text-red-600 mb-2">
+            {t("signUpAs.admin.title")}
+          </h5>
+          <p className="text-sm text-gray-700 mb-4">{t("signUpAs.admin.description")}</p>
+          <Link
+            to="/admin-register"
+            className="mt-auto bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded transition"
+          >
+            {t("signUpAs.admin.button")}
+          </Link>
         </div>
 
         {/* User Sign Up Card */}
-        <div className="col-md-6 mb-3">
-          <div className="card shadow-sm h-100" style={{ borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}>
-            <div className="card-body d-flex flex-column justify-content-center text-center">
-              <h5 className="card-title" style={{ color: "#ff6600" }}>
-                {t("signUpAs.user.title")}
-              </h5>
-              <p className="card-text">{t("signUpAs.user.description")}</p>
-              <Link to="/user-register" className="btn mt-auto" style={{ backgroundColor: "#ff6600", color: "white" }}>
-                {t("signUpAs.user.button")}
-              </Link>
-            </div>
-          </div>
+        <div className="bg-white rounded-lg shadow-md border-t-4 border-b-4 border-red-500 flex flex-col p-6 text-center">
+          <h5 className="text-xl font-semibold text-red-600 mb-2">
+            {t("signUpAs.user.title")}
+          </h5>
+          <p className="text-sm text-gray-700 mb-4">{t("signUpAs.user.description")}</p>
+          <Link
+            to="/user-register"
+            className="mt-auto bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded transition"
+          >
+            {t("signUpAs.user.button")}
+          </Link>
         </div>
       </div>
     </div>

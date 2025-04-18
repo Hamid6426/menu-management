@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { FaSignOutAlt, FaUtensils, FaPhone, FaSignInAlt } from "react-icons/fa";
 import { RiAccountCircleFill } from "react-icons/ri";
 import LanguageSwitcher from "./LanguageSwitcher";
-import { MdDashboard } from "react-icons/md";
+import { MdClose, MdDashboard } from "react-icons/md";
 
 const Navbar = () => {
   const { t } = useTranslation();
@@ -64,29 +64,34 @@ const Navbar = () => {
 
   const navItems = token ? loggedNavItems : notLoggedNavItems;
 
+  // State for mobile menu toggle
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <nav className="w-full flex justify-between items-center border-b rounded-b-lg bg-white px-6 py-3 shadow-sm">
+    <nav className="flex w-full items-center justify-between bg-white px-6 py-3 shadow-sm">
       {/* Logo */}
       <button
-        className="text-2xl font-bold text-orange-600 hover:text-orange-700 focus:outline-none"
+        className="text-2xl font-bold text-red-600 hover:text-red-700 focus:outline-none"
         onClick={() => navigate("/")}
       >
-        MENU MANAGEMENT
+        DIGIMENU
       </button>
 
       {/* Mobile Menu Button */}
-      <div className="lg:hidden">
+      <div className="flex items-center gap-4 md:hidden">
+        <LanguageSwitcher />
         <button
-          className="text-orange-600 hover:text-orange-700 focus:outline-none"
+          className="flex cursor-pointer flex-col items-center hover:text-red-700 focus:outline-none"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          onClick={toggleMobileMenu} // Use the toggle function here
         >
           <svg
-            className="w-6 h-6"
+            className="h-6 w-6"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -99,18 +104,19 @@ const Navbar = () => {
               d="M4 6h16M4 12h16M4 18h16"
             />
           </svg>
+          <small className="text-xs">Menu</small>
         </button>
       </div>
 
       {/* Navbar Links */}
-      <div className="hidden lg:flex items-center space-x-6" id="navbarNav">
+      <div className="hidden items-center space-x-6 md:flex" id="navbarNav">
         <LanguageSwitcher />
 
         {navItems.map((item, index) => (
           <button
             key={index}
-            onClick={() => item.href ? navigate(item.href) : item.action?.()}
-            className="flex flex-col items-center text-gray-800 hover:text-orange-600 transition-colors duration-300"
+            onClick={() => (item.href ? navigate(item.href) : item.action?.())}
+            className="flex flex-col items-center text-gray-800 transition-colors duration-300 hover:text-red-600"
           >
             <div>{item.icon}</div>
             <span className="text-xs">{t(item.labelKey)}</span>
@@ -118,20 +124,29 @@ const Navbar = () => {
         ))}
       </div>
 
-      {/* Mobile Menu Content - would need JavaScript to handle collapse */}
-      <div className="lg:hidden fixed inset-0 bg-white z-50 hidden" id="mobileMenu">
-        <div className="flex flex-col items-center justify-center h-full space-y-8">
-          <LanguageSwitcher />
-          
+      {/* Mobile Menu Content */}
+      <div
+        className={`fixed inset-0 z-50 bg-white md:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}
+        id="mobileMenu"
+      >
+        <button
+          className="mt-3 mr-4 ml-auto flex cursor-pointer flex-col items-center hover:text-red-700 focus:outline-none"
+          type="button"
+          onClick={toggleMobileMenu} // Use the toggle function here
+        >
+          <MdClose className="text-lg" />
+          <small className="text-xs">Menu</small>
+        </button>
+        <div className="flex h-full flex-col items-center justify-start mt-2 pt-6 border-t border-rose-200 space-y-3">
           {navItems.map((item, index) => (
             <button
               key={index}
               onClick={() => {
                 if (item.href) navigate(item.href);
                 if (item.action) item.action();
-                // Close mobile menu here
+                setIsMobileMenuOpen(false); // Close mobile menu after an item is clicked
               }}
-              className="flex flex-col items-center text-gray-800 hover:text-orange-600 transition-colors duration-300"
+              className="flex w-60 cursor-pointer items-center justify-start gap-3 rounded-md border border-red-400 px-4 py-2 text-gray-800 transition-colors duration-300 hover:text-red-600"
             >
               <div>{item.icon}</div>
               <span className="text-sm">{t(item.labelKey)}</span>

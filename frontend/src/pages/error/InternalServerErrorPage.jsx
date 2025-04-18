@@ -7,14 +7,14 @@ const InternalServerErrorPage = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="text-center px-4">
-        <h1 className="text-4xl font-bold mb-4 text-orange-600">
+        <h1 className="text-4xl font-bold mb-4 text-red-600">
           {t("internalServerErrorPage.title")}
         </h1>
         <p className="text-lg mb-4">
           {t("internalServerErrorPage.message")}{" "}
           <a
             href="/contact"
-            className="underline text-orange-600 hover:text-orange-800"
+            className="underline text-red-600 hover:text-red-800"
           >
             {t("internalServerErrorPage.support")}
           </a>

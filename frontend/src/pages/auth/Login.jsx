@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import { jwtDecode } from "jwt-decode"; // ensure default import
-import { useTranslation } from "react-i18next"; // Add this import
+import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
-  const { t } = useTranslation(); // Initialize translation
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
 
-  // New useEffect to check for a stored token on component mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -33,7 +32,7 @@ const Login = () => {
                 navigate("/restaurants");
               }
             } else {
-              setError(t("login.errorMessage")); // Translated error message
+              setError(t("login.errorMessage"));
             }
           }, 200);
         }
@@ -44,9 +43,7 @@ const Login = () => {
   }, [navigate, t]);
 
   const handleChange = (e) => {
-    if (e.target.name === "password" && error) {
-      setError(null);
-    }
+    if (e.target.name === "password" && error) setError(null);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -59,12 +56,10 @@ const Login = () => {
     try {
       const response = await axiosInstance.post("/auth/login", formData);
       const { token } = response.data;
-
-      // Store token & user data immediately
       localStorage.setItem("token", token);
 
       if (!token) {
-        setError(t("login.noTokenError")); // Translated error message
+        setError(t("login.noTokenError"));
         return;
       }
 
@@ -73,7 +68,7 @@ const Login = () => {
       const role = decoded?.role;
       const allergies = decoded?.allergies;
 
-      setSuccess(t("login.successMessage")); // Translated success message
+      setSuccess(t("login.successMessage"));
       setFormData({ email: "", password: "" });
 
       setTimeout(() => {
@@ -86,13 +81,13 @@ const Login = () => {
             navigate("/restaurants");
           }
         } else {
-          setError(t("login.errorMessage")); // Translated error message
+          setError(t("login.errorMessage"));
         }
       }, 200);
     } catch (err) {
       const message =
         err.response?.data?.message ||
-        (err.request ? t("login.networkError") : t("login.unexpectedError")); // Translated error message
+        (err.request ? t("login.networkError") : t("login.unexpectedError"));
       setError(message);
     } finally {
       setLoading(false);
@@ -100,26 +95,18 @@ const Login = () => {
   };
 
   return (
-    <div
-      className="container rounded bg-white p-4 shadow-lg"
-      style={{
-        maxWidth: "400px",
-        borderTop: "4px solid #ff6600",
-        borderBottom: "4px solid #ff6600",
-      }}
-    >
-      <h2 className="mb-4 text-center" style={{ color: "#ff6600" }}>
+    <div className="max-w-sm w-full mx-auto bg-white p-6 shadow-lg rounded-lg mt-10 border-t-4 border-b-4 border-red-500">
+      <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
         {t("login.title")}
       </h2>
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">{t("login.email")}</label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("login.email")}</label>
           <input
             type="email"
             name="email"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.email}
             onChange={handleChange}
             placeholder={t("login.email")}
@@ -127,13 +114,12 @@ const Login = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("login.password")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("login.password")}</label>
           <input
             type="password"
             name="password"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.password}
             onChange={handleChange}
             placeholder={t("login.password")}
@@ -141,27 +127,19 @@ const Login = () => {
           />
         </div>
 
-        <div className="text-end">
-          <Link
-            to="/forgot-password"
-            className="text-decoration-none"
-            style={{ color: "#ff6600" }}
-          >
+        <div className="text-right text-sm">
+          <Link to="/forgot-password" className="text-red-500 hover:underline">
             {t("login.forgotPassword")}
           </Link>
         </div>
 
         <button
           type="submit"
-          className="btn mt-3 w-100"
+          className="w-full bg-red-500 text-white font-semibold py-2 rounded hover:bg-red-600 transition"
           disabled={loading}
-          style={{ backgroundColor: "#ff6600", color: "white" }}
         >
           {loading ? (
-            <>
-              <span className="spinner-border spinner-border-sm me-2"></span>
-              {t("login.loading")}
-            </>
+            <span className="animate-pulse">{t("login.loading")}</span>
           ) : (
             t("login.loginButton")
           )}
@@ -169,29 +147,19 @@ const Login = () => {
       </form>
 
       {error && (
-        <div
-          className="alert mt-3"
-          style={{ backgroundColor: "#ffe6e6", color: "#cc0000" }}
-        >
+        <div className="mt-4 bg-red-100 text-red-700 px-4 py-2 rounded text-sm">
           {error}
         </div>
       )}
       {success && (
-        <div
-          className="alert mt-3"
-          style={{ backgroundColor: "#e6ffe6", color: "#007700" }}
-        >
+        <div className="mt-4 bg-green-100 text-green-700 px-4 py-2 rounded text-sm">
           {success}
         </div>
       )}
 
-      <div className="d-flex justify-content-center align-items-center mt-3">
-        <p className="mb-0">{t("login.registerPrompt")}</p>
-        <Link
-          to="/signup-as"
-          className="text-decoration-none ms-1"
-          style={{ color: "#ff6600" }}
-        >
+      <div className="flex justify-center items-center gap-1 mt-4 text-sm">
+        <p>{t("login.registerPrompt")}</p>
+        <Link to="/signup-as" className="text-red-500 hover:underline">
           {t("login.registerLink")}
         </Link>
       </div>

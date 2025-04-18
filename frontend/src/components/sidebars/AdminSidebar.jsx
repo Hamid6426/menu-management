@@ -11,7 +11,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 
-const DashboardSidebar = () => {
+const AdminSidebar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -41,17 +41,7 @@ const DashboardSidebar = () => {
       title: t("dashboardNavbar.manageRestaurants"),
     },
     {
-      to: "/admin/manage-staff",
-      icon: <FaUsersCog />,
-      title: t("dashboardNavbar.manageStaff"),
-    },
-    {
-      to: "/admin/settings",
-      icon: <FaCogs />,
-      title: t("dashboardNavbar.settings"),
-    },
-    {
-      to: "/admin/profile",
+      to: "/profile",
       icon: <FaUserCircle />,
       title: t("dashboardNavbar.profile"),
     },
@@ -66,7 +56,7 @@ const DashboardSidebar = () => {
         <Link
           key={index}
           to={to}
-          className="mb-6 text-xl text-gray-700 hover:text-orange-500"
+          className="mb-6 text-xl text-gray-700 hover:text-red-500"
           title={title}
         >
           {icon}
@@ -74,7 +64,7 @@ const DashboardSidebar = () => {
       ))}
       <button
         onClick={handleLogout}
-        className="mt-auto rounded-full p-2 text-xl text-gray-700 transition duration-200 ease-in-out  hover:text-orange-500"
+        className="mt-auto rounded-full p-2 text-xl text-gray-700 transition duration-200 ease-in-out  hover:text-red-500"
         title={t("dashboardNavbar.logout")}
       >
         <FaSignOutAlt />
@@ -83,4 +73,4 @@ const DashboardSidebar = () => {
   );
 };
 
-export default DashboardSidebar;
+export default AdminSidebar;

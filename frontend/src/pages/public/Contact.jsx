@@ -23,8 +23,8 @@
 
     return (
       <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="max-w-lg w-full bg-white p-6 rounded-lg shadow-lg border-l-4 border-orange-500">
-        <h3 className="text-3xl font-bold text-center text-orange-600 mb-6">
+      <div className="max-w-lg w-full bg-white p-6 rounded-lg shadow-lg border-t-2 border-b-2 border-red-500">
+        <h3 className="text-3xl font-bold text-center text-red-600 mb-6">
           Contact Us
         </h3>
         <form onSubmit={handleSubmit}>
@@ -36,7 +36,7 @@
               onChange={handleChange}
               type="text"
               required
-              className="mt-1 p-2 w-full border-2 border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="mt-1 p-2 w-full border-2 border-red-400 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
             />
           </div>
 
@@ -48,7 +48,7 @@
               onChange={handleChange}
               type="email"
               required
-              className="mt-1 p-2 w-full border-2 border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="mt-1 p-2 w-full border-2 border-red-400 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
             />
           </div>
 
@@ -59,19 +59,19 @@
               value={form.message}
               onChange={handleChange}
               required
-              className="mt-1 p-2 w-full h-32 border-2 border-orange-400 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
+              className="mt-1 p-2 w-full h-32 border-2 border-red-400 rounded focus:outline-none focus:ring-2 focus:ring-red-400"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 mt-4 text-white font-semibold bg-orange-600 hover:bg-orange-700 rounded-md transition duration-300"
+            className="w-full py-2 mt-4 text-white font-semibold bg-red-600 hover:bg-red-700 rounded-md transition duration-300"
           >
             Send Message
           </button>
 
           {status && (
-            <div className="mt-4 text-center text-orange-600">
+            <div className="mt-4 text-center text-red-600">
               {status}
             </div>
           )}

@@ -21,7 +21,7 @@ import InternalServerErrorPage from "./pages/error/InternalServerErrorPage";
 import NotFoundPage from "./pages/error/NotFoundPage";
 
 import Layout from "./layouts/Layout";
-import DashboardLayout from "./layouts/DashboardLayout";
+import AdminDashboardLayout from "./layouts/AdminDashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import ProtectedRoute from "./context/ProtectedRoute";
 
@@ -42,6 +42,20 @@ import UpdateDish from "./pages/admin/UpdateDish";
 import ManageStaff from "./pages/admin/ManageStaff";
 import Settings from "./pages/admin/Settings";
 
+// Super
+import ManageAllUsers from "./pages/super/ManageAllUsers";
+import ManageAllRestaurants from "./pages/super/ManageAllRestaurants";
+import ManageAllDishes from "./pages/super/ManageAllDishes";
+
+import AddUser from "./pages/super/AddUser";
+import AddRestaurant from "./pages/super/AddRestaurant";
+import AddDish from "./pages/super/AddDish";
+
+import UpdateUser from "./pages/super/UpdateUser";
+
+
+import SuperAdminDashboardLayout from "./layouts/SuperAdminDashboardLayout";
+
 function App() {
   return (
     <Routes>
@@ -56,7 +70,13 @@ function App() {
         <Route path="/:restaurantSlug" element={<ShowRestaurant />} />
         <Route path="/:restaurantSlug/menu" element={<ShowRestaurantMenu />} />
         {/* Protected route */}
-        <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin", "manager", "user"]} />}>
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={["admin", "super-admin", "manager", "user"]}
+            />
+          }
+        >
           <Route path="/profile" element={<Profile />} />
           <Route path="/add-allergies" element={<AddAllergies />} />
         </Route>
@@ -69,25 +89,94 @@ function App() {
         <Route path="/admin-register" element={<AdminRegister />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:resetToken" eleament={<ResetPassword />} />
+        <Route
+          path="/reset-password/:resetToken"
+          eleament={<ResetPassword />}
+        />
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin", "manager"]} />}>
-        <Route element={<DashboardLayout />}>
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={["admin", "super-admin"]} />
+        }
+      >
+        <Route element={<AdminDashboardLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
 
-          <Route path="/admin/manage-restaurants" element={<ManageRestaurants />} />
-          <Route path="/admin/manage-restaurants/create-restaurant" element={<CreateRestaurant />} />
-          <Route path="/admin/manage-restaurants/:restaurantSlug/update-restaurant" element={<UpdateRestaurant />} />
+          <Route
+            path="/admin/manage-restaurants"
+            element={<ManageRestaurants />}
+          />
+          <Route
+            path="/admin/manage-restaurants/create-restaurant"
+            element={<CreateRestaurant />}
+          />
+          <Route
+            path="/admin/manage-restaurants/:restaurantSlug/update"
+            element={<UpdateRestaurant />}
+          />
 
-          <Route path="/admin/manage-restaurants/:restaurantSlug/dishes" element={<ManageDishes />} />
-          <Route path="/admin/manage-restaurants/:restaurantSlug/create-dish" element={<CreateDish />} />
-          <Route path="/admin/manage-restaurants/:restaurantSlug/:dishSlug/update-dish" element={<UpdateDish />} />
+          <Route
+            path="/admin/manage-restaurants/:restaurantSlug/dishes"
+            element={<ManageDishes />}
+          />
+          <Route
+            path="/admin/manage-restaurants/:restaurantSlug/create-dish"
+            element={<CreateDish />}
+          />
+          <Route
+            path="/admin/manage-restaurants/:restaurantSlug/:dishSlug/update-dish"
+            element={<UpdateDish />}
+          />
 
-          <Route element={<ProtectedRoute allowedRoles={["admin", "super-admin"]} />}>
+          <Route
+            element={<ProtectedRoute allowedRoles={["admin", "super-admin"]} />}
+          >
             <Route path="/admin/settings" element={<Settings />} />
             <Route path="/admin/manage-staff" element={<ManageStaff />} />
           </Route>
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
+        <Route element={<SuperAdminDashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+
+          <Route path="/dashboard/manage-users" element={<ManageAllUsers />} />
+          <Route
+            path="/dashboard/manage-restaurants"
+            element={<ManageAllRestaurants />}
+          />
+          <Route
+            path="/dashboard/manage-dishes"
+            element={<ManageAllDishes />}
+          />
+
+          <Route
+            path="/dashboard/manage-users/add-user"
+            element={<AddUser />}
+          />
+          <Route
+            path="/dashboard/manage-restaurants/add-restaurant"
+            element={<AddRestaurant />}
+          />
+          <Route
+            path="/dashboard/manage-dishes/:restaurantSlug/add-dish"
+            element={<AddDish />}
+          />
+
+          <Route
+            path="/dashboard/manage-users/:username/update"
+            element={<UpdateUser />}
+          />
+          <Route
+            path="/dashboard/manage-restaurants/:restaurantSlug/update"
+            element={<UpdateRestaurant />}
+          />
+          <Route
+            path="/dashboard/manage-dishes/:restaurantSlug/:dishSlug/update"
+            element={<UpdateDish />}
+          />
         </Route>
       </Route>
 

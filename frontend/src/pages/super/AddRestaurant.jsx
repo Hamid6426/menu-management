@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../../utils/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
 const AddRestaurant = () => {
@@ -19,17 +19,14 @@ const AddRestaurant = () => {
   });
 
   const availableLanguages = ["en", "it", "ar"];
-
   const token = localStorage.getItem("token");
   const username = jwtDecode(token)?.username;
 
-  // Handle multi-language inputs and brand color updates
   const handleChange = (e) => {
-    const { name, value, type, checked, files, dataset } = e.target;
+    const { name, value, checked, files, dataset } = e.target;
 
     setFormData((prevState) => {
       if (dataset.language) {
-        // Handle multi-language fields (name, location)
         return {
           ...prevState,
           [name]: {
@@ -40,7 +37,6 @@ const AddRestaurant = () => {
       }
 
       if (name === "languages") {
-        // Handle language checkboxes
         const updatedLanguages = checked
           ? [...prevState.languages, value]
           : prevState.languages.filter((lang) => lang !== value);
@@ -48,7 +44,6 @@ const AddRestaurant = () => {
       }
 
       if (["primary", "secondary", "tertiary"].includes(name)) {
-        // Handle brand colors
         return {
           ...prevState,
           brandColors: {
@@ -66,7 +61,6 @@ const AddRestaurant = () => {
     }
   };
 
-  // Handle image file selection and preview
   const handleImageUpload = (file) => {
     setImageFile(file);
     const reader = new FileReader();
@@ -74,7 +68,6 @@ const AddRestaurant = () => {
     reader.readAsDataURL(file);
   };
 
-  // Validate form fields before submission
   const validateForm = () => {
     if (!formData.name.en.trim()) return "Restaurant name in English is required.";
     if (!formData.location.en.trim()) return "Location in English is required.";
@@ -85,7 +78,6 @@ const AddRestaurant = () => {
     return null;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -121,7 +113,6 @@ const AddRestaurant = () => {
     }
   };
 
-  // Reset form fields after submission
   const resetForm = () => {
     setFormData({
       name: { en: "", it: "", ar: "" },
@@ -134,106 +125,117 @@ const AddRestaurant = () => {
   };
 
   return (
-    <div className="container" style={{ marginTop: "5rem" }}>
-      <div className="card shadow-lg mx-auto" style={{ maxWidth: "500px" }}>
-        <div className="card-body">
-          <h4 className="card-title text-center mb-4">Create New Restaurant</h4>
+    <div className="flex justify-center mt-20 px-4">
+      <div className="w-full max-w-xl bg-white shadow-lg rounded-lg p-6">
+        <h2 className="text-2xl font-semibold text-center mb-6">Create New Restaurant</h2>
 
-          {error && <div className="alert alert-danger">{error}</div>}
-          {success && <div className="alert alert-success">{success}</div>}
+        {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
+        {success && <div className="bg-green-100 text-green-700 p-3 rounded mb-4">{success}</div>}
 
-          <form onSubmit={handleSubmit} encType="multipart/form-data">
-            {/* Restaurant Name */}
-            <div className="mb-3">
-              <label className="form-label">Restaurant Name</label>
-              {availableLanguages.map((lang) => (
-                <input
-                  key={lang}
-                  type="text"
-                  name="name"
-                  data-language={lang}
-                  className="form-control mb-2"
-                  value={formData.name[lang]}
-                  onChange={handleChange}
-                  placeholder={`Name (${lang.toUpperCase()})`}
-                  required={lang === "en"}
-                />
-              ))}
-            </div>
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="space-y-6">
+          {/* Restaurant Name */}
+          <div>
+            <label className="block font-medium mb-1">Restaurant Name</label>
+            {availableLanguages.map((lang) => (
+              <input
+                key={lang}
+                type="text"
+                name="name"
+                data-language={lang}
+                className="w-full mb-2 px-3 py-2 border rounded text-sm"
+                value={formData.name[lang]}
+                onChange={handleChange}
+                placeholder={`Name (${lang.toUpperCase()})`}
+                required={lang === "en"}
+              />
+            ))}
+          </div>
 
-            {/* Location */}
-            <div className="mb-3">
-              <label className="form-label">Location</label>
-              {availableLanguages.map((lang) => (
-                <input
-                  key={lang}
-                  type="text"
-                  name="location"
-                  data-language={lang}
-                  className="form-control mb-2"
-                  value={formData.location[lang]}
-                  onChange={handleChange}
-                  placeholder={`Location (${lang.toUpperCase()})`}
-                  required={lang === "en"}
-                />
-              ))}
-            </div>
+          {/* Location */}
+          <div>
+            <label className="block font-medium mb-1">Location</label>
+            {availableLanguages.map((lang) => (
+              <input
+                key={lang}
+                type="text"
+                name="location"
+                data-language={lang}
+                className="w-full mb-2 px-3 py-2 border rounded text-sm"
+                value={formData.location[lang]}
+                onChange={handleChange}
+                placeholder={`Location (${lang.toUpperCase()})`}
+                required={lang === "en"}
+              />
+            ))}
+          </div>
 
-            {/* Brand Colors */}
-            <div className="mb-3">
-              <label className="form-label">Brand Colors</label>
-              <div className="d-flex gap-3">
-                {["primary", "secondary", "tertiary"].map((color) => (
-                  <div key={color} className="d-flex align-items-center gap-2">
-                    <label>{color.charAt(0).toUpperCase() + color.slice(1)}</label>
-                    <input
-                      type="color"
-                      name={color}
-                      className="form-control form-control-color"
-                      value={formData.brandColors[color]}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Languages */}
-            <div className="mb-3">
-              <label className="form-label">Languages</label>
-              {availableLanguages.map((lang) => (
-                <div key={lang} className="form-check">
+          {/* Brand Colors */}
+          <div>
+            <label className="block font-medium mb-1">Brand Colors</label>
+            <div className="flex gap-4">
+              {["primary", "secondary", "tertiary"].map((color) => (
+                <div key={color} className="flex items-center gap-2">
+                  <label className="text-sm capitalize w-20">{color}</label>
                   <input
-                    className="form-check-input"
+                    type="color"
+                    name={color}
+                    className="w-10 h-10 p-1 border rounded"
+                    value={formData.brandColors[color]}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Languages */}
+          <div>
+            <label className="block font-medium mb-1">Languages</label>
+            <div className="flex gap-6">
+              {availableLanguages.map((lang) => (
+                <label key={lang} className="flex items-center gap-2 text-sm">
+                  <input
                     type="checkbox"
-                    id={`language-${lang}`}
                     name="languages"
                     value={lang}
                     checked={formData.languages.includes(lang)}
                     onChange={handleChange}
+                    className="h-4 w-4"
                   />
-                  <label className="form-check-label" htmlFor={`language-${lang}`}>
-                    {lang.toUpperCase()}
-                  </label>
-                </div>
+                  {lang.toUpperCase()}
+                </label>
               ))}
             </div>
+          </div>
 
-            {/* Image Upload */}
-            <div className="mb-3">
-              <label className="form-label">Restaurant Image</label>
-              <input type="file" className="form-control" name="image" accept="image/*" onChange={handleChange} />
-              {imagePreview && (
-                <img src={imagePreview} alt="Preview" className="img-thumbnail mt-2" style={{ maxWidth: "200px" }} />
-              )}
-            </div>
+          {/* Image Upload */}
+          <div>
+            <label className="block font-medium mb-1">Restaurant Image</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleChange}
+              className="block w-full text-sm text-gray-700 border border-gray-300 rounded px-3 py-2"
+            />
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-3 w-48 h-auto border rounded shadow"
+              />
+            )}
+          </div>
 
-            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-              {loading ? "Creating..." : "Create Restaurant"}
-            </button>
-          </form>
-        </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
+          >
+            {loading ? "Creating..." : "Create Restaurant"}
+          </button>
+        </form>
       </div>
     </div>
   );

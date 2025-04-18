@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
-const AdminSidebar = () => {
+const SuperAdminSidebar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -118,4 +118,4 @@ const AdminSidebar = () => {
   );
 };
 
-export default AdminSidebar;
+export default SuperAdminSidebar;

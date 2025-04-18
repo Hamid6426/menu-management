@@ -38,10 +38,10 @@ export default function Profile() {
   return (
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-orange-600">User Profile</h2>
+        <h2 className="text-3xl font-bold text-red-600">User Profile</h2>
         <Link
           to="/add-allergies"
-          className="bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors hover:bg-orange-700"
+          className="bg-red-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors hover:bg-red-700"
         >
           Update Allergies
         </Link>

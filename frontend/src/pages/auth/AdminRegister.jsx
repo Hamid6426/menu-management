@@ -25,7 +25,7 @@ const AdminRegister = () => {
       const response = await axiosInstance.post("/auth/admin-register", formData);
       setSuccess(response.data.message);
       setTimeout(() => navigate("/admin-login"), 2000);
-      setFormData({ name: "", email: "", password: "" });
+      setFormData({ name: "", username: "", email: "", password: "" });
     } catch (err) {
       setError(err.response?.data?.message || t("adminRegister.errorMessage"));
     } finally {
@@ -34,33 +34,30 @@ const AdminRegister = () => {
   };
 
   return (
-    <div
-      className="container bg-white shadow-lg rounded p-4"
-      style={{ maxWidth: "400px", borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}
-    >
-      <h2 className="text-center mb-3" style={{ color: "#ff6600" }}>
+    <div className="max-w-sm w-full mx-auto bg-white shadow-lg rounded-lg p-6 border-t-4 border-b-4 border-red-500 mt-10">
+      <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
         {t("adminRegister.title")}
       </h2>
 
       {error && (
-        <div className="alert mt-3" style={{ backgroundColor: "#ffe6e6", color: "#cc0000" }}>
+        <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
           {error}
         </div>
       )}
+
       {success && (
-        <div className="alert mt-3" style={{ backgroundColor: "#e6ffe6", color: "#007700" }}>
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm">
           {success}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="mt-4">
-        <div className="mb-3">
-          <label className="form-label">{t("adminRegister.name")}</label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("adminRegister.name")}</label>
           <input
             type="text"
             name="name"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.name}
             onChange={handleChange}
             placeholder={t("adminRegister.name")}
@@ -68,13 +65,12 @@ const AdminRegister = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("adminRegister.username")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("adminRegister.username")}</label>
           <input
             type="text"
             name="username"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.username}
             onChange={handleChange}
             placeholder={t("adminRegister.username")}
@@ -82,13 +78,12 @@ const AdminRegister = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("adminRegister.email")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("adminRegister.email")}</label>
           <input
             type="email"
             name="email"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.email}
             onChange={handleChange}
             placeholder={t("adminRegister.email")}
@@ -96,13 +91,12 @@ const AdminRegister = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("adminRegister.password")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("adminRegister.password")}</label>
           <input
             type="password"
             name="password"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.password}
             onChange={handleChange}
             placeholder={t("adminRegister.password")}
@@ -112,16 +106,15 @@ const AdminRegister = () => {
 
         <button
           type="submit"
-          className="btn w-100 mt-3"
-          style={{ backgroundColor: "#ff6600", color: "white" }}
+          className="w-full bg-red-500 text-white font-semibold py-2 rounded hover:bg-red-600 transition"
           disabled={loading}
         >
           {loading ? t("adminRegister.registering") : t("adminRegister.registerButton")}
         </button>
 
-        <p className="text-center mt-3">
+        <p className="text-center text-sm mt-4 text-gray-600">
           {t("userRegister.loginPrompt")}{" "}
-          <Link to="/login" className="text-decoration-none" style={{ color: "#ff6600" }}>
+          <Link to="/login" className="text-red-600 hover:underline">
             {t("userRegister.loginLink")}
           </Link>
         </p>

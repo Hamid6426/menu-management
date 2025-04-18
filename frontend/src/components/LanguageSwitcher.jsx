@@ -34,7 +34,7 @@ function LanguageSwitcher() {
     <div ref={dropdownRef} className="relative">
       <button
         type="button"
-        className="flex flex-col items-center justify-center text-gray-800 hover:text-orange-600 transition-colors duration-300 bg-transparent border-none mt-0.5"
+        className="flex flex-col items-center justify-center text-gray-800 hover:text-red-600 transition-colors duration-300 bg-transparent border-none mt-0.5"
         onClick={toggleDropdown}
       >
         <MdLanguage className="text-xl h-5" />
@@ -46,7 +46,7 @@ function LanguageSwitcher() {
         <ul className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
           <li>
             <button
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-red-600"
               onClick={() => changeLanguage("en")}
             >
               {t("languageSwitcher.english")}
@@ -54,7 +54,7 @@ function LanguageSwitcher() {
           </li>
           <li>
             <button
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-red-600"
               onClick={() => changeLanguage("it")}
             >
               {t("languageSwitcher.italian")}
@@ -62,7 +62,7 @@ function LanguageSwitcher() {
           </li>
           <li>
             <button
-              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-red-600"
               onClick={() => changeLanguage("ar")}
             >
               {t("languageSwitcher.arabic")}

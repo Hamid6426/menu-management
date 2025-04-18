@@ -1,12 +1,12 @@
 import React from "react";
-import DashboardSidebar from "../components/DashboardSidebar";
+import AdminSidebar from "../components/sidebars/AdminSidebar";
 import { Outlet } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 
-export default function DashboardLayout() {
+export default function AdminDashboardLayout() {
   return (
     <div className="flex w-full">
-      <DashboardSidebar />
+      <AdminSidebar />
       <main className="flex-1">
         <Breadcrumbs />
         <Outlet />

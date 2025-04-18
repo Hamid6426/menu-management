@@ -3,7 +3,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import { useTranslation } from "react-i18next";
 
 const ForgotPassword = () => {
-  const { t } = useTranslation(); // Using the useTranslation hook to get localized text
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -23,24 +23,31 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div
-      className="container bg-white shadow-lg rounded p-4"
-      style={{ maxWidth: "400px", borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}
-    >
-      <h2 className="mb-4 text-center" style={{ color: "#ff6600" }}>
+    <div className="max-w-sm w-full mx-auto bg-white shadow-lg rounded-lg p-6 border-t-4 border-b-4 border-red-500 mt-10">
+      <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
         {t("forgotPassword.title")}
       </h2>
 
-      {error && <div className="alert alert-danger">{error}</div>}
-      {success && <div className="alert alert-success">{t("forgotPassword.success")}</div>}
+      {error && (
+        <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+          {error}
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label className="form-label">{t("forgotPassword.emailLabel")}</label>
+      {success && (
+        <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 text-sm">
+          {t("forgotPassword.success")}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            {t("forgotPassword.emailLabel")}
+          </label>
           <input
             type="email"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("forgotPassword.placeholderEmail")}
@@ -48,7 +55,10 @@ const ForgotPassword = () => {
           />
         </div>
 
-        <button type="submit" className="btn w-100" style={{ backgroundColor: "#ff6600", color: "white" }}>
+        <button
+          type="submit"
+          className="w-full bg-red-500 text-white font-semibold py-2 rounded hover:bg-red-600 transition"
+        >
           {t("forgotPassword.sendResetLink")}
         </button>
       </form>

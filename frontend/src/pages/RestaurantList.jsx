@@ -60,7 +60,7 @@ const RestaurantList = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <h1 className="text-4xl font-bold text-orange-600 text-center mb-6 font-lobster">
+      <h1 className="text-4xl font-bold text-red-600 text-center mb-6 font-lobster">
         Restaurants
       </h1>
 
@@ -83,7 +83,7 @@ const RestaurantList = () => {
                 className="bg-white shadow-md rounded-xl p-5 flex flex-col justify-between"
               >
                 <div>
-                  <h5 className="text-xl font-semibold text-orange-600 mb-2">{restaurant.name}</h5>
+                  <h5 className="text-xl font-semibold text-red-600 mb-2">{restaurant.name}</h5>
                   <p className="text-gray-600 text-sm mb-1">
                     <span className="font-medium">Location:</span> {restaurant.location}
                   </p>
@@ -102,7 +102,7 @@ const RestaurantList = () => {
 
                 <Link
                   to={`/${restaurant.restaurantSlug}/menu`}
-                  className="mt-4 inline-block text-center bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors"
+                  className="mt-4 inline-block text-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                 >
                   View Menu
                 </Link>
@@ -127,7 +127,7 @@ const RestaurantList = () => {
                   onClick={() => setPage(i + 1)}
                   className={`px-4 py-2 text-sm rounded border ${
                     page === i + 1
-                      ? "bg-orange-600 text-white"
+                      ? "bg-red-600 text-white"
                       : "bg-white text-gray-700 hover:bg-gray-100"
                   }`}
                 >

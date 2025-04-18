@@ -80,94 +80,97 @@ const UpdateRestaurant = () => {
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">Update Restaurant</h2>
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      <h2 className="text-2xl font-bold mb-6 text-tomatoRose-700">Update Restaurant</h2>
 
-      {/* Error Message */}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && (
+        <div className="mb-4 p-3 rounded bg-red-100 text-red-700 border border-red-300">
+          {error}
+        </div>
+      )}
 
-      {/* Success Message */}
-      {success && <div className="alert alert-success">{success}</div>}
+      {success && (
+        <div className="mb-4 p-3 rounded bg-green-100 text-green-700 border border-green-300">
+          {success}
+        </div>
+      )}
 
-      {/* Loading Spinner */}
       {loading && (
-        <div className="text-center">
-          <div className="spinner-border text-primary"></div>
+        <div className="flex justify-center py-4">
+          <div className="w-8 h-8 border-4 border-t-tomatoRose-600 border-gray-200 rounded-full animate-spin"></div>
         </div>
       )}
 
       {!loading && (
-        <form onSubmit={handleSubmit} className="row g-3">
-          {/* Restaurant Name */}
-          <div className="col-md-6">
-            <label className="form-label">Restaurant Name</label>
-            <input 
-              type="text" 
-              name="name" 
-              value={formData.name} 
-              onChange={handleChange} 
-              className="form-control" 
-              placeholder="Restaurant Name" 
-              required 
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block mb-1 font-medium">Restaurant Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-tomatoRose-400"
+              placeholder="Restaurant Name"
+              required
             />
           </div>
 
-          {/* Location */}
-          <div className="col-md-6">
-            <label className="form-label">Location</label>
-            <input 
-              type="text" 
-              name="location" 
-              value={formData.location} 
-              onChange={handleChange} 
-              className="form-control" 
-              placeholder="Location" 
+          <div>
+            <label className="block mb-1 font-medium">Location</label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-tomatoRose-400"
+              placeholder="Location"
             />
           </div>
 
-          {/* Logo URL */}
-          <div className="col-md-6">
-            <label className="form-label">Logo URL</label>
-            <input 
-              type="text" 
-              name="logo" 
-              value={formData.logo} 
-              onChange={handleChange} 
-              className="form-control" 
-              placeholder="Logo URL" 
+          <div>
+            <label className="block mb-1 font-medium">Logo URL</label>
+            <input
+              type="text"
+              name="logo"
+              value={formData.logo}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-tomatoRose-400"
+              placeholder="Logo URL"
             />
           </div>
 
-          {/* Brand Colors */}
-          <div className="col-md-6">
-            <label className="form-label">Brand Colors</label>
-            <input 
-              type="text" 
-              name="brandColors" 
-              value={formData.brandColors} 
-              onChange={handleChange} 
-              className="form-control" 
-              placeholder="Brand Colors" 
+          <div>
+            <label className="block mb-1 font-medium">Brand Colors</label>
+            <input
+              type="text"
+              name="brandColors"
+              value={formData.brandColors}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-tomatoRose-400"
+              placeholder="Brand Colors"
             />
           </div>
 
-          {/* Languages */}
-          <div className="col-md-12">
-            <label className="form-label">Languages</label>
-            <input 
-              type="text" 
-              name="languages" 
-              value={formData.languages.join(", ")} 
-              onChange={handleLanguagesChange} 
-              className="form-control" 
-              placeholder="Languages (comma separated)" 
-              required 
+          <div className="md:col-span-2">
+            <label className="block mb-1 font-medium">Languages</label>
+            <input
+              type="text"
+              name="languages"
+              value={formData.languages.join(", ")}
+              onChange={handleLanguagesChange}
+              className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-tomatoRose-400"
+              placeholder="Languages (comma separated)"
+              required
             />
           </div>
 
-          {/* Submit Button */}
-          <div className="col-12">
-            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          <div className="md:col-span-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-tomatoRose-600 text-white py-2 px-4 rounded hover:bg-tomatoRose-700 transition"
+            >
               {loading ? "Updating..." : "Update Restaurant"}
             </button>
           </div>

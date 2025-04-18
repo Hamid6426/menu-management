@@ -23,11 +23,11 @@ const Breadcrumbs = () => {
           return (
             <React.Fragment key={to}>
               <MdChevronRight size={16} className="text-gray-400 mx-1" />
-              <li className="text-sm font-bold text-orange-500">
+              <li className="text-sm font-bold text-red-500">
                 {index === pathnames.length - 1 ? (
                   label
                 ) : (
-                  <Link to={to} className="text-gray-800 font-bold hover:text-orange-500">
+                  <Link to={to} className="text-gray-800 font-bold hover:text-red-500">
                     {label}
                   </Link>
                 )}

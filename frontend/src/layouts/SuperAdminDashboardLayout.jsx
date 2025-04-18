@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import DashboardSidebar from "../components/DashboardSidebar";
 import { Outlet } from "react-router-dom";
+import SuperAdminSidebar from "../components/sidebars/SuperAdminSidebar";
 
-export default function DashboardLayout() {
+export default function SuperAdminDashboardLayout() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Function to update the isMobile state based on window width
@@ -21,11 +21,11 @@ export default function DashboardLayout() {
     <div className="flex min-vh-100">
       {!isMobile ? (
         <div style={{ width: "15rem" }}>
-          <DashboardSidebar />
+          <SuperAdminSidebarSidebar />
         </div>
       ) : (
         <div>
-          <DashboardSidebar />
+          <SuperAdminSidebarSidebar />
         </div>
       )}
 

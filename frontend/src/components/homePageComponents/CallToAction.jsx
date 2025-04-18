@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function CallToAction() {
   return (
-    <section className="py-16 bg-red-50 w-full" id="get-started">
+    <section className="py-12 w-full" id="get-started">
       <div className="max-w-4xl mx-auto text-center px-6">
         <h2 className="text-3xl sm:text-4xl font-bold text-red-600 mb-4">
           Ready to Transform Your Menu Management?

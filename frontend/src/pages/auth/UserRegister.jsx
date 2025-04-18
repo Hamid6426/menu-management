@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate, Link } from "react-router-dom";
-import { useTranslation } from "react-i18next"; // Add translation import
+import { useTranslation } from "react-i18next";
 
 const UserRegister = () => {
-  const { t } = useTranslation(); // Initialize translation
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -34,22 +34,18 @@ const UserRegister = () => {
   };
 
   return (
-    <div
-      className="container bg-white shadow-lg rounded p-4"
-      style={{ maxWidth: "400px", borderTop: "4px solid #ff6600", borderBottom: "4px solid #ff6600" }}
-    >
-      <h2 className="text-center mb-3" style={{ color: "#ff6600" }}>
+    <div className="max-w-sm w-full mx-auto bg-white rounded shadow-md p-6 border-t-4 border-b-4 border-red-500 mt-10">
+      <h2 className="text-2xl font-semibold text-center text-red-600 mb-4">
         {t("userRegister.title")}
       </h2>
 
-      <form onSubmit={handleSubmit} className="mt-4">
-        <div className="mb-3">
-          <label className="form-label">{t("userRegister.name")}</label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("userRegister.name")}</label>
           <input
             type="text"
             name="name"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.name}
             onChange={handleChange}
             placeholder={t("userRegister.name")}
@@ -57,13 +53,12 @@ const UserRegister = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("userRegister.email")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("userRegister.email")}</label>
           <input
             type="email"
             name="email"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.email}
             onChange={handleChange}
             placeholder={t("userRegister.email")}
@@ -71,13 +66,12 @@ const UserRegister = () => {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">{t("userRegister.password")}</label>
+        <div>
+          <label className="block text-sm font-medium mb-1">{t("userRegister.password")}</label>
           <input
             type="password"
             name="password"
-            className="form-control"
-            style={{ borderColor: "#ffa500" }}
+            className="w-full border border-red-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
             value={formData.password}
             onChange={handleChange}
             placeholder={t("userRegister.password")}
@@ -87,28 +81,28 @@ const UserRegister = () => {
 
         <button
           type="submit"
-          className="btn w-100 mt-3"
-          style={{ backgroundColor: "#ff6600", color: "white" }}
           disabled={loading}
+          className="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded transition"
         >
           {loading ? t("userRegister.registering") : t("userRegister.registerButton")}
         </button>
       </form>
 
       {error && (
-        <div className="alert mt-3" style={{ backgroundColor: "#ffe6e6", color: "#cc0000" }}>
+        <div className="mt-4 text-sm text-red-700 bg-red-100 border border-red-400 rounded px-4 py-2">
           {error}
         </div>
       )}
+
       {success && (
-        <div className="alert mt-3" style={{ backgroundColor: "#e6ffe6", color: "#007700" }}>
+        <div className="mt-4 text-sm text-green-700 bg-green-100 border border-green-400 rounded px-4 py-2">
           {success}
         </div>
       )}
 
-      <p className="text-center mt-3">
+      <p className="text-center text-sm mt-4">
         {t("userRegister.loginPrompt")}{" "}
-        <Link to="/login" className="text-decoration-none" style={{ color: "#ff6600" }}>
+        <Link to="/login" className="text-red-600 hover:underline">
           {t("userRegister.loginLink")}
         </Link>
       </p>

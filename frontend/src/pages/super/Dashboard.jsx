@@ -34,12 +34,22 @@ export default function Dashboard() {
   const username = decoded.username;
 
   if (error) {
-    return <div>{error}</div>; // Show error before redirecting
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-100">
+        <div className="p-6 max-w-md w-full bg-white shadow-lg rounded-lg text-center text-red-500">
+          <p>{error}</p>
+        </div>
+      </div>
+    ); // Show error before redirecting
   }
 
   return (
-    <div>
-      <h2>Welcome, {username}!</h2>
+    <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="p-6 max-w-md w-full bg-white shadow-lg rounded-lg text-center">
+        <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+          Welcome, {username}!
+        </h2>
+      </div>
     </div>
   );
 }
