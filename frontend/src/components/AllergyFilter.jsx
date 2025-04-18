@@ -37,43 +37,36 @@ const AllergyFilter = ({ availableAllergens, selectedAllergens, setSelectedAller
 
   return (
     <div className="mb-4">
-      <div className="d-flex mb-1 position-relative">
+      <div className="flex items-center mb-2 relative">
         <input
           type="text"
-          className="form-control"
+          className="form-input w-full px-3 py-2 rounded border border-gray-300"
           placeholder={t("allergyFilter.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{ height: "40px" }}
         />
-        <button className="btn btn-secondary ms-2" style={{ height: "40px" }} onClick={() => setIsVisible(!isVisible)}>
+        <button
+          className="btn btn-secondary ml-2 px-3 py-2 rounded bg-gray-300 hover:bg-gray-400"
+          onClick={() => setIsVisible(!isVisible)}
+        >
           {isVisible ? t("allergyFilter.hide") : t("allergyFilter.show")}
         </button>
       </div>
       {isVisible && (
-        <div
-          className="d-flex position-absolute w-25 z-3 bg-white flex-column"
-          style={{
-            gap: "-1px",
-            border: "solid #ddd 1px",
-          }}
-        >
+        <div className="absolute w-64 bg-white shadow-lg z-10 border border-gray-300 rounded mt-2">
           {filteredAllergens.map((allergen) => (
             <div
-              className="d-flex align-items-center"
+              className="flex items-center px-4 py-2 border-b border-gray-200"
               key={allergen}
-              style={{
-                padding: "0.25rem 0.5rem",
-                minWidth: "fit-content",
-              }}
             >
               <input
                 type="checkbox"
                 id={allergen}
                 checked={selectedAllergens.includes(allergen)}
                 onChange={() => handleCheckboxChange(allergen)}
+                className="mr-2"
               />
-              <label htmlFor={allergen} className="ms-2">
+              <label htmlFor={allergen} className="text-sm text-gray-800">
                 {t(`allergens.${allergen}`, allergen.charAt(0).toUpperCase() + allergen.slice(1))}
               </label>
             </div>

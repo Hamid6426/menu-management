@@ -9,26 +9,25 @@ const Breadcrumbs = () => {
   const pathnames = location.pathname.split("/").filter((segment) => segment);
 
   return (
-    <nav aria-label="breadcrumb" style={{ backgroundColor: "#eee", width: "100%" }}>
-      <ol className="breadcrumb rounded p-2 d-flex align-items-center" style={{ backgroundColor: "#eee", width: "100%" }}>
-        <li className="breadcrumb-item">
-          <Link to="/" className="text-decoration-none text-dark fw-bold d-flex align-items-center">
-            <MdHome size={18} className="me-1" /> Home
+    <nav aria-label="breadcrumb" className="bg-gray-200 w-full">
+      <ol className="flex items-center space-x-2 p-2 bg-gray-200 rounded">
+        <li>
+          <Link to="/" className="text-gray-800 text-sm font-bold flex items-center">
+            <MdHome size={18} className="ml-2" />
           </Link>
         </li>
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-          const isLast = index === pathnames.length - 1;
           const label = value.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
           return (
             <React.Fragment key={to}>
-              <MdChevronRight size={16} className="text-muted mx-1" />
-              <li className={`breadcrumb-item ${isLast ? "active text-primary fw-bold" : ""}`}>
-                {isLast ? (
+              <MdChevronRight size={16} className="text-gray-400 mx-1" />
+              <li className="text-sm font-bold text-orange-500">
+                {index === pathnames.length - 1 ? (
                   label
                 ) : (
-                  <Link to={to} className="text-decoration-none text-dark fw-semibold">
+                  <Link to={to} className="text-gray-800 font-bold hover:text-orange-500">
                     {label}
                   </Link>
                 )}

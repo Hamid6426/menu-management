@@ -4,10 +4,10 @@ import Navbar from "../components/Navbar";
 
 export default function AuthLayout() {
   return (
-    <div className="d-flex flex-column w-100 vh-100">
+    <div className="flex flex-col w-full h-screen">
       <Navbar />
-      <div className="d-flex justify-content-center align-items-center h-100 pt-5">
-      <Outlet />
+      <div className="flex justify-center items-center h-full pt-5">
+        <Outlet />
       </div>
     </div>
   );

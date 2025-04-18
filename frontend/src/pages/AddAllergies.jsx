@@ -109,38 +109,43 @@ const AddAllergies = () => {
     );
 
   return (
-    <div className="container mt-4">
-      <h2 className="mb-3">{t("addAllergies.title")}</h2>
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold text-orange-600 mb-6">{t("addAllergies.title")}</h2>
 
       {/* Error Message */}
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alert alert-danger text-red-500 mb-4">{error}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <div className="row">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {allowedAllergies.map((allergy) => (
-            <div className="col-md-4" key={allergy}>
-              <div className="form-check">
-                <input
-                  type="checkbox"
-                  id={allergy}
-                  value={allergy}
-                  checked={selectedAllergies.includes(allergy)}
-                  onChange={handleCheckboxChange}
-                  className="form-check-input"
-                />
-                <label className="form-check-label" htmlFor={allergy}>
-                  {t(`allergies.${allergy}`) || allergy}
-                </label>
-              </div>
+            <div className="flex items-center" key={allergy}>
+              <input
+                type="checkbox"
+                id={allergy}
+                value={allergy}
+                checked={selectedAllergies.includes(allergy)}
+                onChange={handleCheckboxChange}
+                className="form-checkbox h-5 w-5 text-orange-600"
+              />
+              <label className="ml-2 text-sm text-gray-700" htmlFor={allergy}>
+                {t(`allergies.${allergy}`) || allergy}
+              </label>
             </div>
           ))}
         </div>
 
-        <div className="mt-4">
-          <button type="submit" className="btn btn-primary me-2">
+        <div className="flex justify-between items-center mt-4">
+          <button
+            type="submit"
+            className="w-1/2 bg-orange-600 text-white font-semibold py-2 rounded-md hover:bg-orange-700 transition duration-200"
+          >
             {t("addAllergies.saveButton")}
           </button>
-          <button type="button" className="btn btn-secondary" onClick={() => navigate("/restaurants")}>
+          <button
+            type="button"
+            onClick={() => navigate("/restaurants")}
+            className="w-1/2 bg-gray-300 text-gray-700 font-semibold py-2 rounded-md hover:bg-gray-400 transition duration-200"
+          >
             {t("addAllergies.skipButton")}
           </button>
         </div>

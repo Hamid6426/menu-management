@@ -9,7 +9,7 @@ function LanguageSwitcher() {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
-    localStorage.setItem("i18nextLng", lng); // Optional: persist language
+    localStorage.setItem("i18nextLng", lng);
     setIsDropdownOpen(false);
   };
 
@@ -17,7 +17,6 @@ function LanguageSwitcher() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,44 +31,43 @@ function LanguageSwitcher() {
   }, []);
 
   return (
-    <div ref={dropdownRef} className="position-relative">
+    <div ref={dropdownRef} className="relative">
       <button
         type="button"
-        className="nav-link d-flex flex-column align-items-center justify-content-center"
-        style={{ color: "#333", transition: "all 0.3s", marginTop: "2px", background: "none", border: "none" }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = "#ff6600")}
-        onMouseLeave={(e) => (e.currentTarget.style.color = "#333")}
+        className="flex flex-col items-center justify-center text-gray-800 hover:text-orange-600 transition-colors duration-300 bg-transparent border-none mt-0.5"
         onClick={toggleDropdown}
       >
-        <MdLanguage style={{ fontSize: "1.25rem", height: "1.38rem" }} />
-        <small>{t("languageSwitcher.selectLanguage")}</small>
+        <MdLanguage className="text-xl h-5" />
+        <small className="text-xs">{t("languageSwitcher.selectLanguage")}</small>
       </button>
 
+      {/* Dropdown Menu */}
       {isDropdownOpen && (
-        <ul
-          className="dropdown-menu show"
-          style={{
-            position: "absolute",
-            top: "100%",
-            left: "0",
-            zIndex: 1000,
-            display: "block",
-            minWidth: "8rem",
-            padding: "0.5rem 0",
-            margin: "0.25rem 0 0",
-            fontSize: "1rem",
-            color: "#212529",
-            textAlign: "left",
-            listStyle: "none",
-            backgroundColor: "#fff",
-            backgroundClip: "padding-box",
-            border: "1px solid rgba(0,0,0,.15)",
-            borderRadius: "0.25rem"
-          }}
-        >
-          <li><button className="dropdown-item w-100 text-start" onClick={() => changeLanguage("en")}>{t("languageSwitcher.english")}</button></li>
-          <li><button className="dropdown-item w-100 text-start" onClick={() => changeLanguage("it")}>{t("languageSwitcher.italian")}</button></li>
-          <li><button className="dropdown-item w-100 text-start" onClick={() => changeLanguage("ar")}>{t("languageSwitcher.arabic")}</button></li>
+        <ul className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+          <li>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              onClick={() => changeLanguage("en")}
+            >
+              {t("languageSwitcher.english")}
+            </button>
+          </li>
+          <li>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              onClick={() => changeLanguage("it")}
+            >
+              {t("languageSwitcher.italian")}
+            </button>
+          </li>
+          <li>
+            <button
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-rose-50 hover:text-orange-600"
+              onClick={() => changeLanguage("ar")}
+            >
+              {t("languageSwitcher.arabic")}
+            </button>
+          </li>
         </ul>
       )}
     </div>

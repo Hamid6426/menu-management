@@ -39,16 +39,12 @@ const ShowRestaurantMenu = () => {
       setDishes(formattedDishes);
       setFilteredDishes(formattedDishes);
 
-      // Extract categories from the dishes
       const uniqueCategories = [t("showRestaurantMenu.all"), ...new Set(formattedDishes.map((dish) => dish.category))];
       setCategories(uniqueCategories);
 
-      // Extract unique allergens from all dishes
       const allergensSet = new Set();
       formattedDishes.forEach((dish) => {
-        if (dish.allergens && dish.allergens.length > 0) {
-          dish.allergens.forEach((allergen) => allergensSet.add(allergen));
-        }
+        dish.allergens?.forEach((a) => allergensSet.add(a));
       });
       setAvailableAllergens(Array.from(allergensSet));
     } catch (err) {
@@ -61,25 +57,19 @@ const ShowRestaurantMenu = () => {
   const filterDishes = () => {
     let filtered = [...dishes];
 
-    // Filter by category
     if (selectedCategory !== t("showRestaurantMenu.all")) {
-      // Using translated "All" here
       filtered = filtered.filter((dish) => dish.category === selectedCategory);
     }
 
-    // Filter by search query
     if (searchQuery) {
-      filtered = filtered.filter(
-        (dish) =>
-          dish.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          dish.description.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter((dish) =>
+        `${dish.name} ${dish.description}`.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // Exclude dishes that contain any of the selected allergens.
     if (selectedAllergens.length > 0) {
       filtered = filtered.filter(
-        (dish) => !dish.allergens || !dish.allergens.some((allergen) => selectedAllergens.includes(allergen))
+        (dish) => !dish.allergens || !dish.allergens.some((a) => selectedAllergens.includes(a))
       );
     }
 
@@ -96,88 +86,82 @@ const ShowRestaurantMenu = () => {
     filterDishes();
   }, [selectedCategory, searchQuery, selectedAllergens, dishes]);
 
-  // Group the filtered dishes by category
   const groupedDishes = filteredDishes.reduce((acc, dish) => {
-    if (!acc[dish.category]) {
-      acc[dish.category] = [];
-    }
+    if (!acc[dish.category]) acc[dish.category] = [];
     acc[dish.category].push(dish);
     return acc;
   }, {});
 
   return (
-    <div className="container-fluid">
-      {error && <div className="alert alert-danger">{error}</div>}
+    <div className="px-4 sm:px-6 lg:px-10 py-6">
+      {error && (
+        <div className="bg-red-100 text-red-800 px-4 py-2 rounded-md mb-4">
+          {error}
+        </div>
+      )}
 
-      <div className="mt-3 d-flex flex-column flex-lg-row align-items-start gap-2">
-        <div>
-          <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            placeholder={t("showRestaurantMenu.searchPlaceholder")}
-          />
-        </div>
-        <div>
-          <CategoryFilter
-            categories={categories}
-            selectedCategory={selectedCategory}
-            setSelectedCategory={setSelectedCategory}
-          />
-        </div>
-        <div>
-          <AllergyFilter
-            availableAllergens={availableAllergens}
-            selectedAllergens={selectedAllergens}
-            setSelectedAllergens={setSelectedAllergens}
-          />
-        </div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end mb-6">
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder={t("showRestaurantMenu.searchPlaceholder")}
+        />
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+        <AllergyFilter
+          availableAllergens={availableAllergens}
+          selectedAllergens={selectedAllergens}
+          setSelectedAllergens={setSelectedAllergens}
+        />
       </div>
 
       {loading ? (
-        <div className="text-center">
-          <div className="spinner-border text-primary"></div>
+        <div className="flex justify-center mt-10">
+          <div className="w-8 h-8 border-4 border-t-primary border-gray-300 rounded-full animate-spin"></div>
         </div>
       ) : filteredDishes.length === 0 ? (
-        <div className="alert alert-info">{t("showRestaurantMenu.noDishesFound")}</div>
+        <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-md text-center">
+          {t("showRestaurantMenu.noDishesFound")}
+        </div>
       ) : (
         Object.entries(groupedDishes).map(([category, dishesInCategory]) => (
-          <div key={category} className="mb-3 container">
-            <h2 className="fw-bold fst-italic my-3">{t(`categories.${category}`, category)}</h2>
-            <div className="row row-cols-1 row-cols-md-4 g-4">
+          <div key={category} className="mb-10">
+            <h2 className="text-xl sm:text-2xl font-semibold italic text-tomatoRose-700 mb-4">
+              {t(`categories.${category}`, category)}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {dishesInCategory.map((dish) => (
-                <div className="col" key={dish._id}>
-                  <div className="card">
-                    <img
-                      src={dish.imageUrl || "https://picsum.photos/id/312/1024/512"}
-                      alt={dish.name}
-                      className="card-img-top"
-                      style={{ height: "200px", objectFit: "cover" }}
-                    />
-                    <div className="card-body">
-                      <div className="d-flex align-items-center justify-content-between">
-                        <div className="fw-bold">{dish.name}</div>
-                        <div className="fw-bold">{dish.price.toFixed(2)}</div>
-                      </div>
-                      <div className="fw-light mt-1" style={{ fontSize: "0.8rem" }}>
-                        {dish.description || "No description available"}
-                      </div>
-                      <div className="fw-bold mt-2" style={{ fontSize: "0.8rem" }}>
-                        {dish.kilocalories} {t("showRestaurantMenu.kcal")}
-                      </div>
-                      <div className="mt-2">
-                        <div className="d-flex flex-row align-items-center flex-wrap gap-2">
-                          {dish.allergens && dish.allergens.length > 0 ? (
-                            dish.allergens.map((allergen, index) => (
-                              <div key={index} className="badge bg-warning text-dark">
-                                {t(`allergens.${allergen}`)}
-                              </div>
-                            ))
-                          ) : (
-                            <li className="badge bg-success text-white">{t("allergens.none", "No Allergens")}</li>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                <div key={dish._id} className="bg-white rounded-xl shadow p-4">
+                  <img
+                    src={dish.imageUrl || "https://picsum.photos/id/312/1024/512"}
+                    alt={dish.name}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                  <div className="mt-3 flex justify-between text-sm font-bold text-gray-700">
+                    <span>{dish.name}</span>
+                    <span>${dish.price.toFixed(2)}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {dish.description || t("showRestaurantMenu.noDescription")}
+                  </p>
+                  <p className="text-xs font-semibold text-tomatoRose-600 mt-2">
+                    {dish.kilocalories} {t("showRestaurantMenu.kcal")}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mt-3">
+                    {dish.allergens && dish.allergens.length > 0 ? (
+                      dish.allergens.map((allergen, index) => (
+                        <span key={index} className="text-xs bg-yellow-300 text-black px-2 py-1 rounded-full">
+                          {t(`allergens.${allergen}`)}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+                        {t("allergens.none")}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}

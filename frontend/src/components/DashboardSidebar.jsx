@@ -30,29 +30,51 @@ const DashboardSidebar = () => {
   };
 
   const links = [
-    { to: "/admin/dashboard", icon: <FaTachometerAlt />, title: t("dashboardNavbar.dashboard") },
-    { to: "/admin/manage-restaurants", icon: <FaUtensils />, title: t("dashboardNavbar.manageRestaurants") },
-    { to: "/admin/manage-staff", icon: <FaUsersCog />, title: t("dashboardNavbar.manageStaff") },
-    { to: "/admin/settings", icon: <FaCogs />, title: t("dashboardNavbar.settings") },
-    { to: "/admin/profile", icon: <FaUserCircle />, title: t("dashboardNavbar.profile") },
+    {
+      to: "/admin/dashboard",
+      icon: <FaTachometerAlt />,
+      title: t("dashboardNavbar.dashboard"),
+    },
+    {
+      to: "/admin/manage-restaurants",
+      icon: <FaUtensils />,
+      title: t("dashboardNavbar.manageRestaurants"),
+    },
+    {
+      to: "/admin/manage-staff",
+      icon: <FaUsersCog />,
+      title: t("dashboardNavbar.manageStaff"),
+    },
+    {
+      to: "/admin/settings",
+      icon: <FaCogs />,
+      title: t("dashboardNavbar.settings"),
+    },
+    {
+      to: "/admin/profile",
+      icon: <FaUserCircle />,
+      title: t("dashboardNavbar.profile"),
+    },
   ];
 
   return (
-    <div className="d-flex flex-column align-items-center vh-100 py-3" style={{ width: "3rem", backgroundColor:"#eee", }}>
+    <div
+      className="flex h-screen flex-col items-center bg-gray-100 py-3"
+      style={{ width: "3rem" }}
+    >
       {links.map(({ to, icon, title }, index) => (
         <Link
           key={index}
           to={to}
-          className="mb-3 text-primary"
+          className="mb-6 text-xl text-gray-700 hover:text-orange-500"
           title={title}
-          style={{ textDecoration: "none" }}
         >
           {icon}
         </Link>
       ))}
       <button
         onClick={handleLogout}
-        className="btn btn-sm btn-outline-danger mt-auto"
+        className="mt-auto rounded-full p-2 text-xl text-gray-700 transition duration-200 ease-in-out  hover:text-orange-500"
         title={t("dashboardNavbar.logout")}
       >
         <FaSignOutAlt />

@@ -2,11 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import "./globals.css";
-import App from "./App"; // ✅ No need to specify `.jsx`
-import './i18n';
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import App from "./App";
+import "./i18n";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

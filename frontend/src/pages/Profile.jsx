@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 
@@ -38,39 +36,37 @@ export default function Profile() {
   if (!user) return null;
 
   return (
-    <div className="container py-4">
-      <div className="d-flex align-items-center justify-content-between mb-3">
-        <h2>User Profile</h2>
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-orange-600">User Profile</h2>
         <Link
           to="/add-allergies"
-          className="nav-link d-flex flex-column align-items-center px-3 py-2 justify-content-center"
-          style={{ backgroundColor: "#ff6600", color:"#fff", transition: "all 0.3s" }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#FFF")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#FFF")}
+          className="bg-orange-600 text-white font-semibold px-4 py-2 rounded-lg transition-colors hover:bg-orange-700"
         >
           Update Allergies
         </Link>
       </div>
-      <div className="card shadow-sm p-4">
-        <p>
-          <strong>Name:</strong> {user.name}
+
+      <div className="card bg-white shadow-lg p-6 rounded-lg">
+        <p className="text-lg font-medium mb-2">
+          <strong className="text-gray-700">Name:</strong> {user.name}
         </p>
-        <p>
-          <strong>Username:</strong> {user.username}
+        <p className="text-lg font-medium mb-2">
+          <strong className="text-gray-700">Username:</strong> {user.username}
         </p>
-        <p>
-          <strong>Email:</strong> {user.email}
+        <p className="text-lg font-medium mb-2">
+          <strong className="text-gray-700">Email:</strong> {user.email}
         </p>
-        <p>
-          <strong>Role:</strong> {user.role}
+        <p className="text-lg font-medium mb-4">
+          <strong className="text-gray-700">Role:</strong> {user.role}
         </p>
 
         {user.restaurants?.length > 0 && (
-          <div className="mb-3">
-            <strong>Restaurants:</strong>
-            <ul className="mb-0">
+          <div className="mb-4">
+            <strong className="text-lg text-gray-700">Restaurants:</strong>
+            <ul className="list-disc pl-6">
               {user.restaurants.map((res, index) => (
-                <li key={index}>{res}</li>
+                <li key={index} className="text-gray-600">{res}</li>
               ))}
             </ul>
           </div>
@@ -78,10 +74,10 @@ export default function Profile() {
 
         {user.allergies?.length > 0 && (
           <div>
-            <strong>Allergies:</strong>
-            <ul className="mb-0">
+            <strong className="text-lg text-gray-700">Allergies:</strong>
+            <ul className="list-disc pl-6">
               {user.allergies.map((allergy, index) => (
-                <li key={index}>{allergy}</li>
+                <li key={index} className="text-gray-600">{allergy}</li>
               ))}
             </ul>
           </div>

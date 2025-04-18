@@ -1,34 +1,45 @@
 import React from "react";
-import "./HowItWorks.css";
 
 export default function HowItWorks() {
   return (
-    <section className="how-it-works-section py-5" id="how-it-works">
-      <div className="container-fluid px-5">
-        <h2 className="section-title text-center text-main mb-5">
+    <section className="py-16 bg-white text-stone-900" id="how-it-works">
+      <div className="max-w-7xl mx-auto px-6">
+        <h2 className="text-3xl sm:text-4xl font-bold text-red-600 text-center mb-12">
           How It Works
         </h2>
-        <div className="row g-4">
-          <div className="col-md-4">
-            <div className="step-card text-center p-4 h-100">
-              <div className="step-number mb-3">1</div>
-              <h3 className="mb-2">Sign Up</h3>
-              <p>Create your account and upload your existing menu in minutes.</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Step 1 */}
+          <div className="bg-rose-50 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition">
+            <div className="text-3xl w-12 h-12 mx-auto mb-4 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">
+              1
             </div>
+            <h3 className="text-xl font-semibold mb-2">Sign Up</h3>
+            <p className="text-stone-700">
+              Create your account and upload your existing menu in minutes.
+            </p>
           </div>
-          <div className="col-md-4">
-            <div className="step-card text-center p-4 h-100">
-              <div className="step-number mb-3">2</div>
-              <h3 className="mb-2">Customize</h3>
-              <p>Organize your menu categories and items with our drag-and-drop interface.</p>
+
+          {/* Step 2 */}
+          <div className="bg-rose-50 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition">
+            <div className="text-3xl w-12 h-12 mx-auto mb-4 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">
+              2
             </div>
+            <h3 className="text-xl font-semibold mb-2">Customize</h3>
+            <p className="text-stone-700">
+              Organize your menu categories and items with our drag-and-drop interface.
+            </p>
           </div>
-          <div className="col-md-4">
-            <div className="step-card text-center p-4 h-100">
-              <div className="step-number mb-3">3</div>
-              <h3 className="mb-2">Go Live</h3>
-              <p>Publish your menu and start managing it in real-time.</p>
+
+          {/* Step 3 */}
+          <div className="bg-rose-50 rounded-xl p-6 text-center shadow-sm hover:shadow-md transition">
+            <div className="text-3xl w-12 h-12 mx-auto mb-4 bg-red-600 text-white rounded-full flex items-center justify-center font-bold">
+              3
             </div>
+            <h3 className="text-xl font-semibold mb-2">Go Live</h3>
+            <p className="text-stone-700">
+              Publish your menu and start managing it in real-time.
+            </p>
           </div>
         </div>
       </div>

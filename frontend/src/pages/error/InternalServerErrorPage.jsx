@@ -5,14 +5,17 @@ const InternalServerErrorPage = () => {
   const { t } = useTranslation(); // Initialize useTranslation
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div className="text-center px-3">
-        <h1 className="display-4 fw-bold mb-4" style={{ color: "#ff6600" }}>
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="text-center px-4">
+        <h1 className="text-4xl font-bold mb-4 text-orange-600">
           {t("internalServerErrorPage.title")}
         </h1>
-        <p className="lead mb-4">
+        <p className="text-lg mb-4">
           {t("internalServerErrorPage.message")}{" "}
-          <a href="/contact" className="text-decoration-underline" style={{ color: "#ff6600" }}>
+          <a
+            href="/contact"
+            className="underline text-orange-600 hover:text-orange-800"
+          >
             {t("internalServerErrorPage.support")}
           </a>
           .

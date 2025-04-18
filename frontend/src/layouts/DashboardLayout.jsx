@@ -5,10 +5,10 @@ import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function DashboardLayout() {
   return (
-    <div className="w-100 d-flex">
+    <div className="flex w-full">
       <DashboardSidebar />
-      <main className="w-100">
-        <Breadcrumbs/>
+      <main className="flex-1">
+        <Breadcrumbs />
         <Outlet />
       </main>
     </div>

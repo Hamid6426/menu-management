@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../../utils/axiosInstance";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

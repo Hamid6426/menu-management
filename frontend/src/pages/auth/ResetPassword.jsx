@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axiosInstance from "../utils/axiosInstance";
+import axiosInstance from "../../utils/axiosInstance";
 import { useTranslation } from "react-i18next";
 
 const ResetPassword = () => {

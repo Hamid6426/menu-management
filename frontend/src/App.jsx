@@ -1,23 +1,32 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+// users
+import About from "./pages/public/About";
+import Contact from "./pages/public/Contact";
+import Demo from "./pages/public/Demo";
+import Home from "./pages/public/Home";
+import Pricing from "./pages/public/Pricing";
+
+import SignUpAs from "./pages/auth/SignUpAs";
+import AdminRegister from "./pages/auth/AdminRegister";
+import UserRegister from "./pages/auth/UserRegister";
+import Login from "./pages/auth/Login";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
+
+// error
+import ForbiddenPage from "./pages/error/ForbiddenPage";
+import InternalServerErrorPage from "./pages/error/InternalServerErrorPage";
+import NotFoundPage from "./pages/error/NotFoundPage";
 
 import Layout from "./layouts/Layout";
+import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import ProtectedRoute from "./context/ProtectedRoute";
 
-// users
-import Home from "./pages/Home";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-
-import SignUpAs from "./pages/SignUpAs";
-import UserRegister from "./pages/UserRegister";
-import AdminRegister from "./pages/AdminRegister";
+import Profile from "./pages/Profile";
 import AddAllergies from "./pages/AddAllergies";
-import Login from "./pages/Login";
-import ForgotPassword from "./pages/ForgotPassword";
-import ResetPassword from "./pages/ResetPassword";
-
 import Restaurants from "./pages/RestaurantList";
 import ShowRestaurant from "./pages/ShowRestaurant";
 import ShowRestaurantMenu from "./pages/ShowRestaurantMenu";
@@ -32,15 +41,6 @@ import UpdateRestaurant from "./pages/admin/UpdateRestaurant";
 import UpdateDish from "./pages/admin/UpdateDish";
 import ManageStaff from "./pages/admin/ManageStaff";
 import Settings from "./pages/admin/Settings";
-
-// error
-import ForbiddenPage from "./pages/ForbiddenPage";
-import InternalServerErrorPage from "./pages/InternalServerErrorPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import DashboardLayout from "./layouts/DashboardLayout";
-import Profile from "./pages/Profile";
-import Pricing from "./pages/Pricing";
-import Demo from "./pages/Demo";
 
 function App() {
   return (

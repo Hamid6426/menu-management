@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 
 const CategoryFilter = ({ categories, selectedCategory, setSelectedCategory }) => {
   const { t } = useTranslation();
+  
   return (
-    <div className="mb-3">
+    <div className="mb-4">
       <select
-        className="form-select"
+        className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
         value={selectedCategory}
         onChange={(e) => setSelectedCategory(e.target.value)}
       >

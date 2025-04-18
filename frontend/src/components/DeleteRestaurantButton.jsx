@@ -8,8 +8,8 @@ const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
-    const confirmationMessage = t('deleteRestaurantButton.confirmDelete');
-    
+    const confirmationMessage = t("deleteRestaurantButton.confirmDelete");
+
     if (window.confirm(confirmationMessage)) {
       try {
         setLoading(true);
@@ -18,7 +18,7 @@ const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
           onDeleteSuccess(); // callback to refresh the list
         }
       } catch (err) {
-        const errorMessage = t('deleteRestaurantButton.errorMessage');
+        const errorMessage = t("deleteRestaurantButton.errorMessage");
         alert(errorMessage);
       } finally {
         setLoading(false);
@@ -29,8 +29,8 @@ const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
   return (
     <button
       onClick={handleDelete}
-      className="btn btn-sm btn-outline-danger"
-      title={t('deleteRestaurantButton.confirmDelete')}
+      className="focus:ring-opacity-50 rounded-md border border-red-600 px-2 py-1 text-sm text-red-600 hover:bg-red-600 hover:text-white focus:ring-2 focus:ring-red-600 focus:outline-none disabled:opacity-50"
+      title={t("deleteRestaurantButton.confirmDelete")}
       disabled={loading}
     >
       <MdDelete />
