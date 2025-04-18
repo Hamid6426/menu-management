@@ -244,5 +244,9 @@
     "sesame seeds": "Semi di sesamo",
     "papaya": "Papaya",
     "mango": "Mango"
+  },
+  "updateDish": {
+    "title": "Modifica Piatto",
+    "updateButton": "Aggiorna Piatto"
   }
 }

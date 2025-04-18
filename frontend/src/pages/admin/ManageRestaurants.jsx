@@ -26,7 +26,7 @@ const ManageRestaurants = () => {
     setError("");
     try {
       const response = await axiosInstance.get(
-        `/restaurants/${username}?page=${page}&limit=${limit}&lang=${currentLang}`
+        `/restaurants/${username}?page=${page}&limit=${limit}&lang=${currentLang}`,
       );
       setRestaurants(response.data.restaurants);
       setTotal(response.data.total);
@@ -44,29 +44,35 @@ const ManageRestaurants = () => {
   const handlePageChange = (newPage) => setPage(newPage);
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-tomatoRose-700">Restaurants List</h2>
+    <div className="mx-auto max-w-7xl p-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-tomatoRose-700 text-2xl font-bold">
+          Restaurants List
+        </h2>
         <Link
           to="/admin/manage-restaurants/create-restaurant"
-          className="bg-rose-600 text-white px-4 py-2 rounded hover:bg-tomatoRose-700 transition"
+          className="hover:bg-tomatoRose-700 rounded bg-rose-600 px-4 py-2 text-white transition"
         >
           Create New
         </Link>
       </div>
 
-      {error && <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">{error}</div>}
+      {error && (
+        <div className="mb-4 rounded bg-red-100 px-4 py-2 text-red-700">
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div className="flex justify-center py-10">
-          <div className="w-10 h-10 border-4 border-t-tomatoRose-600 border-gray-200 rounded-full animate-spin" />
+          <div className="border-t-tomatoRose-600 h-10 w-10 animate-spin rounded-full border-4 border-gray-200" />
         </div>
       ) : restaurants.length === 0 ? (
         <p className="text-gray-600">No restaurants found.</p>
       ) : (
         <>
-          <div className="overflow-x-auto shadow-sm rounded-xl">
-            <table className="min-w-full border text-sm text-left">
+          <div className="overflow-x-auto rounded-xl shadow-sm">
+            <table className="min-w-full  text-left text-sm">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="p-3 font-semibold">#</th>
@@ -80,32 +86,45 @@ const ManageRestaurants = () => {
               </thead>
               <tbody>
                 {restaurants.map((restaurant, index) => (
-                  <tr key={restaurant._id} className="border-t hover:bg-gray-50">
+                  <tr
+                    key={restaurant._id}
+                    className="border-t hover:bg-gray-50"
+                  >
                     <td className="p-3">{(page - 1) * limit + index + 1}</td>
                     <td className="p-3">
                       {restaurant.logo ? (
                         <img
                           src={restaurant.logo}
                           alt={restaurant.name?.[currentLang] || "Logo"}
-                          className="w-12 h-12 object-cover rounded"
+                          className="h-12 w-12 rounded object-cover"
                         />
                       ) : (
                         "N/A"
                       )}
                     </td>
-                    <td className="p-3">{restaurant.name?.[currentLang] || restaurant.name?.en || "Unknown"}</td>
-                    <td className="p-3">{restaurant.location?.[currentLang] || restaurant.location?.en || "Unknown"}</td>
-                    <td className="p-3">{new Date(restaurant.createdAt).toLocaleDateString()}</td>
+                    <td className="p-3">
+                      {restaurant.name?.[currentLang] ||
+                        restaurant.name?.en ||
+                        "Unknown"}
+                    </td>
+                    <td className="p-3">
+                      {restaurant.location?.[currentLang] ||
+                        restaurant.location?.en ||
+                        "Unknown"}
+                    </td>
+                    <td className="p-3">
+                      {new Date(restaurant.createdAt).toLocaleDateString()}
+                    </td>
                     <td className="p-3">
                       <Link
                         to={`/admin/manage-restaurants/${restaurant.restaurantSlug}/dishes`}
-                        className="text-gray-600 hover:text-tomatoRose-600"
+                        className="hover:text-tomatoRose-600 text-gray-600"
                         title="Menus"
                       >
                         <MdMenu size={20} />
                       </Link>
                     </td>
-                    <td className="p-3 flex items-center gap-2">
+                    <td className="flex items-center gap-2 p-3">
                       <Link
                         to={`/${restaurant.restaurantSlug}`}
                         className="text-blue-500 hover:text-blue-700"
@@ -121,7 +140,7 @@ const ManageRestaurants = () => {
                         <MdEdit size={20} />
                       </Link>
                       <DeleteRestaurantButton
-                        restaurantId={restaurant._id}
+                        restaurantId={restaurant.restaurantSlug}
                         onDeleteSuccess={fetchRestaurants}
                       />
                     </td>
@@ -134,20 +153,23 @@ const ManageRestaurants = () => {
           {total > limit && (
             <div className="mt-6 flex justify-center">
               <ul className="flex gap-2">
-                {Array.from({ length: Math.ceil(total / limit) }, (_, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() => handlePageChange(index + 1)}
-                      className={`px-3 py-1 rounded border ${
-                        page === index + 1
-                          ? "bg-tomatoRose-600 text-white"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                ))}
+                {Array.from(
+                  { length: Math.ceil(total / limit) },
+                  (_, index) => (
+                    <li key={index}>
+                      <button
+                        onClick={() => handlePageChange(index + 1)}
+                        className={`rounded border px-3 py-1 ${
+                          page === index + 1
+                            ? "bg-tomatoRose-600 text-white"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        {index + 1}
+                      </button>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
           )}

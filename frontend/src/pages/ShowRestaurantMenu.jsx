@@ -34,12 +34,17 @@ const ShowRestaurantMenu = () => {
       const response = await axiosInstance.get(`/dishes/${restaurantSlug}`);
       const formattedDishes = response.data.dishes.map((dish) => ({
         ...dish,
-        imageUrl: dish.dishImage?.data ? arrayBufferToBase64(dish.dishImage.data) : null,
+        imageUrl: dish.dishImage?.data
+          ? arrayBufferToBase64(dish.dishImage.data)
+          : null,
       }));
       setDishes(formattedDishes);
       setFilteredDishes(formattedDishes);
 
-      const uniqueCategories = [t("showRestaurantMenu.all"), ...new Set(formattedDishes.map((dish) => dish.category))];
+      const uniqueCategories = [
+        t("showRestaurantMenu.all"),
+        ...new Set(formattedDishes.map((dish) => dish.category)),
+      ];
       setCategories(uniqueCategories);
 
       const allergensSet = new Set();
@@ -48,7 +53,10 @@ const ShowRestaurantMenu = () => {
       });
       setAvailableAllergens(Array.from(allergensSet));
     } catch (err) {
-      setError(err.response?.data?.message || "Error fetching dishes. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Error fetching dishes. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -63,13 +71,17 @@ const ShowRestaurantMenu = () => {
 
     if (searchQuery) {
       filtered = filtered.filter((dish) =>
-        `${dish.name} ${dish.description}`.toLowerCase().includes(searchQuery.toLowerCase())
+        `${dish.name} ${dish.description}`
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
       );
     }
 
     if (selectedAllergens.length > 0) {
       filtered = filtered.filter(
-        (dish) => !dish.allergens || !dish.allergens.some((a) => selectedAllergens.includes(a))
+        (dish) =>
+          !dish.allergens ||
+          !dish.allergens.some((a) => selectedAllergens.includes(a)),
       );
     }
 
@@ -93,72 +105,82 @@ const ShowRestaurantMenu = () => {
   }, {});
 
   return (
-    <div className="px-4 sm:px-6 lg:px-10 py-6">
+    <div className="px-4 py-6 sm:px-6 lg:px-10">
       {error && (
-        <div className="bg-red-100 text-red-800 px-4 py-2 rounded-md mb-4">
+        <div className="mb-4 rounded-md bg-red-100 px-4 py-2 text-red-800">
           {error}
         </div>
       )}
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end mb-6">
-        {/* SearchBar component integration */}
-        <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-        />
-        <CategoryFilter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-        />
-        <AllergyFilter
-          availableAllergens={availableAllergens}
-          selectedAllergens={selectedAllergens}
-          setSelectedAllergens={setSelectedAllergens}
-        />
+      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full gap-4 md:gap-6">
+        <div className="">
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
+        </div>
+        <div className="">
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+          />
+        </div>
+        <div className="">
+          <AllergyFilter
+            availableAllergens={availableAllergens}
+            selectedAllergens={selectedAllergens}
+            setSelectedAllergens={setSelectedAllergens}
+          />
+        </div>
       </div>
 
       {loading ? (
-        <div className="flex justify-center mt-10">
-          <div className="w-8 h-8 border-4 border-t-primary border-gray-300 rounded-full animate-spin"></div>
+        <div className="mt-10 flex justify-center">
+          <div className="border-t-primary h-8 w-8 animate-spin rounded-full border-4 border-gray-300"></div>
         </div>
       ) : filteredDishes.length === 0 ? (
-        <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-md text-center">
+        <div className="rounded-md bg-blue-100 px-4 py-2 text-center text-blue-800">
           {t("showRestaurantMenu.noDishesFound")}
         </div>
       ) : (
         Object.entries(groupedDishes).map(([category, dishesInCategory]) => (
           <div key={category} className="mb-10">
-            <h2 className="text-xl sm:text-2xl font-semibold italic text-tomatoRose-700 mb-4">
+            <h2 className="text-tomatoRose-700 mb-4 text-xl font-semibold italic sm:text-2xl">
               {t(`categories.${category}`, category)}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {dishesInCategory.map((dish) => (
-                <div key={dish._id} className="bg-white rounded-xl shadow p-4">
+                <div key={dish._id} className="rounded-xl bg-white p-4 shadow">
                   <img
-                    src={dish.imageUrl || "https://picsum.photos/id/312/1024/512"}
+                    src={
+                      dish.imageUrl || "https://picsum.photos/id/312/1024/512"
+                    }
                     alt={dish.name}
-                    className="w-full h-48 object-cover rounded-md"
+                    className="h-48 w-full rounded-md object-cover"
                   />
                   <div className="mt-3 flex justify-between text-sm font-bold text-gray-700">
                     <span>{dish.name}</span>
                     <span>${dish.price.toFixed(2)}</span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="mt-1 text-xs text-gray-500">
                     {dish.description || t("showRestaurantMenu.noDescription")}
                   </p>
-                  <p className="text-xs font-semibold text-tomatoRose-600 mt-2">
+                  <p className="text-tomatoRose-600 mt-2 text-xs font-semibold">
                     {dish.kilocalories} {t("showRestaurantMenu.kcal")}
                   </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {dish.allergens && dish.allergens.length > 0 ? (
                       dish.allergens.map((allergen, index) => (
-                        <span key={index} className="text-xs bg-yellow-300 text-black px-2 py-1 rounded-full">
+                        <span
+                          key={index}
+                          className="rounded-full bg-yellow-300 px-2 py-1 text-xs text-black"
+                        >
                           {t(`allergens.${allergen}`)}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs bg-green-500 text-white px-2 py-1 rounded-full">
+                      <span className="rounded-full bg-green-500 px-2 py-1 text-xs text-white">
                         {t("allergens.none")}
                       </span>
                     )}

@@ -6,8 +6,10 @@ import Breadcrumbs from "../components/Breadcrumbs";
 export default function AdminDashboardLayout() {
   return (
     <div className="flex w-full">
+      <div className="fixed">
       <AdminSidebar />
-      <main className="flex-1">
+      </div>
+      <main className="flex-1 ml-12">
         <Breadcrumbs />
         <Outlet />
       </main>

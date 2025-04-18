@@ -140,7 +140,6 @@ exports.getCurrentRestaurantDishes = async (req, res) => {
 };
 
 exports.getAllDishes = async (_req, res) => {
-  
   try {
     const dishes = await Dish.find();
     res.status(200).json({ dishes });
@@ -171,11 +170,14 @@ exports.getAllDishes = async (_req, res) => {
 // Get a single dish by its slug (instead of its ID)
 exports.getDishBySlug = async (req, res) => {
   try {
-    const { dishSlug } = req.params;
-    const dish = await Dish.findOne({ dishSlug });
+    const { restaurantSlug, dishSlug } = req.params;
+
+    const dish = await Dish.findOne({ dishSlug, restaurantSlug });
+
     if (!dish) {
       return res.status(404).json({ message: "Dish not found." });
     }
+
     return res.status(200).json({ message: "Dish fetched successfully", dish });
   } catch (error) {
     console.error("Get Dish By Slug Error:", error);
@@ -186,7 +188,9 @@ exports.getDishBySlug = async (req, res) => {
 // Update a dish by its slug
 exports.updateDish = async (req, res) => {
   try {
-    const { dishSlug } = req.params; // Get dishSlug from params
+    const { dishSlug, restaurantSlug } = req.params; // Get dishSlug from params
+    const restaurant = await Restaurant.findOne({ slug: req.params.restaurantSlug });
+    if (!restaurant) throw new Error("Restaurant not found");
     const { name, description, price, kilocalories, category, allergens, availability } = req.body;
     const { username } = req.user;
 
@@ -276,8 +280,6 @@ exports.updateDish = async (req, res) => {
   }
 };
 
-
-
 // Delete a dish by its slug
 exports.deleteDish = async (req, res) => {
   try {
@@ -305,4 +307,3 @@ exports.deleteDish = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
-

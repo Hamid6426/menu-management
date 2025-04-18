@@ -244,5 +244,9 @@
     "sesame seeds": "بذور السمسم",
     "papaya": "بابايا",
     "mango": "مانجو"
+  },
+  "updateDish": {
+    "title": "تعديل الطبق",
+    "updateButton": "تحديث الطبق"
   }
 }

@@ -17,6 +17,17 @@ router.post(
   dishController.createDish
 );
 
+// Update a dish by its slug
+router.put(
+  "/:restaurantSlug/:dishSlug",
+  protectRoute,
+  authorizeRoles("super-admin", "admin"),
+  convertAvailabilityTime,
+  upload.single("image"),
+  processImage,
+  dishController.updateDish
+);
+
 // List all dishes for a given menu by its slug
 router.get("/:restaurantSlug", dishController.getCurrentRestaurantDishes);
 
@@ -26,10 +37,7 @@ router.get("/", dishController.getAllDishes);
 // router.get("/:dishSlug/image", dishController.getDishImage);
 
 // Get a single dish by its slug
-router.get("/:dishSlug", protectRoute, dishController.getDishBySlug);
-
-// Update a dish by its slug
-router.put("/:dishSlug", protectRoute, upload.single("image"), dishController.updateDish);
+router.get("/:restaurantSlug/:dishSlug", protectRoute, dishController.getDishBySlug);
 
 // Delete a dish by its slug
 router.delete("/:dishSlug", protectRoute, dishController.deleteDish);

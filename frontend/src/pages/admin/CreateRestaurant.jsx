@@ -214,7 +214,7 @@ const CreateRestaurant = () => {
             name="image"
             accept="image/*"
             onChange={handleChange}
-            className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-tomatoRose-600 file:text-black hover:file:bg-tomatoRose-700"
+            className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:bg-rose-600 file:text-white file:border-0 file:cursor-pointer hover:file:bg-tomatoRose-700"
           />
           {imagePreview && (
             <img

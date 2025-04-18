@@ -15,6 +15,14 @@ router.post(
   restaurantController.createRestaurant
 );
 
+// Update a restaurant by its slug
+router.put(
+  "/:restaurantSlug",
+  protectRoute,
+  authorizeRoles("admin", "manager", "super-admin"),
+  restaurantController.updateRestaurant
+);
+
 // Get all restaurants
 router.get("/", restaurantController.getAllRestaurants);
 
@@ -29,13 +37,7 @@ router.get(
 // Get a single restaurant by its slug
 router.get("/:restaurantSlug/get", restaurantController.getRestaurantBySlug);
 
-// Update a restaurant by its slug
-router.put(
-  "/:restaurantSlug",
-  protectRoute,
-  authorizeRoles("admin", "manager", "super-admin"),
-  restaurantController.updateRestaurant
-);
+
 
 // Delete a restaurant by its slug
 router.delete(

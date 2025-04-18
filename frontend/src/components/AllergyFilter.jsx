@@ -38,15 +38,15 @@ const AllergyFilter = ({ availableAllergens, selectedAllergens, setSelectedAller
   return (
     <div className="mb-4">
       <div className="flex items-center mb-2 relative">
-        <input
+        {/* <input
           type="text"
           className="form-input w-full px-3 py-2 rounded border border-gray-300"
           placeholder={t("allergyFilter.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-        />
+        /> */}
         <button
-          className="btn btn-secondary ml-2 px-3 py-2 rounded bg-gray-300 hover:bg-gray-400"
+          className="btn btn-secondary ml-2 px-8 py-2 rounded w-full bg-gray-300 hover:bg-gray-400"
           onClick={() => setIsVisible(!isVisible)}
         >
           {isVisible ? t("allergyFilter.hide") : t("allergyFilter.show")}

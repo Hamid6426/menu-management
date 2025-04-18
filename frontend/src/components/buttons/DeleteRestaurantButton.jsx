@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { MdDelete } from "react-icons/md";
 import axiosInstance from "../../../../super/src/utils/axiosInstance";
 
-const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
+const DeleteRestaurantButton = ({ restaurantSlug, onDeleteSuccess }) => {
   const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
@@ -11,7 +11,7 @@ const DeleteRestaurantButton = ({ restaurantId, onDeleteSuccess }) => {
     if (window.confirm(confirmationMessage)) {
       try {
         setLoading(true);
-        await axiosInstance.delete(`/restaurants/${restaurantId}`);
+        await axiosInstance.delete(`/restaurants/${restaurantSlug}`);
         if (onDeleteSuccess) {
           onDeleteSuccess();
         }

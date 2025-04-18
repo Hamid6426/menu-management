@@ -153,8 +153,8 @@
   },
   "allergyFilter": {
     "searchPlaceholder": "Search allergens...",
-    "show": "Show",
-    "hide": "Hide"
+    "show": "Allergy Filter",
+    "hide": "Hide Filter"
   },
   "breadcrumbs": {
     "home": "Home"
@@ -244,5 +244,9 @@
     "sesame seeds": "Sesame seeds",
     "papaya": "Papaya",
     "mango": "Mango"
+  },
+  "updateDish": {
+    "title": "Update Dish",
+    "updateButton": "Update Dish"
   }
 }

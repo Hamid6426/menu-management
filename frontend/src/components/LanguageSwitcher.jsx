@@ -34,7 +34,7 @@ function LanguageSwitcher() {
     <div ref={dropdownRef} className="relative">
       <button
         type="button"
-        className="flex flex-col items-center justify-center text-gray-800 hover:text-red-600 transition-colors duration-300 bg-transparent border-none mt-0.5"
+        className="flex flex-col items-center justify-center text-gray-800 hover:text-red-600 transition-colors duration-300 bg-transparent"
         onClick={toggleDropdown}
       >
         <MdLanguage className="text-xl h-5" />

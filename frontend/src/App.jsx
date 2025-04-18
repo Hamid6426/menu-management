@@ -52,8 +52,6 @@ import AddRestaurant from "./pages/super/AddRestaurant";
 import AddDish from "./pages/super/AddDish";
 
 import UpdateUser from "./pages/super/UpdateUser";
-
-
 import SuperAdminDashboardLayout from "./layouts/SuperAdminDashboardLayout";
 
 function App() {
@@ -96,9 +94,7 @@ function App() {
       </Route>
 
       <Route
-        element={
-          <ProtectedRoute allowedRoles={["admin", "super-admin"]} />
-        }
+        element={<ProtectedRoute allowedRoles={["admin", "super-admin"]} />}
       >
         <Route element={<AdminDashboardLayout />}>
           <Route path="/admin/dashboard" element={<Dashboard />} />
@@ -121,11 +117,11 @@ function App() {
             element={<ManageDishes />}
           />
           <Route
-            path="/admin/manage-restaurants/:restaurantSlug/create-dish"
+            path="/admin/:restaurantSlug/create-dish"
             element={<CreateDish />}
           />
           <Route
-            path="/admin/manage-restaurants/:restaurantSlug/:dishSlug/update-dish"
+            path="/admin/:restaurantSlug/:dishSlug/update-dish"
             element={<UpdateDish />}
           />
 
