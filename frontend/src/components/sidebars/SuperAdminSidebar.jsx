@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -6,28 +6,13 @@ const SuperAdminSidebar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // State to determine if the screen width is less than 768px
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Function to update the isMobile state based on window width
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
   useEffect(() => {
-    // If token is not present, redirect to login
     if (!token) {
       navigate("/login");
     }
   }, [token, navigate]);
-
-  // Attach resize event listener
-  useEffect(() => {
-    window.addEventListener("resize", handleResize);
-    // Cleanup event listener on component unmount
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   if (!token) return null;
 
@@ -40,72 +25,60 @@ const SuperAdminSidebar = () => {
   };
 
   const links = [
-    { name: "Dashboard", path: "/dashboard", allowedRoles: ["super-admin"] },
-    { name: "Manage Users", path: "/dashboard/manage-users", allowedRoles: ["super-admin"] },
-    { name: "Manage Restaurants", path: "/dashboard/manage-restaurants", allowedRoles: ["super-admin"] },
-    { name: "Manage Dishes", path: "/dashboard/manage-dishes", allowedRoles: ["super-admin"] },
-    { name: "Profile", path: "/dashboard/profile", allowedRoles: ["super-admin"] },
+    { name: "Dashboard", path: "/super", allowedRoles: ["super-admin"] },
+    { name: "Manage Users", path: "/super/manage-users", allowedRoles: ["super-admin"] },
+    { name: "Manage Restaurants", path: "/super/manage-restaurants", allowedRoles: ["super-admin"] },
+    { name: "Manage Dishes", path: "/super/manage-dishes", allowedRoles: ["super-admin"] },
+    { name: "Profile", path: "/super/profile", allowedRoles: ["super-admin"] },
   ];
 
   const filteredLinks = links.filter((link) => link.allowedRoles.includes(role));
 
   return (
     <div>
-      {/* Top Navbar always visible */}
-      <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-dark text-white shadow-sm position-fixed w-100">
-        <button className="btn btn-outline-light" onClick={() => setSidebarOpen(!sidebarOpen)}>
+      {/* Top Navbar */}
+      <div className="flex justify-between items-center px-4 py-2 bg-gray-900 text-white shadow fixed w-full z-50 md:hidden">
+        <button
+          className="text-white border border-white px-3 py-1 rounded hover:bg-gray-700"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+        >
           ☰
         </button>
-        <button onClick={handleLogout} className="btn btn-outline-danger">
+        <button
+          onClick={handleLogout}
+          className="text-white border border-red-500 px-3 py-1 rounded hover:bg-red-600"
+        >
           Logout
         </button>
       </div>
 
-      {/* Sidebar visible only on screens wider than 768px */}
-      {!isMobile && (
-        <div
-          className="text-light p-3 bg-dark position-fixed top-0"
-          style={{
-            width: "15rem",
-            minHeight: "100vh",
-            left: 0,
-            zIndex: "1050",
-          }}
-        >
-          <h4 className="mb-4 text-center text-white">Dashboard</h4>
-          <ul className="nav flex-column mb-auto">
+      {/* Sidebar (Desktop) */}
+      <div className="hidden md:block bg-gray-900 text-white p-4 fixed top-0 left-0 w-60 h-full z-40">
+        <h4 className="text-center text-xl font-semibold mb-6">DIGIMENU PANEL</h4>
+        <ul className="space-y-3">
+          {filteredLinks.map((link, index) => (
+            <li key={index}>
+              <Link
+                to={link.path}
+                className="block bg-green-600 hover:bg-green-700 rounded px-4 py-2 font-medium text-white"
+              >
+                {link.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Sidebar (Mobile) */}
+      {sidebarOpen && (
+        <div className="block md:hidden">
+          <ul className="flex flex-col bg-gray-900 text-white pt-20 fixed top-0 left-0 w-full h-full z-40 space-y-4">
             {filteredLinks.map((link, index) => (
-              <li className="nav-item mb-2" key={index}>
+              <li key={index} className="w-3/4 mx-auto">
                 <Link
                   to={link.path}
-                  className="nav-link text-light fw-semibold rounded bg-success px-3 py-2"
-                  style={{ textDecoration: "none" }}
-                >
-                  {link.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      {isMobile && sidebarOpen && (
-        <div>
-          <div className="d-flex justify-content-between align-items-center px-3 py-2 bg-dark text-white shadow-sm position-fixed w-100">
-            <button className="btn btn-outline-light" onClick={() => setSidebarOpen(!sidebarOpen)}>
-              ☰
-            </button>
-            <button onClick={handleLogout} className="btn btn-outline-danger">
-              Logout
-            </button>
-          </div>
-          <ul className="nav flex-column mb-auto pt-5 position-absolute bg-dark z-3 w-100 h-100" style={{ top: "3.4rem"}}>
-            {filteredLinks.map((link, index) => (
-              <li className="nav-item mb-2 w-50 mx-auto" key={index}>
-                <Link
-                  to={link.path}
-                  className="nav-link text-light fw-semibold rounded bg-success px-3 py-2"
-                  style={{ textDecoration: "none" }}
-                  onClick={() => setSidebarOpen(false)} // close sidebar on link click (mobile UX)
+                  onClick={() => setSidebarOpen(false)}
+                  className="block bg-green-600 hover:bg-green-700 text-white rounded px-4 py-2 text-center font-medium"
                 >
                   {link.name}
                 </Link>

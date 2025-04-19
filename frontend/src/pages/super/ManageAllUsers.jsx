@@ -10,8 +10,7 @@ const ManageAllUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axiosInstance.get("/users", {});
+        const res = await axiosInstance.get("/users");
         setUsers(res.data.users);
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -36,73 +35,74 @@ const ManageAllUsers = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
-      <div className="flex gap-4 items-center mb-6">
-        <h2 className="text-3xl font-semibold">Manage All Users</h2>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Manage All Users</h2>
         <Link
           to="/dashboard/manage-users/add-user"
-          className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md text-sm font-medium"
         >
           Add New User
         </Link>
       </div>
 
       {loading && (
-        <div className="flex justify-center">
-          <div className="animate-spin border-4 border-t-4 border-blue-600 rounded-full w-12 h-12"></div>
+        <div className="flex justify-center items-center py-10">
+          <div className="w-12 h-12 border-4 border-t-blue-500 border-gray-200 rounded-full animate-spin" />
         </div>
       )}
 
       {error && (
-        <div className="alert alert-danger text-red-500">{error}</div>
+        <div className="bg-red-100 text-red-700 px-4 py-3 rounded shadow mb-4">
+          {error}
+        </div>
       )}
 
       {!loading && !error && users.length === 0 && (
-        <div className="alert alert-info text-yellow-500">No users found.</div>
+        <div className="bg-yellow-100 text-yellow-700 px-4 py-3 rounded shadow mb-4">
+          No users found.
+        </div>
       )}
 
       {!loading && !error && users.length > 0 && (
-        <div className="overflow-x-auto mt-6">
-          <table className="min-w-full table-auto border-separate border-spacing-0.5">
+        <div className="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
+          <table className="min-w-full text-sm text-gray-700 table-auto">
             <thead className="bg-gray-800 text-white">
               <tr>
-                <th className="p-2 text-center">#</th>
-                <th className="p-2 text-center">Name</th>
-                <th className="p-2 text-center">Username</th>
-                <th className="p-2 text-center">Email</th>
-                <th className="p-2 text-center">Role</th>
-                <th className="p-2 text-center">Allergies</th>
-                <th className="p-2 text-center">Created At</th>
-                <th className="p-2 text-center">Actions</th>
+                {["#", "Name", "Username", "Email", "Role", "Allergies", "Created At", "Actions"].map((label, idx) => (
+                  <th key={idx} className="px-4 py-2 text-center font-semibold whitespace-nowrap">
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white">
+            <tbody>
               {users.map((user, index) => (
-                <tr key={user._id} className="border-t">
-                  <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{user.name}</td>
-                  <td className="p-2 text-center">{user.username}</td>
-                  <td className="p-2 text-center">{user.email}</td>
-                  <td className="p-2 text-center text-capitalize">{user.role}</td>
-                  <td className="p-2 text-center">Allergies</td>
-                  <td className="p-2 text-center">{new Date(user.createdAt).toLocaleString()}</td>
-                  <td className="p-2 text-center">
-                    <div className="flex justify-center gap-2">
+                <tr key={user._id} className="border-t even:bg-gray-50">
+                  <td className="px-4 py-2 text-center">{index + 1}</td>
+                  <td className="px-4 py-2 text-center">{user.name}</td>
+                  <td className="px-4 py-2 text-center">{user.username}</td>
+                  <td className="px-4 py-2 text-center">{user.email}</td>
+                  <td className="px-4 py-2 text-center capitalize">{user.role}</td>
+                  <td className="px-4 py-2 text-center">Allergies</td>
+                  <td className="px-4 py-2 text-center">{new Date(user.createdAt).toLocaleString()}</td>
+                  <td className="px-4 py-2 text-center">
+                    <div className="flex flex-wrap justify-center gap-2">
                       <Link
                         to={`/dashboard/manage-dishes/${user.username}`}
-                        className="bg-teal-500 text-white py-1 px-4 rounded-md hover:bg-teal-600"
+                        className="bg-teal-500 hover:bg-teal-600 text-white text-xs px-3 py-1 rounded"
                       >
                         Dishes
                       </Link>
                       <Link
                         to={`/dashboard/manage-users/${user.username}/update`}
-                        className="bg-yellow-500 text-white py-1 px-4 rounded-md hover:bg-yellow-600"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded"
                       >
                         Edit
                       </Link>
                       <button
                         onClick={() => handleDelete(user.username)}
-                        className="bg-red-500 text-white py-1 px-4 rounded-md hover:bg-red-600"
+                        className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
                       >
                         Delete
                       </button>

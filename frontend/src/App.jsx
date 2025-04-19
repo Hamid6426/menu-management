@@ -53,6 +53,7 @@ import AddDish from "./pages/super/AddDish";
 
 import UpdateUser from "./pages/super/UpdateUser";
 import SuperAdminDashboardLayout from "./layouts/SuperAdminDashboardLayout";
+import SuperProfile from "./pages/super/SuperProfile";
 
 function App() {
   return (
@@ -136,42 +137,49 @@ function App() {
 
       <Route element={<ProtectedRoute allowedRoles={["super-admin"]} />}>
         <Route element={<SuperAdminDashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/super" element={<Dashboard />} />
 
-          <Route path="/dashboard/manage-users" element={<ManageAllUsers />} />
           <Route
-            path="/dashboard/manage-restaurants"
+            path="/super/manage-users"
+            element={<ManageAllUsers />}
+          />
+          <Route
+            path="/super/manage-restaurants"
             element={<ManageAllRestaurants />}
           />
           <Route
-            path="/dashboard/manage-dishes"
+            path="/super/manage-dishes"
             element={<ManageAllDishes />}
           />
 
           <Route
-            path="/dashboard/manage-users/add-user"
+            path="/super/manage-users/add-user"
             element={<AddUser />}
           />
           <Route
-            path="/dashboard/manage-restaurants/add-restaurant"
+            path="/super/manage-restaurants/add-restaurant"
             element={<AddRestaurant />}
           />
           <Route
-            path="/dashboard/manage-dishes/:restaurantSlug/add-dish"
+            path="/super/manage-dishes/:restaurantSlug/add-dish"
             element={<AddDish />}
           />
 
           <Route
-            path="/dashboard/manage-users/:username/update"
+            path="/super/manage-users/:username/update"
             element={<UpdateUser />}
           />
           <Route
-            path="/dashboard/manage-restaurants/:restaurantSlug/update"
+            path="/super/manage-restaurants/:restaurantSlug/update"
             element={<UpdateRestaurant />}
           />
           <Route
-            path="/dashboard/manage-dishes/:restaurantSlug/:dishSlug/update"
+            path="/super/manage-dishes/:restaurantSlug/:dishSlug/update"
             element={<UpdateDish />}
+          />
+          <Route
+            path="/super/profile"
+            element={<SuperProfile />}
           />
         </Route>
       </Route>

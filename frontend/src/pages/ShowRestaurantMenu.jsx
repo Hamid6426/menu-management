@@ -17,6 +17,7 @@ const ShowRestaurantMenu = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedAllergens, setSelectedAllergens] = useState([]);
   const [availableAllergens, setAvailableAllergens] = useState([]);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const { t } = useTranslation();
 
@@ -112,7 +113,7 @@ const ShowRestaurantMenu = () => {
         </div>
       )}
 
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full gap-4 md:gap-6">
+      <div className="mb-6 grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
         <div className="">
           <SearchBar
             searchQuery={searchQuery}
@@ -140,7 +141,7 @@ const ShowRestaurantMenu = () => {
           <div className="border-t-primary h-8 w-8 animate-spin rounded-full border-4 border-gray-300"></div>
         </div>
       ) : filteredDishes.length === 0 ? (
-        <div className="rounded-md bg-blue-100 px-4 py-2 text-center text-blue-800">
+        <div className="rounded-md bg-red-100 px-4 py-2 text-center text-red-500">
           {t("showRestaurantMenu.noDishesFound")}
         </div>
       ) : (
@@ -157,8 +158,15 @@ const ShowRestaurantMenu = () => {
                       dish.imageUrl || "https://picsum.photos/id/312/1024/512"
                     }
                     alt={dish.name}
-                    className="h-48 w-full rounded-md object-cover"
+                    className="h-48 w-full cursor-pointer rounded-md object-cover transition hover:opacity-80"
+                    onClick={() =>
+                      setPreviewImage(
+                        dish.imageUrl ||
+                          "https://picsum.photos/id/312/1024/512",
+                      )
+                    }
                   />
+
                   <div className="mt-3 flex justify-between text-sm font-bold text-gray-700">
                     <span>{dish.name}</span>
                     <span>${dish.price.toFixed(2)}</span>
@@ -190,6 +198,27 @@ const ShowRestaurantMenu = () => {
             </div>
           </div>
         ))
+      )}
+
+      {previewImage && (
+        <div
+          className="bg-opacity-70 fixed inset-0 z-50 flex items-center justify-center bg-red-200"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="max-w-3xl p-4" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-h-[80vh] w-full rounded-lg object-contain"
+            />
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="bg-white cursor-pointer mt-4 w-full rounded px-4 py-2 text-red-500 hover:text-red-700 font-bold"
+            >
+              Close Preview
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

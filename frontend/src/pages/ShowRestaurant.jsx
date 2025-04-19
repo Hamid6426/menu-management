@@ -12,7 +12,6 @@ const ShowRestaurant = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Convert ArrayBuffer to Base64 (if restaurantLogo is stored as binary data)
   const arrayBufferToBase64 = (buffer) => {
     let binary = "";
     const bytes = new Uint8Array(buffer);
@@ -79,69 +78,75 @@ const ShowRestaurant = () => {
   return (
     <div className="restaurant-page">
       {/* Hero Section */}
-      <div
-        className="relative flex h-[400px] w-full items-center justify-center bg-cover bg-center text-center text-white"
-        style={{ backgroundImage: `url(${restaurant.logoUrl})` }}
-      >
+      <div className="relative h-[400px] w-full overflow-hidden bg-white text-white">
+        <img
+          src={`data:image/png;base64,${restaurant.restaurantLogo}`}
+          alt="Restaurant Logo"
+          className="mx-auto h-full"
+        />
+
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 px-4">
           <h1 className="text-3xl font-bold md:text-5xl">{restaurant.name}</h1>
-          <p className="mt-2 text-sm md:text-base">
-            {restaurant.location || "Location not available"}
-          </p>
         </div>
       </div>
 
       {/* Restaurant Details */}
-      <div className="mx-auto max-w-3xl px-4 py-8 text-center">
-        <h2 className="mb-3 text-2xl font-semibold">{restaurant.name}</h2>
-        <p className="text-gray-700">
-          <strong className="text-gray-900">Location:</strong>{" "}
-          {restaurant.location || "N/A"}
-        </p>
+      <div className="mx-auto text-lg max-w-3xl px-4 py-8 text-center">
+        <p className="text-gray-900 font-bold">Location</p>
+        <p className="text-gray-700">"{restaurant.location || "N/A"}"</p>
 
         {restaurant.brandColors && (
           <div className="mt-5">
             <strong className="text-gray-900">Brand Colors:</strong>
-            <div className="mt-2 flex justify-center gap-3">
+            <div className="mt-2 flex justify-center gap-3 font-semibold">
               {restaurant.brandColors?.primary && (
-                <span
-                  className="rounded-md px-4 py-2 font-semibold text-white"
-                  style={{ backgroundColor: restaurant.brandColors.primary }}
-                >
-                  Primary
-                </span>
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="rounded-md border border-black px-5 py-5"
+                    style={{ backgroundColor: restaurant.brandColors.primary }}
+                  ></div>
+                  <div>Primary</div>
+                </div>
               )}
               {restaurant.brandColors?.secondary && (
-                <span
-                  className="rounded-md px-4 py-2 font-semibold text-white"
-                  style={{ backgroundColor: restaurant.brandColors.secondary }}
-                >
-                  Secondary
-                </span>
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="rounded-md border border-black px-5 py-5"
+                    style={{
+                      backgroundColor: restaurant.brandColors.secondary,
+                    }}
+                  ></div>
+                  <div>Secondary</div>
+                </div>
               )}
               {restaurant.brandColors?.tertiary && (
-                <span
-                  className="rounded-md px-4 py-2 font-semibold text-white"
-                  style={{ backgroundColor: restaurant.brandColors.tertiary }}
-                >
-                  Tertiary
-                </span>
+                <div className="flex flex-col items-center gap-3">
+                  <div
+                    className="rounded-md border border-black px-5 py-5"
+                    style={{ backgroundColor: restaurant.brandColors.tertiary }}
+                  ></div>
+                  <div>Tertiary</div>
+                </div>
               )}
             </div>
           </div>
         )}
-
         {/* View Menu Button */}
-        {restaurant.menus?.length > 0 && (
-          <div className="mt-6">
-            <Link
-              to={`/${restaurantSlug}/menu`}
-              className="inline-block rounded-lg bg-green-600 px-6 py-2 font-medium text-white shadow transition hover:bg-green-700"
-            >
-              View Menu
-            </Link>
-          </div>
-        )}
+        <div className="mt-6">
+          <Link
+            to={restaurant.dishes?.length > 0 ? `/${restaurantSlug}/menu` : "#"}
+            onClick={(e) => {
+              if (!restaurant.dishes?.length) e.preventDefault(); // Prevent navigation
+            }}
+            className={`inline-block rounded-lg px-6 py-2 font-medium shadow transition ${
+              restaurant.dishes?.length > 0
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "cursor-not-allowed bg-gray-400 text-white"
+            }`}
+          >
+            View Menu
+          </Link>
+        </div>
       </div>
     </div>
   );

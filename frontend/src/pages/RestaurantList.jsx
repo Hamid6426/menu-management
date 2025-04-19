@@ -101,10 +101,10 @@ const RestaurantList = () => {
                 </div>
 
                 <Link
-                  to={`/${restaurant.restaurantSlug}/menu`}
+                  to={`/${restaurant.restaurantSlug}`}
                   className="mt-4 inline-block text-center bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
                 >
-                  View Menu
+                  View Restaurant
                 </Link>
               </div>
             ))}

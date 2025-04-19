@@ -21,20 +21,20 @@ export default function SuperAdminDashboardLayout() {
     <div className="flex min-vh-100">
       {!isMobile ? (
         <div style={{ width: "15rem" }}>
-          <SuperAdminSidebarSidebar />
+          <SuperAdminSidebar />
         </div>
       ) : (
         <div>
-          <SuperAdminSidebarSidebar />
+          <SuperAdminSidebar />
         </div>
       )}
 
       {!isMobile ? (
-        <div className="min-vh-100 p-2" style={{ marginLeft: "15rem" }}>
+        <div className="min-vh-100" style={{ marginLeft: "16rem" }}>
           <Outlet />
         </div>
       ) : (
-        <div className="min-vh-100 p-2">
+        <div className="min-vh-100">
           <Outlet />
         </div>
       )}

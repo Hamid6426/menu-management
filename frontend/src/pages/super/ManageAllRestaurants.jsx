@@ -12,10 +12,8 @@ const ManageAllRestaurants = () => {
     const fetchRestaurants = async () => {
       try {
         const res = await axiosInstance.get("/restaurants");
-        console.log("Fetched restaurants:", res.data.restaurants);
         setRestaurants(res.data.restaurants || []);
       } catch (err) {
-        console.error("Error fetching restaurants:", err);
         setError("Failed to load restaurants.");
       } finally {
         setLoading(false);
@@ -31,118 +29,119 @@ const ManageAllRestaurants = () => {
       await axiosInstance.delete(`/restaurants/${slug}`);
       setRestaurants((prev) => prev.filter((r) => r.restaurantSlug !== slug));
     } catch (err) {
-      console.error("Delete failed:", err);
       alert("Could not delete restaurant.");
     }
   };
 
   return (
-    <div className="container mx-auto mt-8">
-      <div className="flex gap-4 items-center mb-6">
-        <h2 className="text-3xl font-semibold">Manage All Restaurants</h2>
-        <Link to="/dashboard/manage-restaurants/add-restaurant" className="btn bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600">
+    <div className="max-w-7xl mx-auto p-6 mt-10">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Manage All Restaurants</h2>
+        <Link
+          to="/dashboard/manage-restaurants/add-restaurant"
+          className="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-md font-medium text-sm"
+        >
           Add New Restaurant
         </Link>
       </div>
 
       {loading && (
-        <div className="flex justify-center">
-          <div className="animate-spin border-4 border-t-4 border-blue-600 rounded-full w-12 h-12"></div>
+        <div className="flex justify-center items-center py-10">
+          <div className="w-12 h-12 border-4 border-t-4 border-gray-200 rounded-full animate-spin" />
         </div>
       )}
 
-      {error && <div className="alert alert-danger text-red-500">{error}</div>}
+      {error && (
+        <div className="bg-red-100 text-red-700 p-4 rounded shadow mb-4">{error}</div>
+      )}
 
       {!loading && !error && restaurants.length === 0 && (
-        <div className="alert alert-info text-yellow-500">No restaurants found.</div>
+        <div className="bg-yellow-100 text-yellow-700 p-4 rounded shadow mb-4">
+          No restaurants found.
+        </div>
       )}
 
       {!loading && !error && restaurants.length > 0 && (
-        <div className="overflow-x-auto mt-6">
-          <table className="min-w-full table-auto border-separate border-spacing-0.5">
+        <div className="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
+          <table className="min-w-full table-auto text-sm text-gray-700">
             <thead className="bg-gray-800 text-white">
               <tr>
-                <th className="p-2 text-center">#</th>
-                <th className="p-2 text-center">Name</th>
-                <th className="p-2 text-center">Slug</th>
-                <th className="p-2 text-center">Location</th>
-                <th className="p-2 text-center">Languages</th>
-                <th className="p-2 text-center">Brand Colors</th>
-                <th className="p-2 text-center">Logo</th>
-                <th className="p-2 text-center">Created By</th>
-                <th className="p-2 text-center">Created At</th>
-                <th className="p-2 text-center">Dishes Count</th>
-                <th className="p-2 text-center">Actions</th>
+                {[
+                  "#", "Name", "Slug", "Location", "Languages", "Brand Colors",
+                  "Logo", "Created By", "Created At", "Dishes Count", "Actions"
+                ].map((head, idx) => (
+                  <th key={idx} className="px-3 py-2 text-center font-semibold whitespace-nowrap">
+                    {head}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="bg-white">
+            <tbody>
               {restaurants.map((restaurant, index) => (
-                <tr key={restaurant._id} className="border-t">
-                  <td className="p-2 text-center">{index + 1}</td>
-                  <td className="p-2 text-center">{restaurant.name?.en || "-"}</td>
-                  <td className="p-2 text-center">{restaurant.restaurantSlug || "-"}</td>
-                  <td className="p-2 text-center">{restaurant.location?.en || "-"}</td>
-                  <td className="p-2 text-center">{restaurant.languages?.join(", ") || "-"}</td>
-                  <td className="p-2">
-                    <div className="flex gap-1 flex-wrap">
+                <tr key={restaurant._id} className="border-t even:bg-gray-50">
+                  <td className="px-3 py-2 text-center">{index + 1}</td>
+                  <td className="px-3 py-2 text-center">{restaurant.name?.en || "-"}</td>
+                  <td className="px-3 py-2 text-center">{restaurant.restaurantSlug || "-"}</td>
+                  <td className="px-3 py-2 text-center">{restaurant.location?.en || "-"}</td>
+                  <td className="px-3 py-2 text-center">
+                    {restaurant.languages?.join(", ") || "-"}
+                  </td>
+                  <td className="px-3 py-2 text-center">
+                    <div className="flex flex-wrap justify-center gap-1">
                       {restaurant.brandColors &&
                         Object.entries(restaurant.brandColors).map(([key, color]) => (
                           <span
                             key={key}
                             title={key}
-                            style={{
-                              display: "inline-block",
-                              width: "16px",
-                              height: "16px",
-                              backgroundColor: color,
-                              borderRadius: "3px",
-                              border: "1px solid #ccc",
-                            }}
+                            className="w-4 h-4 rounded border border-gray-300"
+                            style={{ backgroundColor: color }}
                           />
                         ))}
                     </div>
                   </td>
-                  <td className="p-2 text-center">
+                  <td className="px-3 py-2 text-center">
                     {restaurant.restaurantLogo ? (
                       <img
                         src={`data:image/jpeg;base64,${restaurant.restaurantLogo}`}
                         alt="Restaurant Logo"
-                        className="w-12 h-12 object-cover"
+                        className="w-12 h-12 object-cover mx-auto rounded shadow"
                       />
                     ) : (
                       "-"
                     )}
                   </td>
-                  <td className="p-2 text-center">{restaurant.createdBy || "-"}</td>
-                  <td className="p-2 text-center">
+                  <td className="px-3 py-2 text-center">{restaurant.createdBy || "-"}</td>
+                  <td className="px-3 py-2 text-center">
                     {new Date(restaurant.createdAt).toLocaleString()}
                   </td>
-                  <td className="p-2 text-center">{restaurant.dishes?.length || 0}</td>
-                  <td className="p-2 text-center">
-                    <div className="flex justify-center gap-2">
+                  <td className="px-3 py-2 text-center">
+                    {restaurant.dishes?.length || 0}
+                  </td>
+                  <td className="px-3 py-2 text-center">
+                    <div className="flex flex-wrap justify-center gap-2">
                       <Link
                         to={`/dashboard/manage-restaurants/${restaurant.restaurantSlug}`}
-                        className="btn btn-sm bg-yellow-500 text-white py-1 px-4 rounded-md"
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1 rounded"
                       >
-                        Edit Restaurant
+                        Edit
                       </Link>
                       <button
                         onClick={() => handleDelete(restaurant.restaurantSlug)}
-                        className="btn btn-sm bg-red-500 text-white py-1 px-4 rounded-md"
+                        className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded"
                       >
-                        Delete Restaurant
+                        Delete
                       </button>
                       <Link
                         to={`/dashboard/manage-dishes/${restaurant.restaurantSlug}/add-dish`}
-                        className="btn btn-sm bg-teal-500 text-white py-1 px-4 rounded-md"
+                        className="bg-teal-500 hover:bg-teal-600 text-white text-xs px-3 py-1 rounded"
                       >
                         Add Dish
                       </Link>
                       <Link
                         to={`/dashboard/manage-dishes/${restaurant.restaurantSlug}`}
-                        className="btn btn-sm bg-teal-500 text-white py-1 px-4 rounded-md"
+                        className="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1 rounded"
                       >
-                        Check Dishes
+                        View Dishes
                       </Link>
                     </div>
                   </td>
